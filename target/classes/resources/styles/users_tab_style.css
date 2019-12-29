@@ -1,0 +1,51 @@
+#buttons {
+	-fx-background-color:#272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+	-fx-font-family: "Arial";
+	-fx-padding: 10.0 20.0 10.0 20.0;
+	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+}
+
+#searchUsersToolbar {
+	-fx-background-color: transparent;
+}
+
+#searchUserTextField {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+	-fx-border-color: #272343;
+	-fx-font-style: italic;
+	-fx-font-size: 1.4em;
+	-fx-prompt-text-fill: gray;
+	-fx-text-fill: #272343;
+}
+
+#usersTableView {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#usersTableView .column-header-background .label {
+	-fx-background-color: #f6f6f6;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+}
+
+#userDetailsVbox {
+	-fx-background-color:#272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+}
+
+#detailsLabel {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}

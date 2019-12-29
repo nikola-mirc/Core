@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#dragged"
+	onMousePressed="#pressed" prefHeight="350.0" prefWidth="500.0"
+	stylesheets="@../styles/login_style.css"
+	xmlns="http://javafx.com/javafx/11.0.1"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="alfatec.controller.user.LoginController">
+	<children>
+		<VBox id="logoVbox" alignment="BASELINE_CENTER"
+			maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+			minWidth="-Infinity" prefHeight="350.0" prefWidth="200.0">
+			<children>
+				<ImageView fitHeight="50.0" fitWidth="80.0"
+					pickOnBounds="true" preserveRatio="true">
+					<image>
+						<Image url="@../images/login_logo.png" />
+					</image>
+					<VBox.margin>
+						<Insets top="50.0" />
+					</VBox.margin>
+				</ImageView>
+				<ImageView fitHeight="60.0" fitWidth="160.0"
+					pickOnBounds="true" preserveRatio="true">
+					<image>
+						<Image url="@../images/logo_letters.png" />
+					</image>
+					<VBox.margin>
+						<Insets top="10.0" />
+					</VBox.margin>
+				</ImageView>
+			</children>
+		</VBox>
+		<VBox alignment="BASELINE_CENTER" layoutX="200.0"
+			maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+			minWidth="-Infinity" prefHeight="350.0" prefWidth="300.0">
+			<children>
+				<HBox alignment="TOP_RIGHT" maxHeight="-Infinity"
+					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+					prefHeight="25.0" prefWidth="300.0">
+					<children>
+						<Button fx:id="quitButton" maxHeight="-Infinity"
+							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+							mnemonicParsing="false" onAction="#quit" prefHeight="25.0"
+							prefWidth="25.0">
+							<graphic>
+								<ImageView fitHeight="25.0" fitWidth="25.0"
+									pickOnBounds="true" preserveRatio="true">
+									<image>
+										<Image url="@../images/quit_login_icon.png" />
+									</image>
+								</ImageView>
+							</graphic>
+							<HBox.margin>
+								<Insets right="2.0" top="2.0" />
+							</HBox.margin>
+						</Button>
+					</children>
+				</HBox>
+				<Label id="label" alignment="CENTER" maxHeight="-Infinity"
+					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+					prefHeight="40.0" prefWidth="150.0" text="Welcome">
+					<VBox.margin>
+						<Insets top="10.0" />
+					</VBox.margin>
+				</Label>
+				<JFXTextField id="text" fx:id="usernameTextField"
+					maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+					minWidth="-Infinity" prefHeight="35.0" prefWidth="200.0"
+					promptText="Username">
+					<VBox.margin>
+						<Insets top="30.0" />
+					</VBox.margin>
+				</JFXTextField>
+				<JFXPasswordField id="text" fx:id="passwordField"
+					maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+					minWidth="-Infinity" prefHeight="35.0" prefWidth="200.0"
+					promptText="Password">
+					<VBox.margin>
+						<Insets top="30.0" />
+					</VBox.margin>
+				</JFXPasswordField>
+				<Button fx:id="loginButton" maxHeight="-Infinity"
+					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+					mnemonicParsing="false" onAction="#login" prefHeight="40.0"
+					prefWidth="85.0" text="Login">
+					<VBox.margin>
+						<Insets top="45.0" />
+					</VBox.margin>
+				</Button>
+			</children>
+		</VBox>
+	</children>
+</AnchorPane>

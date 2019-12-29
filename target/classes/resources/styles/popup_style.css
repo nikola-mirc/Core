@@ -1,0 +1,52 @@
+#popup {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#label {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#errorText {
+	-fx-font-family: 'Arial Unicode MS';
+	-fx-font-style: italic;
+	-fx-text-fill: red;
+}
+
+#text {
+	-fx-prompt-text-fill: #272343;
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+}
+
+#comboBoxText {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.2em;
+}
+
+#button {
+	-fx-background-color:#272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+	-fx-font-family: "Arial";
+	-fx-padding: 10.0 20.0 10.0 20.0;
+	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+}
+
+#closeButton {
+	-fx-border-color: transparent;
+    -fx-border-width: 0.0;
+    -fx-background-radius: 0.0;
+    -fx-background-color: transparent;
+}
+
+#closeButton:hover {
+	-fx-background-color: #a299e0;
+}

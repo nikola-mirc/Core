@@ -1,0 +1,114 @@
+#anchorPane {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#label {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#activeConferenceLabel {
+	-fx-text-fill: darkred;
+	-fx-font-size: 1.8em;
+	-fx-font-weight: bold;
+}
+
+#text {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+}
+
+#radio {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+}
+
+#searchToolbar {
+	-fx-background-color: transparent;
+}
+
+#searchTextField {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+	-fx-border-color: #272343;
+	-fx-font-style: italic;
+	-fx-font-size: 1.4em;
+	-fx-text-fill: #272343;
+}
+
+#searchButton {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+	-fx-border-color: #272343;
+	-fx-text-fill: #272343;
+}
+
+#button {
+	-fx-background-color:#272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+	-fx-font-family: "Arial";
+	-fx-padding: 10.0 20.0 10.0 20.0;
+	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+}
+
+#hbox {
+	-fx-border-style: dotted hidden hidden hidden;
+	-fx-border-width: 3.0;
+	-fx-border-color: #272343;
+}
+
+#detailsVbox {
+	-fx-background-color: #272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+}
+
+#detailsLabel {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#detailsTextArea {
+	-fx-background-color: #d9d8de;
+	-fx-background-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 3.0;
+	-fx-border-color: #272343;
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.2em;
+}
+
+#buttonInverse {
+	-fx-background-color:#d9d8de;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
+	-fx-text-fill: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+	-fx-font-family: "Arial";
+	-fx-padding: 10.0 20.0 10.0 20.0;
+	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+}
+
+#closeButton {
+	-fx-border-color: transparent;
+    -fx-border-width: 0.0;
+    -fx-background-radius: 0.0;
+    -fx-background-color: transparent;
+}
+
+#closeButton:hover {
+	-fx-background-color: #a299e0;
+}

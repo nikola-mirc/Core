@@ -1,0 +1,122 @@
+#labels {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#labelsInverse {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#labelsBordered {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+	-fx-background-color: #d9d8de;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+	-fx-border-color: #272343;
+}
+
+#negativeLabel {
+	-fx-text-fill: darkred;
+	-fx-font-size: 2.5em;
+	-fx-font-weight: bold;
+}
+
+#positiveLabel {
+	-fx-text-fill: darkgreen;
+	-fx-font-size: 2.5em;
+	-fx-font-weight: bold;
+}
+
+#button {
+	-fx-background-color: #272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+	-fx-font-family: "Arial";
+	-fx-padding: 10.0 20.0 10.0 20.0;
+	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0,
+		0.0, 1.0);
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+}
+
+#buttonInverse {
+	-fx-background-color: #d9d8de;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
+	-fx-text-fill: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+	-fx-font-family: "Arial";
+	-fx-padding: 10.0 20.0 10.0 20.0;
+	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0,
+		0.0, 1.0);
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+}
+
+#text {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+	-fx-border-color: #272343;
+	-fx-font-style: italic;
+	-fx-font-size: 1.4em;
+	-fx-prompt-text-fill: gray;
+	-fx-text-fill: #272343;
+}
+
+#comboBoxText {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+	-fx-border-color: #272343;
+	-fx-prompt-text-fill: #272343;
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.2em;
+}
+
+#detailsHbox {
+	-fx-background-color: #272343;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+}
+
+#tableView {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#tableView .column-header-background .label {
+	-fx-background-color: #272343;
+	-fx-text-fill: white;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+}
+
+#addConferenceHbox, #noConferenceHbox, #activeConferenceHbox {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#notesVbox {
+	-fx-background-color: #d9d8de;
+	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#cancelAddConferenceButton:hover {
+	-fx-background-color: #a299e0;
+}
