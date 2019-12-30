@@ -1,51 +1,195 @@
-#buttons {
-	-fx-background-color:#272343;
-	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
-	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
-	-fx-text-fill: white;
+#mainVbox {
+	-fx-background-color: #d9d8de;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
 	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
-	-fx-font-family: "Arial";
-	-fx-padding: 10.0 20.0 10.0 20.0;
-	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
+    -fx-border-radius: 10.0 0.0 0.0 10.0;
+    -fx-background-radius: 10.0 0.0 0.0 10.0;
+}
+
+#popupVbox {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-background-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+    -fx-border-radius: 10.0 0.0 0.0 10.0;
+    -fx-background-radius: 10.0 0.0 0.0 10.0;
+}
+
+#label {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
 	-fx-font-weight: bold;
+}
+
+#labelInverse {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#labelInverseBig {
+	-fx-text-fill: white;
+	-fx-font-size: 3.0em;
+	-fx-font-weight: bold;
+}
+
+#errorText {
+	-fx-font-family: 'Arial Unicode MS';
+	-fx-font-style: italic;
+	-fx-text-fill: red;
+}
+
+#comboBoxText {
+	-fx-text-fill: #272343;
 	-fx-font-size: 1.2em;
 }
 
-#searchUsersToolbar {
+#chartAxis {
+	-fx-tick-label-fill: white;
+}
+
+#activityChart {
+	-fx-background-color: #272343;
+	-fx-background-radius: 10.0;
+	
+}
+
+#activityChart .chart-title {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#activityChart .axis-label {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#button {
+    -fx-padding: 8.0 15.0 15.0 15.0;
+    -fx-background-insets: 0.0,0.0 0.0 5.0 0.0, 0.0 0.0 6.0 0.0, 0.0 0.0 7.0 0.0;
+    -fx-background-radius: 3.0;
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #272343 0.0%, #fff 100.0%),
+        #4e4780,
+        #272343,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #272343, #272343);
+    -fx-effect: dropshadow( gaussian , rgba(0.0,0.0,0.0,0.75) , 4.0,0.0,0.0,1.0 );
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+}
+
+#button:hover {
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #d9d8de 0.0%, #272343 100.0%),
+        #272343,
+        #d9d8de,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #d9d8de, #d9d8de);
+   	-fx-text-fill:#272343;
+}
+
+#button:pressed {
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
+}
+
+#buttonInverse {
+    -fx-padding: 8.0 15.0 15.0 15.0;
+    -fx-background-insets: 0.0,0.0 0.0 5.0 0.0, 0.0 0.0 6.0 0.0, 0.0 0.0 7.0 0.0;
+    -fx-background-radius: 3.0;
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #272343 0.0%, #272343 100.0%),
+        #272343,
+        #272343,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #d9d8de, #d9d8de);
+    -fx-effect: dropshadow( gaussian , rgba(0.0,0.0,0.0,0.75) , 4.0,0.0,0.0,1.0 );
+    -fx-text-fill:#272343;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+}
+
+#buttonInverse:hover {
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #d9d8de 0.0%, #272343 100.0%),
+        #272343,
+        #d9d8de,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #d9d8de, #d9d8de);
+   	-fx-text-fill:#272343;
+}
+
+#buttonInverse:pressed {
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
+}
+
+#miniButton {
+	-fx-border-color: transparent;
+    -fx-border-width: 0.0;
+    -fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+    -fx-background-radius: 100.0;
+    -fx-background-color: #d9d8de;
+}
+
+#miniButton:hover {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+}
+
+#miniButton:pressed {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
+}
+
+#miniButtonInverse {
+	-fx-border-color: transparent;
+    -fx-border-width: 0.0;
+    -fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+    -fx-background-radius: 100.0;
+    -fx-background-color: #d9d8de;
+}
+
+#miniButtonInverse:hover {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+}
+
+#miniButtonInverse:pressed {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
+}
+
+#tableView {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#tableView .column-header-background .label {
+	-fx-background-color: #272343;
+	-fx-text-fill: white;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+}
+
+#searchToolbar {
 	-fx-background-color: transparent;
 }
 
-#searchUserTextField {
+#searchTextField {
 	-fx-border-style: solid solid solid solid;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
 	-fx-border-width: 1.0;
 	-fx-border-color: #272343;
 	-fx-font-style: italic;
 	-fx-font-size: 1.4em;
 	-fx-prompt-text-fill: gray;
 	-fx-text-fill: #272343;
-}
-
-#usersTableView {
-	-fx-border-style: solid solid solid solid;
-	-fx-border-width: 2.0;
-	-fx-border-color: #272343;
-}
-
-#usersTableView .column-header-background .label {
-	-fx-background-color: #f6f6f6;
-	-fx-border-style: solid solid solid solid;
-	-fx-border-width: 1.0;
-}
-
-#userDetailsVbox {
-	-fx-background-color:#272343;
-	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
-	-fx-text-fill: white;
-	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
-}
-
-#detailsLabel {
-	-fx-text-fill: white;
-	-fx-font-size: 1.4em;
-	-fx-font-weight: bold;
 }

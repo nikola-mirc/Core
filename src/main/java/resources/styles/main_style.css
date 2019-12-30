@@ -91,6 +91,9 @@
 	-fx-border-style: solid solid solid solid;
 	-fx-border-width: 2.0;
 	-fx-border-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+	-fx-border-radius: 3.0, 3.0, 3.0, 3.0;
 }
 
 #tableView .column-header-background .label {

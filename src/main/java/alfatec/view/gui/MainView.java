@@ -58,7 +58,7 @@ public class MainView {
 		mainViewDisplay.setY(event.getScreenY() - y);
 	}
 
-	public void loadTabs(JFXTabPane tabPane) {
+	public void loadTabs(JFXTabPane tabPane, LoginData ld) {
 		Tab scientificWorkTab = new Tab("Scientific work");
 		Tab conferenceTab = new Tab("Conference");
 		Tab usersTab = new Tab("Users");
@@ -178,4 +178,5 @@ public class MainView {
 	public boolean loggedOut() {
 		return logout;
 	}
+
 }

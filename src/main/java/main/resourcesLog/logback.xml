@@ -12,9 +12,9 @@
 		<connectionSource
 			class="ch.qos.logback.core.db.DriverManagerConnectionSource">
 			<driverClass>com.mysql.cj.jdbc.Driver</driverClass>
-			<url>jdbc:mysql://localhost:3306/project_conference</url>
-			<user>root</user>
-			<!-- no password -->
+			<url>jdbc:mysql://localhost:3306/test_conference</url>
+			<user>jelenam86</user>
+			<password>JelenaM@86</password> <!-- no password -->
 		</connectionSource>
 	</appender>
 

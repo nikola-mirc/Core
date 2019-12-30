@@ -135,7 +135,7 @@ public class LoginDataDAO {
 				new String[] { email }, getLogin);
 		return search.size() > 0 ? search.get(0) : null;
 	}
-
+	
 	public LoginData getter(ResultSet rs) {
 		return getLogin.get(rs);
 	}

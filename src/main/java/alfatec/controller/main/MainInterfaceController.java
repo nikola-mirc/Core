@@ -102,7 +102,7 @@ public class MainInterfaceController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		authorsTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
 		authorsData = AuthorDAO.getInstance().getAllAuthors();
-		MainView.getInstance().loadTabs(tabPane);
+		MainView.getInstance().loadTabs(tabPane, loginData);
 		populateAuthorTable();
 		handleSearch();
 	}

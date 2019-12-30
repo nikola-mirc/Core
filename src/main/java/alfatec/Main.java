@@ -27,7 +27,7 @@ public class Main extends Application {
 		this.primaryStage = primaryStage;
 		Group root = new Group();
 		Scene scene = new Scene(root);
-		Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("resources/fxml/login.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("resources/fxml/main_interface.fxml"));
 		root.getChildren().addAll(parent);
 		scene.getStylesheets()
 				.add(getClass().getClassLoader().getResource("resources/styles/main_style.css").toExternalForm());
