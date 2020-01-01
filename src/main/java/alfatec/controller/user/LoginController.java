@@ -91,6 +91,8 @@ public class LoginController {
 			controller = LoginView.getInstance().loadMainView(controller);
 			controller.setWelcomeMessage(loginData);
 			controller.setLoginData(loginData);
+			controller.loadTabs(loginData);
+			controller.disableSendEmailForUsers(loginData);
 		} else {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.initStyle(StageStyle.UNDECORATED);
