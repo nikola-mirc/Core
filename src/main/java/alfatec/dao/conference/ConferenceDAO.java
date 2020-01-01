@@ -140,7 +140,11 @@ public class ConferenceDAO {
 	 * @return current conference
 	 */
 	public Conference getCurrentConference() {
-		return table.findBy(0, 8, getConference).get(0);
+		try {
+			return table.findBy(0, 8, getConference).get(0);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public Conference startConference(String title, String field, String email, String password, String bcc,
