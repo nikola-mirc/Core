@@ -102,7 +102,6 @@ public class MainInterfaceController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		authorsTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
 		authorsData = AuthorDAO.getInstance().getAllAuthors();
-		MainView.getInstance().loadTabs(tabPane, loginData);
 		populateAuthorTable();
 		handleSearch();
 	}
@@ -264,5 +263,15 @@ public class MainInterfaceController implements Initializable {
 	public void setLoginData(LoginData data) {
 		this.loginData = data;
 
+	}
+
+	public void loadTabs(LoginData lgData) {
+		if (lgData.getRoleID() != 1)
+			MainView.getInstance().loadTabs(tabPane, lgData);
+	}
+
+	public void disableSendEmailForUsers(LoginData lgData) {
+		if (lgData.getRoleID() == 1)
+			sendEmailButton.setVisible(false);
 	}
 }
