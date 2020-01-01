@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
-
+import alfatec.controller.conference.ConferenceTabController;
 import alfatec.Main;
 import alfatec.controller.author.AuthorsPopupController;
 import alfatec.controller.email.SendEmailController;
@@ -58,7 +58,7 @@ public class MainView {
 		mainViewDisplay.setY(event.getScreenY() - y);
 	}
 
-	public void loadTabs(JFXTabPane tabPane, LoginData ld) {
+	public void loadTabs(JFXTabPane tabPane, LoginData loginData) {
 		Tab scientificWorkTab = new Tab("Scientific work");
 		Tab conferenceTab = new Tab("Conference");
 		Tab usersTab = new Tab("Users");
@@ -73,12 +73,17 @@ public class MainView {
 			conferenceAnchor = FXMLLoader
 					.load(getClass().getClassLoader().getResource("resources/fxml/conference_tab.fxml"));
 			conferenceTab.setContent(conferenceAnchor);
+			ConferenceTabController conferenceController = (ConferenceTabController) getController(conferenceAnchor);
+			conferenceController.disablePartsForAdminAccess(loginData);
 			scientificWorkAnchor = FXMLLoader
 					.load(getClass().getClassLoader().getResource("resources/fxml/scientific_work_tab.fxml"));
 			scientificWorkTab.setContent(scientificWorkAnchor);
 			emailAnchor = FXMLLoader.load(getClass().getClassLoader().getResource("resources/fxml/emailTab.fxml"));
 			emailWebTab.setContent(emailAnchor);
-			tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, usersTab, emailWebTab);
+			if (loginData.getRoleID() == 3)
+				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, usersTab, emailWebTab);
+			else
+				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, emailWebTab);
 		} catch (IOException e) {
 			System.out.println("Error loading tabs.");
 			e.printStackTrace();
@@ -177,6 +182,15 @@ public class MainView {
 
 	public boolean loggedOut() {
 		return logout;
+	}
+
+	public static Object getController(Node node) {
+		Object controller = null;
+		do {
+			controller = node.getProperties().get("foo");
+			node = node.getParent();
+		} while (controller == null && node != null);
+		return controller;
 	}
 
 }
