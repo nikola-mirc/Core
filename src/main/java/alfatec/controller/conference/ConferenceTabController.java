@@ -2,6 +2,10 @@ package alfatec.controller.conference;
 
 import com.jfoenix.controls.JFXButton;
 
+import alfatec.dao.conference.ConferenceDAO;
+import alfatec.model.user.LoginData;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -149,33 +153,49 @@ public class ConferenceTabController {
 	@FXML
 	private JFXButton deleteReviewerButton;
 
+	BooleanProperty conferenceActive = new SimpleBooleanProperty(false);
+	BooleanProperty noActiveConference = new SimpleBooleanProperty(true);
+	BooleanProperty addingConferenceActive = new SimpleBooleanProperty(false);
+
+	@FXML
+	private void initialize() {
+		if (ConferenceDAO.getInstance().getCurrentConference() != null) {
+			this.conferenceActive.set(true);
+			this.noActiveConference.set(false);
+		}
+		activeConferenceHbox.visibleProperty().bind(conferenceActive);
+		noConferenceHbox.visibleProperty().bind(noActiveConference);
+		addConferenceHbox.visibleProperty().bind(addingConferenceActive);
+	}
+
 	@FXML
 	void createNewConference(ActionEvent event) {
-		noConferenceHbox.setVisible(false);
-		addConferenceHbox.setVisible(true);
+		noActiveConference.set(false);
+		addingConferenceActive.set(true);
 	}
 
 	@FXML
 	void cancelAddConference(ActionEvent event) {
-		addConferenceHbox.setVisible(false);
-		noConferenceHbox.setVisible(true);
+		addingConferenceActive.set(false);
+		noActiveConference.set(true);
 	}
 
 	@FXML
 	void saveConference(ActionEvent event) {
-		addConferenceHbox.setVisible(false);
-		activeConferenceHbox.setVisible(true);
+		addingConferenceActive.set(false);
+		conferenceActive.set(true);
 	}
 
 	@FXML
 	void editConference(ActionEvent event) {
-		activeConferenceHbox.setVisible(false);
-		addConferenceHbox.setVisible(true);
+		conferenceActive.set(false);
+		addingConferenceActive.set(true);
 	}
 
 	@FXML
 	void closeConference(ActionEvent event) {
-
+		conferenceActive.set(false);
+		noActiveConference.set(true);
 	}
 
 	@FXML
@@ -198,4 +218,12 @@ public class ConferenceTabController {
 
 	}
 
+	public void disablePartsForAdminAccess(LoginData ld) {
+		if (ld.getRoleID() == 2) {
+			newConferenceButton.setVisible(false);
+			editConferenceButton.setVisible(false);
+			closeConferenceButton.setVisible(false);
+			detailsHbox.setVisible(false);
+		}
+	}
 }
