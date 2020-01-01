@@ -22,6 +22,16 @@
 	xmlns="http://javafx.com/javafx/11.0.1"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="alfatec.controller.conference.ConferenceTabController">
+	<!-- store controller as userData property -->
+	<userData>
+		<fx:reference source="controller" />
+	</userData>
+	<properties>
+		<!-- store controller at key "foo" in properties map -->
+		<foo>
+			<fx:reference source="controller" />
+		</foo>
+	</properties>
 	<children>
 		<HBox fx:id="noConferenceHbox" alignment="CENTER" layoutX="15.0"
 			layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity"
