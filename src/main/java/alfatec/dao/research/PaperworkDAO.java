@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import javafx.collections.ObservableList;
 import alfatec.dao.conference.ConferenceDAO;
 import alfatec.dao.utils.Commons;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.research.Paperwork;
 import database.Getter;
@@ -101,6 +102,8 @@ public class PaperworkDAO {
 	public void setPresentationDateTime(Paperwork work, LocalDateTime datetime) {
 		table.update(work.getPaperworkID(), 2, datetime);
 		work.setPresentationTimestamp(datetime);
+		Logging.getInstance().change("Update",
+				"Set presentation date for " + ResearchDAO.getInstance().getResearch(work.getResearchID()));
 	}
 
 	/**
@@ -109,17 +112,23 @@ public class PaperworkDAO {
 	public void setPresentationDateTime(Paperwork work, String datetime) {
 		table.update(work.getPaperworkID(), 2, datetime);
 		work.setPresentationTime(datetime);
+		Logging.getInstance().change("Update",
+				"Set presentation date for " + ResearchDAO.getInstance().getResearch(work.getResearchID()));
 	}
 
 	public void setRegistrationFee(Paperwork work, int registrationFeeID) {
 		table.update(work.getPaperworkID(), 6, registrationFeeID);
 		work.setRegistrationFeeID(registrationFeeID);
+		Logging.getInstance().change("Update",
+				"Set registration fee for " + ResearchDAO.getInstance().getResearch(work.getResearchID()));
 	}
 
 	public void setRegistrationFee(Paperwork work, String registrationName) {
 		int regID = Commons.findRegistration(registrationName, work.getConferenceID()).getRegistrationFeeID();
 		table.update(work.getPaperworkID(), 6, regID);
 		work.setRegistrationFeeID(regID);
+		Logging.getInstance().change("Update",
+				"Set registration fee for " + ResearchDAO.getInstance().getResearch(work.getResearchID()));
 	}
 
 	public void updateIsSentToReview(Paperwork work, boolean bool) {
@@ -130,10 +139,14 @@ public class PaperworkDAO {
 	public void updateIsSubmittetWork(Paperwork work, boolean bool) {
 		table.update(work.getPaperworkID(), 4, BooleanUtil.parse(bool));
 		work.setIsSubmittetWork(bool);
+		Logging.getInstance().change("Update",
+				"Sent " + ResearchDAO.getInstance().getResearch(work.getResearchID()) + " to review.");
 	}
 
 	public void updatePaperworkPresentationType(Paperwork work, String presentationType) {
 		table.update(work.getPaperworkID(), 1, presentationType);
 		work.setPresentation(presentationType);
+		Logging.getInstance().change("Update",
+				"Set presentation type for " + ResearchDAO.getInstance().getResearch(work.getResearchID()));
 	}
 }

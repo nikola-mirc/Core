@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Conference;
 import database.DatabaseTable;
@@ -77,10 +78,14 @@ public class ConferenceDAO {
 	}
 
 	public void deleteConference(Conference conference) {
+		String past = conference.getConferenceTitle();
 		table.delete(conference.getConferenceID());
+		Logging.getInstance().change("Delete", "Delete conference " + past);
 	}
 
 	public void endConference() {
+		Logging.getInstance().change("end",
+				"Marked conference " + getCurrentConference().getConferenceTitle() + " as realized.");
 		table.update(getCurrentConference().getConferenceID(), 8, 1);
 		getCurrentConference().setRealized(1);
 	}
@@ -140,27 +145,30 @@ public class ConferenceDAO {
 	 * @return current conference
 	 */
 	public Conference getCurrentConference() {
-		try {
-			return table.findBy(0, 8, getConference).get(0);
-		} catch (Exception e) {
-			return null;
-		}
+		return table.findBy(0, 8, getConference).get(0);
 	}
 
 	public Conference startConference(String title, String field, String email, String password, String bcc,
 			String note, String reportPath) {
-		return table.create(reportPath, 7, new String[] { title, email, password, bcc, note },
+		Conference conference = table.create(reportPath, 7, new String[] { title, email, password, bcc, note },
 				new int[] { FieldDAO.getInstance().getField(field).getFieldID(), 0 }, new long[] {}, getConference);
+		Logging.getInstance().change("Create", "Start conference " + conference.getConferenceTitle());
+		return conference;
 	}
 
 	public void updateConferenceEmail(String email) {
+		String past = getCurrentConference().getConferenceEmail();
 		table.update(getCurrentConference().getConferenceID(), 2, email);
 		getCurrentConference().setConferenceEmail(email);
+		Logging.getInstance().change("Update", "Update conference email from " + past + " to " + email);
 	}
 
 	public void updateConferenceField(int fieldID) {
+		String past = FieldDAO.getInstance().getField(getCurrentConference().getFieldID()).getFieldName();
 		table.update(getCurrentConference().getConferenceID(), 7, fieldID);
 		getCurrentConference().setFieldID(fieldID);
+		Logging.getInstance().change("Update",
+				"Update conference field from " + past + " to " + FieldDAO.getInstance().getField(fieldID));
 	}
 
 	public void updateConferenceField(String field) {
@@ -168,28 +176,38 @@ public class ConferenceDAO {
 	}
 
 	public void updateConferenceNote(String note) {
+		String past = getCurrentConference().getNote();
+		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(getCurrentConference().getConferenceID(), 5, note);
 		getCurrentConference().setNote(note);
+		Logging.getInstance().change("Update", "Update conference note from " + pastNote + " to " + note);
 	}
 
 	public void updateConferencePassword(String password) {
 		table.update(getCurrentConference().getConferenceID(), 3, password);
 		getCurrentConference().setConferenceEmailPassword(password);
+		Logging.getInstance().change("Update", "Updated password for conference email.");
 	}
 
 	public void updateConferenceReport(String filePath) {
 		table.updateBlob(getCurrentConference().getConferenceID(), 6, filePath);
 		getCurrentConference().setReportFile(filePath);
+		Logging.getInstance().change("Update", "Updated conference file report.");
 	}
 
 	public void updateConferenceTitle(String title) {
+		String past = getCurrentConference().getConferenceTitle();
 		table.update(getCurrentConference().getConferenceID(), 1, title);
 		getCurrentConference().setConferenceTitle(title);
+		Logging.getInstance().change("Update", "Update conference title from " + past + " to " + title);
 	}
 
 	public void updateConferenceBcc(String conferenceBcc) {
+		String past = getCurrentConference().getConferenceBcc();
+		String bcc = past == null || past.isBlank() || past.isEmpty() ? "->no bcc<-" : past;
 		table.update(getCurrentConference().getConferenceID(), 4, conferenceBcc);
 		getCurrentConference().setConferenceBcc(conferenceBcc);
+		Logging.getInstance().change("Update", "Update conference bcc from " + bcc + " to " + conferenceBcc);
 	}
 
 }

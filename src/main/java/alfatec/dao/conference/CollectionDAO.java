@@ -3,6 +3,8 @@ package alfatec.dao.conference;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import alfatec.dao.research.ResearchDAO;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Collection;
 import database.DatabaseTable;
@@ -56,12 +58,19 @@ public class CollectionDAO {
 	}
 
 	public Collection createEntry(long researchID, int conferenceID, boolean forSpecialIssue) {
-		return table.create(new String[] {}, new int[] { conferenceID, BooleanUtil.parse(forSpecialIssue) },
-				new long[] { researchID }, getCollection);
+		Collection collection = table.create(new String[] {},
+				new int[] { conferenceID, BooleanUtil.parse(forSpecialIssue) }, new long[] { researchID },
+				getCollection);
+		Logging.getInstance().change("Add",
+				"Marked " + ResearchDAO.getInstance().getResearch(researchID).getResearchTitle() + " for collection.");
+		return collection;
 	}
 
 	public void deleteEntry(Collection collection) {
 		table.delete(collection.getCollectionID());
+		Logging.getInstance().change("Remove",
+				"Remove " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
+						+ " from collection.");
 	}
 
 	/**
@@ -101,8 +110,16 @@ public class CollectionDAO {
 	}
 
 	public void updateForSpecialIssue(Collection collection, boolean bool) {
+		int special = collection.getForSpecialIssue();
+		String type = special == 0 ? "Add" : "Remove";
+		String description = special == 0
+				? "Mark " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
+						+ " for "
+				: "Remove " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
+						+ " from ";
 		table.update(collection.getCollectionID(), 3, BooleanUtil.parse(bool));
 		collection.setIsForSpecialIssue(bool);
+		Logging.getInstance().change(type, description + "special issue.");
 	}
 
 	public void updateResearchID(Collection collection, long researchID) {

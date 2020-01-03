@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXButton;
 
 import alfatec.dao.user.LoginDataDAO;
 import alfatec.dao.user.UserDAO;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.wrappers.UserLoginDAO;
 import alfatec.model.enums.RoleEnum;
 import alfatec.model.user.LoginData;
@@ -38,6 +39,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import util.DateUtil;
 import util.Password;
@@ -85,8 +87,7 @@ public class UsersTabController {
 
 	private UserLoginConnection userData;
 	private ObservableList<UserLoginConnection> users;
-	String role;
-	String email;
+	private String role, email, password;
 	private boolean editAction;
 
 	@FXML
@@ -106,12 +107,16 @@ public class UsersTabController {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
-					UserLoginConnection userData = usersTableView.getSelectionModel().getSelectedItem();
+					userData = usersTableView.getSelectionModel().getSelectedItem();
+					email = userData.getLoginData().getUserEmail();
+					password = userData.getLoginData().getPasswordHash();
+					role = userData.getLoginData().getRoleName();
 					transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
 					mainVbox.setVisible(true);
-					usernameLabel.setText(userData.getUser().getUserFirstName());
-					roleLabel.setText(userData.getLoginData().getRoleName());
-					emailLabel.setText(userData.getLoginData().getUserEmail());
+					usernameLabel.setText(
+							userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
+					roleLabel.setText(role);
+					emailLabel.setText(email);
 					contactLabel.setText(userData.getUser().getContactTelephone());
 					dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
 				}
@@ -131,12 +136,11 @@ public class UsersTabController {
 	void editUser(ActionEvent event) {
 		closePopup();
 		isEditAction(true);
-		UserLoginConnection user = usersTableView.getSelectionModel().getSelectedItem();
-		if (user != null) {
+		userData = usersTableView.getSelectionModel().getSelectedItem();
+		if (userData != null) {
 			transitionPopupX(popupVbox, 340, 0, Interpolator.EASE_IN, 500);
 			roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
-			setUser(user);
-			email = user.getLoginData().getUserEmail();
+			setUser(userData);
 			popupVbox.setVisible(true);
 		}
 	}
@@ -146,12 +150,14 @@ public class UsersTabController {
 		UserLoginConnection userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.initStyle(StageStyle.UNDECORATED);
 			alert.setTitle("Confirm action:");
 			alert.setHeaderText("Are you sure you want to delete credentials for user "
 					+ userData.getUser().getUserFirstName().concat(" ").concat(userData.getUser().getUserLastName())
 					+ "?");
 			alert.showAndWait();
 			if (alert.getResult() == ButtonType.OK) {
+				Logging.getInstance().change("Delete", "Delete user: " + userData.toString());
 				UserDAO.getInstance().deleteUser(userData.getUser());
 				UserDAO.getInstance().getAllUsers().remove(userData.getUser());
 				users.remove(userData);
@@ -204,41 +210,23 @@ public class UsersTabController {
 
 	@FXML
 	void saveUser(ActionEvent event) {
-		if (isValidInput() && !isEmailAlreadyInDB() && !isEditAction() && isValidConfirmPassword()) {
-			UserLoginConnection userData = getNewUser();
+		if (isValidInput() && !isEmailAlreadyInDB() && !isEditAction()) {
+			userData = getNewUser();
 			users.add(userData);
-			usersTableView.refresh();
-			usersTableView.requestFocus();
-			int row = users.size() - 1;
-			usersTableView.getSelectionModel().select(row);
-			usersTableView.scrollTo(row);
-			closePopup();
-		} else if (isValidInput() && isEditAction() && isValidConfirmPassword()) {
+			refresh();
+		} else if (isValidInput() && isEditAction()) {
 			if (isEmailAlreadyInDB()) {
 				if (emailTextField.getText().equals(email)) {
 					handleEditUser();
-					usersTableView.refresh();
-					usersTableView.requestFocus();
-					int row = users.size() - 1;
-					usersTableView.getSelectionModel().select(row);
-					usersTableView.scrollTo(row);
 					closePopup();
-				} else {
+				} else
 					emailErrorLabel.setText("Already exists.");
-				}
 			} else {
 				handleEditUser();
-				usersTableView.refresh();
-				usersTableView.requestFocus();
-				int row = users.size() - 1;
-				usersTableView.getSelectionModel().select(row);
-				usersTableView.scrollTo(row);
-				closePopup();
+				refresh();
 			}
-
-		} else if (isEmailAlreadyInDB()) {
+		} else if (isEmailAlreadyInDB())
 			emailErrorLabel.setText("Already exists.");
-		}
 	}
 
 	private boolean isEditAction() {
@@ -268,6 +256,7 @@ public class UsersTabController {
 			LoginData ld = LoginDataDAO.getInstance().createLoginData(emailTextField.getText(), passwordField.getText(),
 					user.getUserID(), roleComboBox.getSelectionModel().getSelectedItem().getRoleID());
 			userData = new UserLoginConnection(user, ld);
+			Logging.getInstance().change("Create", "Add user: " + userData.toString());
 		}
 		return userData;
 	}
@@ -277,14 +266,14 @@ public class UsersTabController {
 				: "Empty first name field.");
 		lastNameErrorLabel.setText((isValidLastName() && lastNameTextField.getLength() < LAST_NAME_LENGTH) ? ""
 				: "Empty last name field.");
+		roleErrorLabel.setText(isValidRole() ? "" : "Please select your role");
 		emailErrorLabel.setText(
 				(isValidEmail() && emailTextField.getLength() < EMAIL_LENGTH) ? "" : "Empty or invalid email field.");
-		roleErrorLabel.setText(isValidRole() ? "" : "Please select your role");
 		passwordErrorLabel
 				.setText((isValidPassword() && !editAction ? passwordField.getLength() < PASSWORD_LENGTH : true) ? ""
 						: "Empty or invalid password field.");
-		confirmPasswordErrorLabel.setText(isValidConfirmPassword() ? "" : "Empty or invalid confirm password field.");
-
+		confirmPasswordErrorLabel
+				.setText(isEditAction() && isValidConfirmPassword() ? "" : "Empty or invalid confirm password field.");
 		return isValidFirstName() && isValidLastName() && isValidEmail() && isValidRole() && isValidPassword()
 				&& isValidConfirmPassword();
 	}
@@ -363,8 +352,11 @@ public class UsersTabController {
 	}
 
 	public void setPassword() {
-		if (!Password.checkPassword(passwordField.getText(), userData.getLoginData().getPasswordHash()))
+		if (!password.equals(userData.getLoginData().getPasswordHash())
+				&& !Password.checkPassword(passwordField.getText(), userData.getLoginData().getPasswordHash())) {
 			LoginDataDAO.getInstance().updatePassword(userData.getLoginData(), passwordField.getText());
+			password = userData.getLoginData().getPasswordHash();
+		}
 	}
 
 	private void transitionPopupX(Node node, double endingCoordinate, double startingCoordinate,
@@ -378,29 +370,24 @@ public class UsersTabController {
 
 	@FXML
 	private void clearPopup(ActionEvent event) {
-		firstNameTextField.clear();
-		lastNameTextField.clear();
-		emailTextField.clear();
-		contactTextField.clear();
-		roleComboBox.setValue(RoleEnum.USER);
-		passwordField.clear();
-		confirmPasswordField.clear();
+		clearPopup();
 	}
 
 	@FXML
 	private void closePopup(ActionEvent event) {
-		transitionPopupX(popupVbox, 0, 340, Interpolator.EASE_IN, 500);
-		firstNameTextField.clear();
-		lastNameTextField.clear();
-		emailTextField.clear();
-		contactTextField.clear();
-		roleComboBox.setValue(RoleEnum.USER);
-		passwordField.clear();
-		confirmPasswordField.clear();
+		closePopup();
 	}
 
 	private void closePopup() {
 		transitionPopupX(popupVbox, 0, 340, Interpolator.EASE_IN, 500);
+		clearPopup();
+	}
+
+	void closeDetails() {
+		transitionPopupX(mainVbox, 0, 1200, Interpolator.EASE_IN, 500);
+	}
+
+	private void clearPopup() {
 		firstNameTextField.clear();
 		lastNameTextField.clear();
 		emailTextField.clear();
@@ -410,8 +397,13 @@ public class UsersTabController {
 		confirmPasswordField.clear();
 	}
 
-	void closeDetails() {
-		transitionPopupX(mainVbox, 0, 1200, Interpolator.EASE_IN, 500);
+	private void refresh() {
+		usersTableView.refresh();
+		usersTableView.requestFocus();
+		int row = users.size() - 1;
+		usersTableView.getSelectionModel().select(row);
+		usersTableView.scrollTo(row);
+		closePopup();
 	}
 
 }

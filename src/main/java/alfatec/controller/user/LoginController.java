@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXTextField;
 
 import alfatec.controller.main.MainInterfaceController;
 import alfatec.dao.user.LoginDataDAO;
+import alfatec.dao.utils.Logging;
 import alfatec.model.user.LoginData;
 import alfatec.view.gui.LoginView;
 import javafx.application.Platform;
@@ -93,6 +94,7 @@ public class LoginController {
 			controller.setLoginData(loginData);
 			controller.loadTabs(loginData);
 			controller.disableSendEmailForUsers(loginData);
+			Logging.getInstance().setUser(loginData);
 		} else {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.initStyle(StageStyle.UNDECORATED);

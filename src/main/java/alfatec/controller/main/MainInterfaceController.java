@@ -94,8 +94,8 @@ public class MainInterfaceController implements Initializable {
 	private ChangePasswordController changePasswordController;
 	private SendEmailController send;
 	private ObservableList<Author> authorsData;
-	private String institution;
-	private String note;
+	private String institution, note;
+	private Author author;
 	private LoginData loginData;
 
 	@Override
@@ -147,7 +147,7 @@ public class MainInterfaceController implements Initializable {
 
 	@FXML
 	void deleteAuthor(ActionEvent event) {
-		Author author = authorsTableView.getSelectionModel().getSelectedItem();
+		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
 			AuthorDAO.getInstance().deleteAuthor(author);
 			AuthorDAO.getInstance().getAllAuthors().remove(author);
@@ -165,7 +165,7 @@ public class MainInterfaceController implements Initializable {
 
 	@FXML
 	void editAuthor() {
-		Author author = authorsTableView.getSelectionModel().getSelectedItem();
+		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
 			authorController = MainView.getInstance().loadEdit(authorController, author);
 			handleEditAuthor();
@@ -177,7 +177,7 @@ public class MainInterfaceController implements Initializable {
 
 	@FXML
 	void sendEmail() {
-		Author author = authorsTableView.getSelectionModel().getSelectedItem();
+		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
 			send = MainView.getInstance().loadEmailWindow(send, author.getAuthorEmail());
 		} else {
@@ -222,7 +222,7 @@ public class MainInterfaceController implements Initializable {
 
 	private void handleNewAuthor() {
 		if (authorController.isSaveClicked()) {
-			Author author = authorController.getNewAuthor();
+			author = authorController.getNewAuthor();
 			AuthorDAO.getInstance().getAllAuthors().add(author);
 			authorsData.add(author);
 			int row = authorsData.size() - 1;

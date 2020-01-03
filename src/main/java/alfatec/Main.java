@@ -12,7 +12,7 @@ public class Main extends Application {
 
 	private static Main instance;
 	private Stage primaryStage;
-	
+
 	public Main() {
 		instance = this;
 	}

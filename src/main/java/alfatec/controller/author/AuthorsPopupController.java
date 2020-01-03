@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 
 import alfatec.dao.country.CountryDAO;
 import alfatec.dao.person.AuthorDAO;
+import alfatec.dao.utils.Logging;
 import alfatec.model.country.Country;
 import alfatec.model.enums.Institution;
 import alfatec.model.person.Author;
@@ -105,6 +106,7 @@ public class AuthorsPopupController {
 		countryComboBox.setItems(CountryDAO.getInstance().getAllCountries());
 		countryComboBox.setValue(CountryDAO.getInstance().getCountry(195));
 		institutionComboBox.setItems(FXCollections.observableArrayList(Institution.values()));
+		institutionComboBox.setValue(Institution.UNIVERSITY);
 		initializeListeners();
 	}
 
@@ -198,14 +200,16 @@ public class AuthorsPopupController {
 
 	public void setInstitutionType() {
 		if (!institutionComboBox.getSelectionModel().getSelectedItem().name()
-				.equalsIgnoreCase(author.getInstitutionType()))
+				.equalsIgnoreCase(author.getInstitution().name())) {
 			AuthorDAO.getInstance().updateAuthorInstitution(author,
 					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase());
+		}
 	}
 
 	public String setInstitutionName() {
-		if (institutionNameTextField.getText() == null)
-			institutionNameTextField.setText("");
+		if (institutionNameTextField.getText() == null) {
+			return "";
+		}
 		if (!institutionNameTextField.getText().equalsIgnoreCase(author.getInstitutionName()))
 			AuthorDAO.getInstance().updateAuthorInstitutionName(author, institutionNameTextField.getText());
 		return institutionNameTextField.getText();
@@ -226,11 +230,13 @@ public class AuthorsPopupController {
 	}
 
 	public Author getNewAuthor() {
-		if (isValidInput())
+		if (isValidInput()) {
 			author = AuthorDAO.getInstance().createAuthor(firstNameTextField.getText(), lastNameTextField.getText(),
 					emailTextField.getText(), countryComboBox.getSelectionModel().getSelectedItem().getCountryName(),
 					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase(),
 					institutionNameTextField.getText(), noteTextArea.getText());
+			Logging.getInstance().change("Create", "Create author: " + author.getAuthorEmail());
+		}
 		return author;
 	}
 

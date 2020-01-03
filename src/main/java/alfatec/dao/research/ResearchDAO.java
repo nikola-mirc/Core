@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import org.apache.commons.io.FileUtils;
 
 import javafx.collections.ObservableList;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.research.Research;
 import database.Getter;
@@ -71,11 +72,15 @@ public class ResearchDAO {
 	}
 
 	public Research createResearch(String title, String filePath, String note) {
-		return table.create(filePath, 2, new String[] { title, note }, new int[] {}, new long[] {}, getResearch);
+		Research research = table.create(filePath, 2, new String[] { title, note }, new int[] {}, new long[] {},
+				getResearch);
+		Logging.getInstance().change("Create", "Add research " + title);
+		return research;
 	}
 
 	public void deleteResearch(Research research) {
 		table.delete(research.getResearchID());
+		Logging.getInstance().change("Delete", "Delete research " + research.getResearchTitle());
 	}
 
 	/**
@@ -106,17 +111,24 @@ public class ResearchDAO {
 	}
 
 	public void updateNote(Research research, String note) {
+		String past = research.getNote();
+		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(research.getResearchID(), 3, note);
 		research.setNote(note);
+		Logging.getInstance().change("Update",
+				"Update " + research.getResearchTitle() + " note from " + pastNote + " to " + note);
 	}
 
 	public void updatePaper(Research research, String filePath) {
 		table.updateBlob(research.getResearchID(), 2, filePath);
 		research.setPaperPath(filePath);
+		Logging.getInstance().change("Update", "Updated research file for " + research.getResearchTitle());
 	}
 
 	public void updateTitle(Research research, String title) {
+		String past = research.getResearchTitle();
 		table.update(research.getResearchID(), 1, title);
 		research.setResearchTitle(title);
+		Logging.getInstance().change("Update", "Update research title from " + past + " to " + title);
 	}
 }

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javafx.collections.ObservableList;
 import util.Password;
 import alfatec.dao.utils.Commons;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.enums.RoleEnum;
 import alfatec.model.user.LoginData;
@@ -110,8 +111,10 @@ public class LoginDataDAO {
 	}
 
 	public void updateEmail(LoginData data, String email) {
+		String past = data.getUserEmail();
 		table.update(data.getLoginID(), 1, email);
 		data.setUserEmail(email);
+		Logging.getInstance().change("Update", "Update user email from " + past + " to " + email);
 	}
 
 	/**
@@ -123,11 +126,15 @@ public class LoginDataDAO {
 	public void updatePassword(LoginData data, String password) {
 		table.update(data.getLoginID(), 2, Password.hashPassword(password));
 		data.setPassword(password);
+		Logging.getInstance().change("Update", "Updated user password: " + data.getUserEmail());
 	}
 
 	public void updateRole(LoginData data, String role) {
+		String past = data.getRoleName();
 		table.update(data.getLoginID(), 4, RoleEnum.valueOf(role).getRoleID());
 		data.setRole(role);
+		Logging.getInstance().change("Update",
+				"Update role for " + data.getUserEmail() + " from " + past + " to " + role);
 	}
 
 	public LoginData findUserDataByExactEmail(String email) {
@@ -135,7 +142,7 @@ public class LoginDataDAO {
 				new String[] { email }, getLogin);
 		return search.size() > 0 ? search.get(0) : null;
 	}
-	
+
 	public LoginData getter(ResultSet rs) {
 		return getLogin.get(rs);
 	}

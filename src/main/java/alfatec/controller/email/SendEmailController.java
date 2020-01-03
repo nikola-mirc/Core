@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 
 import alfatec.dao.conference.ConferenceDAO;
+import alfatec.dao.utils.Logging;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -52,6 +53,7 @@ public class SendEmailController {
 	private void initialize() {
 		try {
 			loopia = new LoopiaEmail();
+			loopia.setConferenceBCC(ConferenceDAO.getInstance().getCurrentConference().getConferenceBcc());
 			emailid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail());
 			password.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword());
 			setListeners(new JFXTextField[] { emailid, subject, recieverid }, password, message);
@@ -72,6 +74,7 @@ public class SendEmailController {
 			loopia.sendEmail(emailid.getText(), password.getText(), recieverid.getText(), subject.getText(),
 					message.getText(), false);
 			alert(AlertType.INFORMATION, "Message sent", "Message was sent to " + recieverid.getText() + ".");
+			Logging.getInstance().change("email", "SEND EMAIL TO " + recieverid.getText());
 		} catch (MessagingException e) {
 			alert(AlertType.ERROR, "Empty or invalid fields",
 					"In order to send email, You must provide accurate credentials.\nMessage was not sent to "

@@ -3,12 +3,14 @@ package alfatec.dao.person;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javafx.collections.ObservableList;
+import alfatec.dao.country.CountryDAO;
 import alfatec.dao.utils.Commons;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.person.Reviewer;
 import database.DatabaseTable;
 import database.Getter;
+import javafx.collections.ObservableList;
 
 /**
  * DAO for table "reviewer".
@@ -21,6 +23,7 @@ import database.Getter;
 public class ReviewerDAO {
 
 	private static ReviewerDAO instance;
+
 	public static ReviewerDAO getInstance() {
 		if (instance == null)
 			synchronized (ReviewerDAO.class) {
@@ -29,6 +32,7 @@ public class ReviewerDAO {
 			}
 		return instance;
 	}
+
 	private final TableUtility table;
 
 	private Getter<Reviewer> getReviewer;
@@ -62,11 +66,16 @@ public class ReviewerDAO {
 			String institution, String country, String note) {
 		String[] strings = { firstName, lastName, email, contactTelephone, institution, note };
 		int[] ints = { Commons.findCountryByName(country).getCountryID() };
-		return table.create(strings, ints, new long[] {}, getReviewer);
+		Reviewer reviewer = table.create(strings, ints, new long[] {}, getReviewer);
+		Logging.getInstance().change("Create", "Add reviewer " + reviewer.getReviewerEmail() + ", "
+				+ reviewer.getReviewerFirstName() + " " + reviewer.getReviewerLastName());
+		return reviewer;
 	}
 
 	public void deleteReviewer(Reviewer reviewer) {
 		table.delete(reviewer.getReviewerID());
+		Logging.getInstance().change("Delete", "Delete reviewer " + reviewer.getReviewerEmail() + ", "
+				+ reviewer.getReviewerFirstName() + " " + reviewer.getReviewerLastName());
 	}
 
 	public ObservableList<Reviewer> getAllReviewers() {
@@ -112,37 +121,62 @@ public class ReviewerDAO {
 	}
 
 	public void updateCountry(Reviewer reviewer, String country) {
+		int id = reviewer.getCountryID();
+		String past = id == 0 ? "->no country<-"
+				: CountryDAO.getInstance().getCountry(reviewer.getCountryID()).getCountryName();
 		table.updateCountry(reviewer.getReviewerID(), 7, country);
 		reviewer.setCountryID(Commons.findCountryByName(country).getCountryID());
+		Logging.getInstance().change("Update",
+				"Update reviewer " + reviewer.getReviewerEmail() + " country from " + past + " to " + country);
 	}
 
 	public void updateNote(Reviewer reviewer, String note) {
+		String past = reviewer.getNote();
+		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(reviewer.getReviewerID(), 6, note);
 		reviewer.setNote(note);
+		Logging.getInstance().change("Update",
+				"Update reviewer " + reviewer.getReviewerEmail() + " note from " + pastNote + " to " + note);
 	}
 
 	public void updateReviewerEmail(Reviewer reviewer, String email) {
+		String past = reviewer.getReviewerEmail();
 		table.update(reviewer.getReviewerID(), 3, email);
+		reviewer.setReviewerEmail(email);
+		Logging.getInstance().change("Update", "Update reviewer " + reviewer.getReviewerEmail() + " from " + past);
 	}
 
 	public void updateReviewerFirstName(Reviewer reviewer, String firstName) {
+		String past = reviewer.getReviewerFirstName();
 		table.update(reviewer.getReviewerID(), 1, firstName);
 		reviewer.setReviewerFirstName(firstName);
+		Logging.getInstance().change("Update", "Update reviewer first name from " + past + " to " + firstName);
 	}
 
 	public void updateReviewerInstitution(Reviewer reviewer, String institution) {
+		String past = reviewer.getInstitutionName();
+		String pastName = past == null || past.isBlank() || past.isEmpty() ? "->no institution name<-" : past;
 		table.update(reviewer.getReviewerID(), 5, institution);
 		reviewer.setInstitutionName(institution);
+		Logging.getInstance().change("Update", "Update reviewer " + reviewer.getReviewerEmail() + " institution from "
+				+ pastName + " to " + institution);
 	}
 
 	public void updateReviewerLastName(Reviewer reviewer, String lastName) {
+		String past = reviewer.getReviewerLastName();
 		table.update(reviewer.getReviewerID(), 2, lastName);
 		reviewer.setReviewerLastName(lastName);
+		Logging.getInstance().change("Update",
+				"Update reviewer " + reviewer.getReviewerEmail() + " last name from " + past + " to " + lastName);
 	}
 
 	public void updateReviewerTelephone(Reviewer reviewer, String telephone) {
+		String past = reviewer.getContactTelephone();
+		String number = past == null || past.isBlank() || past.isEmpty() ? "->no telephone<-" : past;
 		table.update(reviewer.getReviewerID(), 4, telephone);
 		reviewer.setContactTelephone(telephone);
+		Logging.getInstance().change("Update",
+				"Update reviewer " + reviewer.getReviewerEmail() + " telephone from " + number + " to " + telephone);
 	}
 
 }

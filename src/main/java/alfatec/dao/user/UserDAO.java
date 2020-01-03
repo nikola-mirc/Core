@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import javafx.collections.ObservableList;
 import alfatec.dao.utils.Commons;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.user.User;
 import database.Getter;
@@ -105,17 +106,23 @@ public class UserDAO {
 
 	public void updateUserFirstName(User user, String firstName) {
 		table.update(user.getUserID(), 1, firstName);
+		Logging.getInstance().change("Update",
+				"Update first name for " + user.getUserFirstName() + " " + user.getUserLastName());
 		user.setUserFirstName(firstName);
 	}
 
 	public void updateUserLastName(User user, String lastName) {
 		table.update(user.getUserID(), 2, lastName);
+		Logging.getInstance().change("Update",
+				"Update last name for " + user.getUserFirstName() + " " + user.getUserLastName());
 		user.setUserLastName(lastName);
 	}
 
 	public void updateUserTelephone(User user, String contact) {
 		table.update(user.getUserID(), 3, contact);
 		user.setContactTelephone(contact);
+		Logging.getInstance().change("Update",
+				"Update telephone for " + user.getUserFirstName() + " " + user.getUserLastName());
 	}
 
 	public User getter(ResultSet rs) {

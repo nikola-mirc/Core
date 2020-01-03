@@ -12,9 +12,18 @@ import database.DatabaseUtility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * Inner join table for Users and their Login data
+ * 
+ * @author jelena
+ *
+ */
 public class UserLoginDAO {
 
 	private static UserLoginDAO instance;
+
+	private UserLoginDAO() {
+	}
 
 	public static UserLoginDAO getInstance() {
 		if (instance == null)

@@ -5,13 +5,13 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Collection;
 import alfatec.model.conference.SpecialIssue;
-import database.Getter;
 import database.DatabaseTable;
+import database.Getter;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * DAO for table "special_issue".
@@ -24,6 +24,7 @@ import database.DatabaseTable;
 public class SpecialIssueDAO {
 
 	private static SpecialIssueDAO instance;
+
 	public static SpecialIssueDAO getInstance() {
 		if (instance == null)
 			synchronized (SpecialIssueDAO.class) {
@@ -32,6 +33,7 @@ public class SpecialIssueDAO {
 			}
 		return instance;
 	}
+
 	private final TableUtility table;
 
 	private Getter<SpecialIssue> getSpecial;

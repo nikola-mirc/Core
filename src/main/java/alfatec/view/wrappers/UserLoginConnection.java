@@ -29,4 +29,9 @@ public class UserLoginConnection {
 		this.user = user;
 	}
 
+	@Override
+	public String toString() {
+		return user.getUserFirstName() + " " + user.getUserLastName() + ", " + loginData.getUserEmail();
+	}
+
 }

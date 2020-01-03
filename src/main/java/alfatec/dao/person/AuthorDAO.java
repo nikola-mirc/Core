@@ -3,7 +3,9 @@ package alfatec.dao.person;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import alfatec.dao.country.CountryDAO;
 import alfatec.dao.utils.Commons;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.enums.Institution;
 import alfatec.model.person.Author;
@@ -71,7 +73,10 @@ public class AuthorDAO {
 	}
 
 	public void deleteAuthor(Author author) {
+		String authorDetails = author.getAuthorEmail() + ", " + author.getAuthorFirstName() + " "
+				+ author.getAuthorLastName();
 		table.delete(author.getAuthorID());
+		Logging.getInstance().change("Delete", "DELETE AUTHOR " + authorDetails);
 	}
 
 	public Author createAuthor(String firstName, String lastName, String email, String country,
@@ -79,7 +84,6 @@ public class AuthorDAO {
 		int[] ints = { Commons.findCountryByName(country).getCountryID() };
 		String[] strings = { firstName, lastName, email, institutionName, note };
 		return table.create(strings, ints, institutionType, getAuthor);
-
 	}
 
 	/**
@@ -124,41 +128,64 @@ public class AuthorDAO {
 	}
 
 	public void updateAuthorCountry(Author author, String country) {
+		String past = CountryDAO.getInstance().getCountry(author.getCountryID()).getCountryName();
 		table.updateCountry(author.getAuthorID(), 7, country);
 		author.setCountryID(Commons.findCountryByName(country).getCountryID());
+		Logging.getInstance().change("Update",
+				"UPDATE AUTHOR " + author.getAuthorEmail() + " COUNTRY FROM: " + past + " TO: " + country);
 	}
 
 	/**
 	 * Note: Email must be unique in DB
 	 */
 	public void updateAuthorEmail(Author author, String email) {
+		String past = author.getAuthorEmail();
 		table.update(author.getAuthorID(), 4, email);
 		author.setAuthorEmail(email);
+		Logging.getInstance().change("Update",
+				"UPDATE AUTHOR " + author.getAuthorEmail() + " EMAIL FROM: " + past + " TO: " + email);
 	}
 
 	public void updateAuthorFirstName(Author author, String firstName) {
+		String past = author.getAuthorFirstName();
 		table.update(author.getAuthorID(), 2, firstName);
 		author.setAuthorFirstName(firstName);
+		Logging.getInstance().change("Update",
+				"UPDATE AUTHOR " + author.getAuthorEmail() + " FIRST NAME FROM: " + past + " TO: " + firstName);
 	}
 
 	public void updateAuthorInstitution(Author author, String institutionType) {
+		String past = author.getInstitution().name();
 		table.update(author.getAuthorID(), 1, institutionType);
 		author.setInstitutionType(institutionType);
+		Logging.getInstance().change("Update", "UPDATE AUTHOR " + author.getAuthorEmail() + " INSTITUTION TYPE FROM: "
+				+ past + " TO: " + institutionType);
 	}
 
 	public void updateAuthorInstitutionName(Author author, String institutionName) {
+		String past = author.getInstitutionName();
+		String pastName = past == null || past.isBlank() || past.isEmpty() ? "->no institution name<-" : past;
 		table.update(author.getAuthorID(), 5, institutionName);
 		author.setInstitutionName(institutionName);
+		Logging.getInstance().change("Update", "UPDATE AUTHOR " + author.getAuthorEmail() + " INSTITUTION NAME FROM: "
+				+ pastName + " TO: " + institutionName);
 	}
 
 	public void updateAuthorLastName(Author author, String lastName) {
+		String past = author.getAuthorLastName();
 		table.update(author.getAuthorID(), 3, lastName);
 		author.setAuthorLastName(lastName);
+		Logging.getInstance().change("Update",
+				"UPDATE AUTHOR " + author.getAuthorEmail() + " LAST NAME FROM: " + past + " TO: " + lastName);
 	}
 
 	public void updateAuthorNote(Author author, String note) {
+		String past = author.getNote();
+		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(author.getAuthorID(), 6, note);
 		author.setNote(note);
+		Logging.getInstance().change("Update",
+				"UPDATE AUTHOR " + author.getAuthorEmail() + " NOTE FROM: " + pastNote + " TO: " + note);
 	}
 
 	public Author findAuthorByExactEmail(String email) {

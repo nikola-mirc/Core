@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import javafx.collections.ObservableList;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Dates;
 import database.Getter;
@@ -22,6 +23,7 @@ import util.DateUtil;
 public class DatesDAO {
 
 	private static DatesDAO instance;
+
 	public static DatesDAO getInstance() {
 		if (instance == null)
 			synchronized (DatesDAO.class) {
@@ -30,6 +32,7 @@ public class DatesDAO {
 			}
 		return instance;
 	}
+
 	private final TableUtility table;
 
 	private Getter<Dates> getDate;
@@ -107,6 +110,7 @@ public class DatesDAO {
 	public void updateFirstCall(String date) {
 		table.update(getCurrent().getDatesID(), 2, date);
 		getCurrent().setFirstCallDate(date);
+		Logging.getInstance().change("Date", "Update first call date.");
 	}
 
 	/**
@@ -115,6 +119,7 @@ public class DatesDAO {
 	public void updateSecondCall(String date) {
 		table.update(getCurrent().getDatesID(), 3, date);
 		getCurrent().setSecondCallDate(date);
+		Logging.getInstance().change("Date", "Update second call date.");
 	}
 
 	/**
@@ -123,6 +128,7 @@ public class DatesDAO {
 	public void updateThirdCall(String date) {
 		table.update(getCurrent().getDatesID(), 4, date);
 		getCurrent().setThirdCallDate(date);
+		Logging.getInstance().change("Date", "Update third call date.");
 	}
 
 }

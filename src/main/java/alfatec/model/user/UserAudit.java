@@ -29,7 +29,7 @@ public class UserAudit {
 	private final IntegerProperty loginID;
 
 	public UserAudit() {
-		this(0, null, null, null, 0);
+		this(0, null, null, "", 0);
 	}
 
 	public UserAudit(long auditID, String eventType, String description, String datetime, int loginID) {

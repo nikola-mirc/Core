@@ -28,7 +28,7 @@ public class LoopiaEmail {
 	private static final String SMTP_PORT = "465";
 	private static final String IMAP_PORT = "993";
 	private static final String SENT = "INBOX.Sent";
-	private static final String BCC_TO = "core@application.java";
+	private String bcc_to;
 
 	/**
 	 * Send email via Loopia server
@@ -46,6 +46,7 @@ public class LoopiaEmail {
 	public void sendEmail(String user, String password, String receiver, String subject, String message, boolean bcc)
 			throws AddressException, MessagingException {
 		Session session = Session.getInstance(createProperties(), new Authenticator() {
+			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(user, password);
 			}
@@ -86,7 +87,7 @@ public class LoopiaEmail {
 	private MimeMessage createMessage(Session session, String sender, Address[] receiver, String subject,
 			String content) throws MessagingException {
 		MimeMessage mimeMessage = setUp(session, sender, subject, content);
-		mimeMessage.setRecipients(Message.RecipientType.TO, BCC_TO);
+		mimeMessage.setRecipients(Message.RecipientType.TO, bcc_to);
 		mimeMessage.setRecipients(Message.RecipientType.BCC, receiver);
 		return mimeMessage;
 	}
@@ -117,7 +118,7 @@ public class LoopiaEmail {
 			throws MessagingException {
 		Store store = session.getStore();
 		store.connect(HOST, user, password);
-		Folder folder = (Folder) store.getFolder(SENT);
+		Folder folder = store.getFolder(SENT);
 		if (!folder.exists()) {
 			folder.create(Folder.HOLDS_MESSAGES);
 		}
@@ -125,5 +126,9 @@ public class LoopiaEmail {
 		folder.appendMessages(new Message[] { message });
 		message.setFlag(FLAGS.Flag.RECENT, true);
 		store.close();
+	}
+
+	public void setConferenceBCC(String email) {
+		this.bcc_to = email;
 	}
 }

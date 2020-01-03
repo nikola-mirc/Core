@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javafx.collections.ObservableList;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Field;
 import database.Getter;
@@ -20,6 +21,7 @@ import database.DatabaseTable;
 public class FieldDAO {
 
 	private static FieldDAO instance;
+
 	public static FieldDAO getInstance() {
 		if (instance == null)
 			synchronized (FieldDAO.class) {
@@ -28,6 +30,7 @@ public class FieldDAO {
 			}
 		return instance;
 	}
+
 	private final TableUtility table;
 
 	private Getter<Field> getField;
@@ -53,11 +56,14 @@ public class FieldDAO {
 	 * Name of the field should be unique
 	 */
 	public Field createField(String field) {
-		return table.create(new String[] { field }, new int[] {}, new long[] {}, getField);
+		Field newField = table.create(new String[] { field }, new int[] {}, new long[] {}, getField);
+		Logging.getInstance().change("Create", "Add new field " + field);
+		return newField;
 	}
 
 	public void deleteField(Field field) {
 		table.delete(field.getFieldID());
+		Logging.getInstance().change("Delete", "Delete field " + field.getFieldName());
 	}
 
 	/**
@@ -92,7 +98,9 @@ public class FieldDAO {
 	}
 
 	public void updateField(Field field, String fieldName) {
+		String past = field.getFieldName();
 		table.update(field.getFieldID(), 1, fieldName);
 		field.setFieldName(fieldName);
+		Logging.getInstance().change("Update", "Rename field from " + past + " to " + fieldName);
 	}
 }

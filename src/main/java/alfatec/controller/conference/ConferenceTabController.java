@@ -3,6 +3,8 @@ package alfatec.controller.conference;
 import com.jfoenix.controls.JFXButton;
 
 import alfatec.dao.conference.ConferenceDAO;
+import alfatec.model.conference.Field;
+import alfatec.model.enums.Currency;
 import alfatec.model.user.LoginData;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -34,13 +36,13 @@ public class ConferenceTabController {
 	private TextField conferenceTitleTextField;
 
 	@FXML
-	private ComboBox<?> conferenceFieldComboBox;
+	private ComboBox<Field> conferenceFieldComboBox;
 
 	@FXML
 	private TextField feeNameTextField;
 
 	@FXML
-	private ComboBox<?> feeCurrencyComboBox;
+	private ComboBox<Currency> feeCurrencyComboBox;
 
 	@FXML
 	private TextField feeAmountTextField;
