@@ -157,10 +157,9 @@ public class MainInterfaceController implements Initializable {
 			authorsTableView.requestFocus();
 			authorsTableView.getSelectionModel().select(row);
 			authorsTableView.scrollTo(row);
-		} else {
+		} else
 			alert(AlertType.WARNING, "No author selected",
 					"Please select an author from the table in order to send them email.");
-		}
 	}
 
 	@FXML
@@ -169,21 +168,19 @@ public class MainInterfaceController implements Initializable {
 		if (author != null) {
 			authorController = MainView.getInstance().loadEdit(authorController, author);
 			handleEditAuthor();
-		} else {
+		} else
 			alert(AlertType.WARNING, "No author selected",
 					"Please select an author from the table in order to send them email.");
-		}
 	}
 
 	@FXML
 	void sendEmail() {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
-		if (author != null) {
+		if (author != null)
 			send = MainView.getInstance().loadEmailWindow(send, author.getAuthorEmail());
-		} else {
+		else
 			alert(AlertType.WARNING, "No author selected",
 					"Please select an author from the table in order to send them email.");
-		}
 	}
 
 	private void populateAuthorTable() {
@@ -262,7 +259,6 @@ public class MainInterfaceController implements Initializable {
 
 	public void setLoginData(LoginData data) {
 		this.loginData = data;
-
 	}
 
 	public void loadTabs(LoginData lgData) {

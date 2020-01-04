@@ -1,16 +1,23 @@
 package alfatec.controller.user;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.jfoenix.controls.JFXButton;
 
 import alfatec.dao.user.LoginDataDAO;
+import alfatec.dao.user.UserAuditDAO;
 import alfatec.dao.user.UserDAO;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.wrappers.UserLoginDAO;
 import alfatec.model.enums.RoleEnum;
 import alfatec.model.user.LoginData;
 import alfatec.model.user.User;
+import alfatec.model.user.UserAudit;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.UserLoginConnection;
 import javafx.animation.Interpolator;
@@ -26,6 +33,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -53,7 +62,7 @@ public class UsersTabController {
 	private TableColumn<UserLoginConnection, String> userColumn;
 
 	@FXML
-	private LineChart<?, ?> activityChart;
+	private LineChart<String, Number> activityChart;
 
 	@FXML
 	private VBox mainVbox, popupVbox;
@@ -87,6 +96,7 @@ public class UsersTabController {
 
 	private UserLoginConnection userData;
 	private ObservableList<UserLoginConnection> users;
+	private ObservableList<UserAudit> audit;
 	private String role, email, password;
 	private boolean editAction;
 
@@ -119,6 +129,8 @@ public class UsersTabController {
 					emailLabel.setText(email);
 					contactLabel.setText(userData.getUser().getContactTelephone());
 					dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
+					audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
+					createChart();
 				}
 			}
 		});
@@ -218,6 +230,7 @@ public class UsersTabController {
 			if (isEmailAlreadyInDB()) {
 				if (emailTextField.getText().equals(email)) {
 					handleEditUser();
+					usersTableView.refresh();
 					closePopup();
 				} else
 					emailErrorLabel.setText("Already exists.");
@@ -406,4 +419,35 @@ public class UsersTabController {
 		closePopup();
 	}
 
+	private void createChart() {
+		@SuppressWarnings("unchecked")
+		ObservableList<XYChart.Series<String, Number>> lineChartData = FXCollections.observableArrayList(
+				createGraph("Create"), createGraph("Update"), createGraph("Delete"), createGraph("Email"));
+		activityChart.getXAxis().setAnimated(false);
+		activityChart.getData().setAll(lineChartData);
+	}
+
+	private int count(String eventType, LocalDate date) {
+		int count = 0;
+		for (UserAudit data : audit)
+			if (data.getEventType().equalsIgnoreCase(eventType) && data.getTimestamp().toLocalDate().equals(date))
+				count++;
+			else if (eventType.equalsIgnoreCase("update") && data.getTimestamp().toLocalDate().equals(date)) {
+				if (data.getEventType().equalsIgnoreCase("add"))
+					count++;
+			} else if (eventType.equalsIgnoreCase("delete") && data.getTimestamp().toLocalDate().equals(date))
+				if (data.getEventType().equalsIgnoreCase("remove"))
+					count++;
+		return count;
+	}
+
+	private LineChart.Series<String, Number> createGraph(String eventType) {
+		ObservableList<Data<String, Number>> list = FXCollections.observableArrayList();
+		List<LocalDate> dates = Stream.iterate(LocalDate.now().minusDays(30), date -> date.plusDays(1))
+				.limit(ChronoUnit.DAYS.between(LocalDate.now().minusDays(30), LocalDate.now().plusDays(1)))
+				.collect(Collectors.toList());
+		for (LocalDate data : dates)
+			list.add(new XYChart.Data<String, Number>(data.toString(), count(eventType, data)));
+		return new LineChart.Series<String, Number>(eventType, list);
+	}
 }
