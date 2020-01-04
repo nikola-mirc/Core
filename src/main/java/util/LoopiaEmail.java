@@ -1,5 +1,9 @@
 package util;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Address;
@@ -13,7 +17,9 @@ import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import com.sun.mail.imap.protocol.FLAGS;
 
@@ -42,9 +48,10 @@ public class LoopiaEmail {
 	 *                 sent as Blind Carbon Copy
 	 * @throws AddressException
 	 * @throws MessagingException
+	 * @throws IOException
 	 */
-	public void sendEmail(String user, String password, String receiver, String subject, String message, boolean bcc)
-			throws AddressException, MessagingException {
+	public void sendEmail(String user, String password, String receiver, String subject, String message, boolean bcc,
+			String[] filePaths) throws AddressException, MessagingException, IOException {
 		Session session = Session.getInstance(createProperties(), new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
@@ -54,13 +61,22 @@ public class LoopiaEmail {
 		session.setDebug(true);
 		MimeMessage mimeMessage;
 		if (bcc) {
-			InternetAddress[] addresses = InternetAddress.parse(receiver);
-			mimeMessage = createMessage(session, user, addresses, subject, message);
+			Transport transport = session.getTransport("smtp");
+			transport.connect();
+			for (String s : getEmails(receiver)) {
+				InternetAddress[] addresses = InternetAddress.parse(s);
+				mimeMessage = createMessage(session, user, subject, message, filePaths);
+//				mimeMessage.setRecipients(Message.RecipientType.BCC, addresses);
+				for (int i = 0; i < addresses.length; i++)
+					transport.sendMessage(mimeMessage, new Address[] { addresses[i] });
+				saveSentMessage(session, mimeMessage, user, password);
+			}
+			transport.close();
 		} else {
-			mimeMessage = createMessage(session, user, receiver, subject, message);
+			mimeMessage = createMessage(session, user, receiver, subject, message, filePaths);
+			Transport.send(mimeMessage);
+			saveSentMessage(session, mimeMessage, user, password);
 		}
-		Transport.send(mimeMessage);
-		saveSentMessage(session, mimeMessage, user, password);
 	}
 
 	private Properties createProperties() {
@@ -78,22 +94,21 @@ public class LoopiaEmail {
 	}
 
 	private MimeMessage createMessage(Session session, String sender, String receiver, String subject,
-			String textOfMessage) throws MessagingException {
-		MimeMessage mimeMessage = setUp(session, sender, subject, textOfMessage);
+			String textOfMessage, String[] filePaths) throws MessagingException, IOException {
+		MimeMessage mimeMessage = setUp(session, sender, subject, textOfMessage, filePaths);
 		mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiver));
 		return mimeMessage;
 	}
 
-	private MimeMessage createMessage(Session session, String sender, Address[] receiver, String subject,
-			String content) throws MessagingException {
-		MimeMessage mimeMessage = setUp(session, sender, subject, content);
-		mimeMessage.setRecipients(Message.RecipientType.TO, bcc_to);
-		mimeMessage.setRecipients(Message.RecipientType.BCC, receiver);
+	private MimeMessage createMessage(Session session, String sender, String subject, String content,
+			String[] filePaths) throws MessagingException, IOException {
+		MimeMessage mimeMessage = setUp(session, sender, subject, content, filePaths);
+		mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(bcc_to));
 		return mimeMessage;
 	}
 
-	private MimeMessage setUp(Session session, String sender, String subject, String content)
-			throws MessagingException {
+	private MimeMessage setUp(Session session, String sender, String subject, String content, String[] filePaths)
+			throws MessagingException, IOException {
 		MimeMessage mimeMessage = new MimeMessage(session);
 		mimeMessage.setFrom(new InternetAddress(sender));
 		mimeMessage.addHeader("Content-type", "text/HTML; charset=UTF-8");
@@ -101,6 +116,7 @@ public class LoopiaEmail {
 		mimeMessage.addHeader("Content-Transfer-Encoding", "8bit");
 		mimeMessage.setSubject(subject, "UTF-8");
 		mimeMessage.setText(content, "UTF-8");
+		mimeMessage = sendAttachment(filePaths, mimeMessage);
 		return mimeMessage;
 	}
 
@@ -130,5 +146,43 @@ public class LoopiaEmail {
 
 	public void setConferenceBCC(String email) {
 		this.bcc_to = email;
+	}
+
+	private MimeMessage sendAttachment(String[] filePaths, MimeMessage message) throws MessagingException, IOException {
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent(message.getContent(), "text/html");
+		MimeMultipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+		if (filePaths != null && filePaths.length > 0) {
+			for (String file : filePaths) {
+				MimeBodyPart attachPart = new MimeBodyPart();
+				attachPart.attachFile(file);
+				multipart.addBodyPart(attachPart);
+			}
+		}
+		message.setContent(multipart);
+		return message;
+	}
+
+	private List<String> getEmails(String emails) {
+		List<String> list = new ArrayList<String>();
+		List<String> recievers = Arrays.asList(emails.split(","));
+		while (recievers.size() > 900) {
+			String reciever = "";
+			List<String> helperList = new ArrayList<String>();
+			for (int i = 0; i < 900; i++) {
+				reciever += recievers.get(i) + ",";
+				helperList.add(recievers.get(i));
+			}
+			recievers.removeAll(helperList);
+			list.add(reciever.substring(0, reciever.length() - 1));
+		}
+		String reciever = "";
+		if (recievers.size() > 0) {
+			for (String s : recievers)
+				reciever += s + ",";
+			list.add(reciever.substring(0, reciever.length() - 1));
+		}
+		return list;
 	}
 }

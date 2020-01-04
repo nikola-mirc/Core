@@ -21,6 +21,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.CheckBox?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
 	minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
@@ -147,7 +150,7 @@
 								<TableView id="tableView" fx:id="authorsTableView"
 									layoutX="7.0" layoutY="99.0" maxHeight="-Infinity"
 									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									prefHeight="450.0" prefWidth="900.0">
+									prefHeight="400.0" prefWidth="900.0">
 									<columns>
 										<TableColumn fx:id="authorNameColumn"
 											editable="false" maxWidth="150.0" minWidth="100.0"
@@ -169,6 +172,40 @@
 										<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
 									</columnResizePolicy>
 								</TableView>
+								<HBox alignment="CENTER" layoutX="7.0" layoutY="500.0"
+									maxHeight="-Infinity" maxWidth="-Infinity"
+									minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
+									prefWidth="900.0" spacing="30.0">
+									<children>
+										<JFXButton id="button" fx:id="firstCallButton"
+											buttonType="RAISED" maxHeight="-Infinity"
+											maxWidth="-Infinity" minHeight="-Infinity"
+											minWidth="-Infinity" onAction="#makeFirstCall"
+											prefHeight="40.0" prefWidth="200.0" text="Make First Call">
+											<HBox.margin>
+												<Insets top="5.0" />
+											</HBox.margin>
+										</JFXButton>
+										<JFXButton id="button" fx:id="secondCallButton"
+											buttonType="RAISED" maxHeight="-Infinity"
+											maxWidth="-Infinity" minHeight="-Infinity"
+											minWidth="-Infinity" onAction="#makeSecondCall"
+											prefHeight="40.0" prefWidth="200.0" text="Make Second Call">
+											<HBox.margin>
+												<Insets top="5.0" />
+											</HBox.margin>
+										</JFXButton>
+										<JFXButton id="button" fx:id="thirdCallButton"
+											buttonType="RAISED" maxHeight="-Infinity"
+											maxWidth="-Infinity" minHeight="-Infinity"
+											minWidth="-Infinity" onAction="#makeThirdCall"
+											prefHeight="40.0" prefWidth="200.0" text="Make Third Call">
+											<HBox.margin>
+												<Insets top="5.0" />
+											</HBox.margin>
+										</JFXButton>
+									</children>
+								</HBox>
 								<ToolBar id="searchToolbar" layoutX="14.0"
 									layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity"
 									minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0"
@@ -240,24 +277,69 @@
 										<Label id="detailsLabel" alignment="CENTER"
 											maxHeight="-Infinity" maxWidth="-Infinity"
 											minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0"
-											prefWidth="260.0" text="Notes:">
+											prefWidth="260.0" text="Details:">
 											<VBox.margin>
 												<Insets bottom="10.0" top="20.0" />
 											</VBox.margin>
 										</Label>
+										<VBox id="detailsVbox" alignment="TOP_CENTER"
+											fillWidth="false" layoutX="920.0" layoutY="-28.0"
+											prefHeight="100.0" prefWidth="280.0">
+											<children>
+												<RadioButton id="detailsLabel" fx:id="radio1"
+													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
+													minHeight="-Infinity" minWidth="-Infinity"
+													prefHeight="20.0" prefWidth="200.0" text="First Call">
+													<VBox.margin>
+														<Insets top="5.0" />
+													</VBox.margin>
+													<toggleGroup>
+														<ToggleGroup fx:id="group" />
+													</toggleGroup>
+												</RadioButton>
+												<RadioButton id="detailsLabel" fx:id="radio2"
+													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
+													minHeight="-Infinity" minWidth="-Infinity"
+													prefHeight="20.0" prefWidth="200.0" text="Second Call">
+													<VBox.margin>
+														<Insets top="5.0" />
+													</VBox.margin>
+													<toggleGroup>
+														<fx:reference source="group" />
+													</toggleGroup>
+												</RadioButton>
+												<RadioButton id="detailsLabel" fx:id="radio3"
+													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
+													minHeight="-Infinity" minWidth="-Infinity"
+													prefHeight="20.0" prefWidth="200.0" text="Third Call">
+													<VBox.margin>
+														<Insets top="5.0" />
+													</VBox.margin>
+													<toggleGroup>
+														<fx:reference source="group" />
+													</toggleGroup>
+												</RadioButton>
+												<CheckBox id="detailsLabel" fx:id="checkBox"
+													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
+													minHeight="-Infinity" minWidth="-Infinity"
+													prefHeight="20.0" prefWidth="200.0"
+													text="Is interested">
+													<VBox.margin>
+														<Insets top="5.0" />
+													</VBox.margin>
+												</CheckBox>
+											</children>
+										</VBox>
 										<JFXTextArea fx:id="detailsTextArea"
 											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0"
+											minHeight="-Infinity" minWidth="-Infinity" prefHeight="355.0"
 											prefWidth="260.0" />
 										<JFXButton id="buttonInverse"
 											fx:id="sendEmailButton" buttonType="RAISED"
 											maxHeight="-Infinity" maxWidth="-Infinity"
 											minHeight="-Infinity" minWidth="-Infinity"
-											onAction="#sendEmail" prefHeight="40.0" prefWidth="125.0"
+											onAction="#sendEmail" prefHeight="40.0" prefWidth="200.0"
 											text="Send e-mail">
-											<VBox.margin>
-												<Insets top="20.0" />
-											</VBox.margin>
 										</JFXButton>
 									</children>
 								</VBox>

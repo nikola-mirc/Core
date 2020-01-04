@@ -1,12 +1,15 @@
 package alfatec.view.gui;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
-import alfatec.controller.conference.ConferenceTabController;
+
 import alfatec.Main;
 import alfatec.controller.author.AuthorsPopupController;
+import alfatec.controller.conference.ConferenceTabController;
+import alfatec.controller.email.GroupCallController;
 import alfatec.controller.email.SendEmailController;
 import alfatec.controller.user.ChangePasswordController;
 import alfatec.model.person.Author;
@@ -190,6 +193,28 @@ public class MainView {
 			controller = node.getProperties().get("foo");
 			node = node.getParent();
 		} while (controller == null && node != null);
+		return controller;
+	}
+
+	public GroupCallController loadEmailWindow(GroupCallController controller, List<String> list) {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(
+					getClass().getClassLoader().getResource("resources/fxml/Group_call.fxml"));
+			Parent root = (Parent) fxmlLoader.load();
+			Stage stage = new Stage();
+			stage.initStyle(StageStyle.UNDECORATED);
+			stage.setScene(new Scene(root));
+//			@SuppressWarnings("unchecked")
+//			List<String> recievers = (List<String>) root.lookup("#recievers");
+//			recievers.addAll(list);
+			controller = fxmlLoader.getController();
+			controller.setRecievers(list);
+			controller.setDisplayStage(stage);
+			stage.showAndWait();
+		} catch (Exception e) {
+			System.out.println("Error sending group email.");
+			e.printStackTrace();
+		}
 		return controller;
 	}
 

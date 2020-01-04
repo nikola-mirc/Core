@@ -24,10 +24,10 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import util.LoopiaEmail;
 
-public class SendEmailController {
+public class GroupCallController {
 
 	@FXML
-	private JFXTextField emailid, subject, recieverid, selected;
+	private JFXTextField emailid, subject, bccid, selected;
 
 	@FXML
 	private JFXPasswordField password;
@@ -37,11 +37,12 @@ public class SendEmailController {
 
 	private LoopiaEmail loopia;
 	private List<File> selectedFiles;
-	private List<String> attachFiles;
+	private List<String> attachFiles, recievers;
 	private Stage display;
 	private double x = 0;
 	private double y = 0;
 	private Node node;
+	private boolean sent;
 
 	@FXML
 	void pressed(MouseEvent event) {
@@ -62,15 +63,18 @@ public class SendEmailController {
 		selected.setEditable(false);
 		selected.setVisible(false);
 		attachFiles = new ArrayList<String>();
+		recievers = new ArrayList<String>();
 		try {
 			loopia = new LoopiaEmail();
 			loopia.setConferenceBCC(ConferenceDAO.getInstance().getCurrentConference().getConferenceBcc());
 			emailid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail());
 			password.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword());
-			setListeners(new JFXTextField[] { emailid, subject, recieverid }, password, message);
+			bccid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceBcc());
+			setListeners(new JFXTextField[] { emailid, subject, bccid }, password, message);
 		} catch (Exception e) {
 			alert(AlertType.ERROR, "No active conference",
-					"Send email to selected author via loopia server with your own credentials.");
+					"You cann't send group call if there is no active conference.");
+			display.close();
 		}
 	}
 
@@ -82,15 +86,18 @@ public class SendEmailController {
 	@FXML
 	private void handleSendButton() {
 		String[] files = attachFiles.toArray(new String[attachFiles.size()]);
+		loopia.setConferenceBCC(bccid.getText());
 		try {
-			loopia.sendEmail(emailid.getText(), password.getText(), recieverid.getText(), subject.getText(),
-					message.getText(), false, files);
-			alert(AlertType.INFORMATION, "Message sent", "Message was sent to " + recieverid.getText() + ".");
-			Logging.getInstance().change("email", "SEND EMAIL TO " + recieverid.getText());
+			loopia.sendEmail(emailid.getText(), password.getText(), collectEmails(), subject.getText(),
+					message.getText(), true, files);
+			Logging.getInstance().change("email", "SEND GROUP EMAIL TO " + bccid.getText());
+			alert(AlertType.INFORMATION, "Message sent",
+					"Message was sent to " + bccid.getText() + ".\nTotal authors selected: " + recievers.size());
+			sent = true;
 		} catch (MessagingException | IOException e) {
 			alert(AlertType.ERROR, "Empty or invalid fields",
 					"In order to send email, You must provide accurate credentials.\nMessage was not sent to "
-							+ recieverid.getText() + ".");
+							+ bccid.getText() + ".");
 		}
 		display.close();
 	}
@@ -136,5 +143,23 @@ public class SendEmailController {
 				attachFiles.add(file.getAbsolutePath());
 			}
 		}
+	}
+
+	private String collectEmails() {
+		String s = "";
+		for (String str : recievers)
+			s += str + ",";
+		if (s.length() > 0)
+			return s.substring(0, s.length() - 1);
+		return null;
+	}
+
+	public boolean isSent() {
+		return sent;
+	}
+
+	public void setRecievers(List<String> list) {
+		for (String s : list)
+			recievers.add(s);
 	}
 }

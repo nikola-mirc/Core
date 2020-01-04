@@ -13,7 +13,7 @@
 	onMousePressed="#pressed" prefHeight="545.0" prefWidth="757.0"
 	xmlns:fx="http://javafx.com/fxml/1"
 	xmlns="http://javafx.com/javafx/8.0.141"
-	fx:controller="alfatec.controller.email.SendEmailController">
+	fx:controller="alfatec.controller.email.GroupCallController">
 	<children>
 		<JFXTextField fx:id="emailid" labelFloat="true"
 			layoutX="21.0" layoutY="32.0" prefHeight="34.0" prefWidth="713.0"
@@ -21,9 +21,9 @@
 		<JFXPasswordField fx:id="password" labelFloat="true"
 			layoutX="21.0" layoutY="97.0" prefHeight="34.0" prefWidth="713.0"
 			promptText="Password" />
-		<JFXTextField fx:id="recieverid" labelFloat="true"
+		<JFXTextField fx:id="bccid" labelFloat="true"
 			layoutX="21.0" layoutY="162.0" prefHeight="34.0" prefWidth="713.0"
-			promptText="Recipient ID" />
+			promptText="BCC ID" />
 		<JFXTextField fx:id="subject" labelFloat="true"
 			layoutX="21.0" layoutY="227.0" prefHeight="34.0" prefWidth="713.0"
 			promptText="SUBJECT" />
@@ -54,4 +54,6 @@
 			prefHeight="40.0" prefWidth="100.0" text="Cancel" />
 	</children>
 </AnchorPane>
+
+
 

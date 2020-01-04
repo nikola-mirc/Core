@@ -102,9 +102,16 @@ public class ConferenceCallDAO {
 	 * @return answers for current conference from specified author
 	 */
 	public ConferenceCall getCurrentAnswer(long authorID) {
-		return table.findWhere(new String[] { table.getTable().getColumnName(6), table.getTable().getColumnName(1) },
-				new long[] { authorID, ConferenceDAO.getInstance().getCurrentConference().getConferenceID() }, getCall)
-				.get(0);
+		try {
+			return table
+					.findWhere(new String[] { table.getTable().getColumnName(6), table.getTable().getColumnName(1) },
+							new long[] { authorID,
+									ConferenceDAO.getInstance().getCurrentConference().getConferenceID() },
+							getCall)
+					.get(0);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**

@@ -92,7 +92,7 @@
 							<children>
 								<Label id="label" maxHeight="-Infinity"
 									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									prefHeight="20.0" prefWidth="120.0" text="Username:" />
+									prefHeight="20.0" prefWidth="120.0" text="User:" />
 								<Label id="label" maxHeight="-Infinity"
 									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
 									prefHeight="20.0" prefWidth="120.0" text="Role:" />

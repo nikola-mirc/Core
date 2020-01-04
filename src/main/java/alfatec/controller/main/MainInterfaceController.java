@@ -1,6 +1,8 @@
 package alfatec.controller.main;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -8,11 +10,15 @@ import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextArea;
 
 import alfatec.controller.author.AuthorsPopupController;
+import alfatec.controller.email.GroupCallController;
 import alfatec.controller.email.SendEmailController;
 import alfatec.controller.user.ChangePasswordController;
+import alfatec.dao.conference.ConferenceDAO;
 import alfatec.dao.person.AuthorDAO;
+import alfatec.dao.relationship.ConferenceCallDAO;
 import alfatec.dao.user.UserDAO;
 import alfatec.model.person.Author;
+import alfatec.model.relationship.ConferenceCall;
 import alfatec.model.user.LoginData;
 import alfatec.model.user.User;
 import alfatec.view.gui.MainView;
@@ -25,11 +31,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -58,41 +67,34 @@ public class MainInterfaceController implements Initializable {
 	private TableView<Author> authorsTableView;
 
 	@FXML
-	private TableColumn<Author, String> authorNameColumn;
+	private TableColumn<Author, String> authorNameColumn, authorLastNameColumn, authorInstitutionColumn,
+			authorEmailColumn, authorCountryColumn;
 
 	@FXML
-	private TableColumn<Author, String> authorLastNameColumn;
+	private RadioButton radio1, radio2, radio3;
 
 	@FXML
-	private TableColumn<Author, String> authorInstitutionColumn;
+	private ToggleGroup group;
 
 	@FXML
-	private TableColumn<Author, String> authorEmailColumn;
-
-	@FXML
-	private TableColumn<Author, String> authorCountryColumn;
+	private CheckBox checkBox;
 
 	@FXML
 	private JFXTextArea detailsTextArea;
 
 	@FXML
-	private Button sendEmailButton;
+	private JFXButton sendEmailButton, firstCallButton, secondCallButton, thirdCallButton;
 
 	@FXML
 	private TextField searchAuthorTextField;
 
 	@FXML
-	private JFXButton addAuthorButton;
-
-	@FXML
-	private JFXButton editAuthorButton;
-
-	@FXML
-	private JFXButton deleteAuthorButton;
+	private JFXButton addAuthorButton, editAuthorButton, deleteAuthorButton;
 
 	private AuthorsPopupController authorController;
 	private ChangePasswordController changePasswordController;
 	private SendEmailController send;
+	private GroupCallController groupCall;
 	private ObservableList<Author> authorsData;
 	private String institution, note;
 	private Author author;
@@ -104,6 +106,9 @@ public class MainInterfaceController implements Initializable {
 		authorsData = AuthorDAO.getInstance().getAllAuthors();
 		populateAuthorTable();
 		handleSearch();
+		setUpRadioButton(radio1);
+		setUpRadioButton(radio2);
+		setUpRadioButton(radio3);
 	}
 
 	@FXML
@@ -157,10 +162,9 @@ public class MainInterfaceController implements Initializable {
 			authorsTableView.requestFocus();
 			authorsTableView.getSelectionModel().select(row);
 			authorsTableView.scrollTo(row);
-		} else {
+		} else
 			alert(AlertType.WARNING, "No author selected",
 					"Please select an author from the table in order to send them email.");
-		}
 	}
 
 	@FXML
@@ -169,21 +173,19 @@ public class MainInterfaceController implements Initializable {
 		if (author != null) {
 			authorController = MainView.getInstance().loadEdit(authorController, author);
 			handleEditAuthor();
-		} else {
+		} else
 			alert(AlertType.WARNING, "No author selected",
 					"Please select an author from the table in order to send them email.");
-		}
 	}
 
 	@FXML
 	void sendEmail() {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
-		if (author != null) {
+		if (author != null)
 			send = MainView.getInstance().loadEmailWindow(send, author.getAuthorEmail());
-		} else {
+		else
 			alert(AlertType.WARNING, "No author selected",
 					"Please select an author from the table in order to send them email.");
-		}
 	}
 
 	private void populateAuthorTable() {
@@ -262,7 +264,6 @@ public class MainInterfaceController implements Initializable {
 
 	public void setLoginData(LoginData data) {
 		this.loginData = data;
-
 	}
 
 	public void loadTabs(LoginData lgData) {
@@ -270,8 +271,55 @@ public class MainInterfaceController implements Initializable {
 			MainView.getInstance().loadTabs(tabPane, lgData);
 	}
 
-	public void disableSendEmailForUsers(LoginData lgData) {
-		if (lgData.getRoleID() == 1)
+	public void disableOptionsForUsers(LoginData lgData) {
+		if (lgData.getRoleID() == 1 || ConferenceDAO.getInstance().getCurrentConference() == null) {
 			sendEmailButton.setVisible(false);
+			firstCallButton.setDisable(true);
+			secondCallButton.setDisable(true);
+			thirdCallButton.setDisable(true);
+			radio1.setDisable(true);
+			radio2.setDisable(true);
+			radio3.setDisable(true);
+			checkBox.setDisable(true);
+		}
+	}
+
+	@FXML
+	private void makeFirstCall() {
+		List<String> list = new ArrayList<String>();
+		for (Author a : authorsData)
+			list.add(a.getAuthorEmail());
+		groupCall = MainView.getInstance().loadEmailWindow(groupCall, list);
+		groupCall.setRecievers(list);
+		if (groupCall.isSent())
+			for (Author a : authorsData)
+				ConferenceCallDAO.getInstance().createEntry(
+						ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), a.getAuthorID());
+	}
+
+	@FXML
+	private void makeSecondCall() {
+		List<String> list = new ArrayList<String>();
+		for (Author a : authorsData) {
+			ConferenceCall call = ConferenceCallDAO.getInstance().getCurrentAnswer(a.getAuthorID());
+			if (call != null && !call.isFirstCallAnswered() && call.isInterested())
+				list.add(a.getAuthorEmail());
+		}
+		groupCall = MainView.getInstance().loadEmailWindow(groupCall, list);
+	}
+
+	@FXML
+	private void makeThirdCall() {
+		List<String> list = new ArrayList<String>();
+		for (Author a : authorsData) {
+			ConferenceCall call = ConferenceCallDAO.getInstance().getCurrentAnswer(a.getAuthorID());
+			if (call != null && !call.isSecondCallAnswered() && call.isInterested())
+				list.add(a.getAuthorEmail());
+		}
+		groupCall = MainView.getInstance().loadEmailWindow(groupCall, list);
+	}
+
+	private void setUpRadioButton(RadioButton button) {
+		button.setToggleGroup(group);
 	}
 }

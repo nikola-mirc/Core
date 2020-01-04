@@ -93,7 +93,7 @@ public class LoginController {
 			controller.setWelcomeMessage(loginData);
 			controller.setLoginData(loginData);
 			controller.loadTabs(loginData);
-			controller.disableSendEmailForUsers(loginData);
+			controller.disableOptionsForUsers(loginData);
 			Logging.getInstance().setUser(loginData);
 		} else {
 			Alert alert = new Alert(AlertType.INFORMATION);
