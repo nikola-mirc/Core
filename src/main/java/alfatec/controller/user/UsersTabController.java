@@ -97,11 +97,7 @@ public class UsersTabController {
 	private UserLoginConnection userData;
 	private ObservableList<UserLoginConnection> users;
 	private ObservableList<UserAudit> audit;
-<<<<<<< HEAD
 	private String role, email;
-=======
-	private String role, email, password;
->>>>>>> 80aceda6916ca032a7ac244a915473a7dcb1bdfa
 	private boolean editAction;
 
 	@FXML

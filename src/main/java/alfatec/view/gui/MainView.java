@@ -204,9 +204,6 @@ public class MainView {
 			Stage stage = new Stage();
 			stage.initStyle(StageStyle.UNDECORATED);
 			stage.setScene(new Scene(root));
-//			@SuppressWarnings("unchecked")
-//			List<String> recievers = (List<String>) root.lookup("#recievers");
-//			recievers.addAll(list);
 			controller = fxmlLoader.getController();
 			controller.setRecievers(list);
 			controller.setDisplayStage(stage);
