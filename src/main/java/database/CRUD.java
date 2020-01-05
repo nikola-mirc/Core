@@ -205,7 +205,7 @@ public class CRUD {
 		for (int i = 0; i < ints.length; i++)
 			result[i] = ints[i];
 		for (int i = ints.length; i < result.length; i++)
-			result[i] = longs[i];
+			result[i] = longs[i - ints.length];
 		return result;
 	}
 
