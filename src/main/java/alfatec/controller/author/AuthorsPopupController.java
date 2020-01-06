@@ -242,7 +242,6 @@ public class AuthorsPopupController {
 
 	private void setListener(Label label, TextField text, int maxLenght) {
 		text.setOnKeyTyped(event -> {
-			String email = author == null ? "" : author.getAuthorEmail();
 			saveAuthorButton.setDisable(saveClicked);
 			if (event.getCharacter().equals(KeyCode.ESCAPE.getChar()))
 				display.close();
@@ -254,7 +253,7 @@ public class AuthorsPopupController {
 					label.setText("");
 				if (text == emailTextField && !isValidEmail())
 					emailErrorLabel.setText("Invalid email address.");
-				else if (text == emailTextField && isMailAlreadyInDB() && email.equals(text.getText())) {
+				else if (text == emailTextField && isMailAlreadyInDB()) {
 					emailErrorLabel.setText("Email already in use.");
 					saveAuthorButton.setDisable(true);
 				}
