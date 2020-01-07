@@ -64,10 +64,12 @@ public class MainView {
 	public void loadTabs(JFXTabPane tabPane, LoginData loginData) {
 		Tab scientificWorkTab = new Tab("Scientific work");
 		Tab conferenceTab = new Tab("Conference");
+		Tab confManagementTab = new Tab("Conf. management");
 		Tab usersTab = new Tab("Users");
 		Tab emailWebTab = new Tab("Email");
 		AnchorPane scientificWorkAnchor;
 		AnchorPane conferenceAnchor;
+		AnchorPane confManagementAnchor;
 		AnchorPane usersAnchor;
 		AnchorPane emailAnchor;
 		try {
@@ -78,13 +80,16 @@ public class MainView {
 			conferenceTab.setContent(conferenceAnchor);
 			ConferenceTabController conferenceController = (ConferenceTabController) getController(conferenceAnchor);
 			conferenceController.disablePartsForAdminAccess(loginData);
+			confManagementAnchor = FXMLLoader
+					.load(getClass().getClassLoader().getResource("resources/fxml/conference_management_tab.fxml"));
+			confManagementTab.setContent(confManagementAnchor);
 			scientificWorkAnchor = FXMLLoader
 					.load(getClass().getClassLoader().getResource("resources/fxml/scientific_work_tab.fxml"));
 			scientificWorkTab.setContent(scientificWorkAnchor);
 			emailAnchor = FXMLLoader.load(getClass().getClassLoader().getResource("resources/fxml/emailTab.fxml"));
 			emailWebTab.setContent(emailAnchor);
 			if (loginData.getRoleID() == 3)
-				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, usersTab, emailWebTab);
+				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, confManagementTab, usersTab, emailWebTab);
 			else
 				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, emailWebTab);
 		} catch (IOException e) {

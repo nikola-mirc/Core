@@ -3,8 +3,6 @@ package alfatec.controller.conference;
 import com.jfoenix.controls.JFXButton;
 
 import alfatec.dao.conference.ConferenceDAO;
-import alfatec.model.conference.Field;
-import alfatec.model.enums.Currency;
 import alfatec.model.user.LoginData;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -19,142 +17,124 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class ConferenceTabController {
 
-	@FXML
-	private HBox noConferenceHbox;
+    @FXML
+    private TableView<?> confTableView;
 
-	@FXML
-	private JFXButton newConferenceButton;
+    @FXML
+    private TableColumn<?, ?> confTitleColumn;
 
-	@FXML
-	private HBox addConferenceHbox;
+    @FXML
+    private HBox noConferenceHbox;
 
-	@FXML
-	private TextField conferenceTitleTextField;
+    @FXML
+    private Label confLabel;
 
-	@FXML
-	private ComboBox<Field> conferenceFieldComboBox;
+    @FXML
+    private JFXButton newConferenceButton;
 
-	@FXML
-	private TextField feeNameTextField;
+    @FXML
+    private HBox addConferenceHbox;
 
-	@FXML
-	private ComboBox<Currency> feeCurrencyComboBox;
+    @FXML
+    private TextField conferenceTitleTextField;
 
-	@FXML
-	private TextField feeAmountTextField;
+    @FXML
+    private ComboBox<?> conferenceFieldComboBox;
 
-	@FXML
-	private DatePicker startDatePicker;
+    @FXML
+    private JFXButton insertFeesButton;
 
-	@FXML
-	private DatePicker endDatePicker;
+    @FXML
+    private TableView<?> feesTableView;
 
-	@FXML
-	private DatePicker firstCallDatePicker;
+    @FXML
+    private TableColumn<?, ?> presetCol;
 
-	@FXML
-	private DatePicker secondCallDatePicker;
+    @FXML
+    private TableColumn<?, ?> currencyCol;
 
-	@FXML
-	private DatePicker thirdCallDatePicker;
+    @FXML
+    private TableColumn<?, ?> amountCol;
 
-	@FXML
-	private VBox notesVbox;
+    @FXML
+    private Button closeButton;
 
-	@FXML
-	private Button cancelAddConferenceButton;
+    @FXML
+    private Button clearButton;
 
-	@FXML
-	private TextArea conferenceNotes;
+    @FXML
+    private TextField confEmail;
 
-	@FXML
-	private JFXButton saveConferenceButton;
+    @FXML
+    private TextField confPassword;
 
-	@FXML
-	private HBox activeConferenceHbox;
+    @FXML
+    private TextField confBcc;
 
-	@FXML
-	private Label activeConferenceLabel;
+    @FXML
+    private DatePicker firstCallDatePicker;
 
-	@FXML
-	private Label startDateLabel;
+    @FXML
+    private DatePicker secondCallDatePicker;
 
-	@FXML
-	private Label endDateLabel;
+    @FXML
+    private DatePicker thirdCallDatePicker;
 
-	@FXML
-	private Label firstCallDateLabel;
+    @FXML
+    private JFXButton saveConfButton;
 
-	@FXML
-	private Label secondCallDateLabel;
+    @FXML
+    private HBox activeConferenceHbox;
 
-	@FXML
-	private Label thirdCallDateLabel;
+    @FXML
+    private Button closeButton1;
 
-	@FXML
-	private Label conferenceFieldLabel;
+    @FXML
+    private Button clearButton1;
 
-	@FXML
-	private Label feePresetLabel;
+    @FXML
+    private Label activeConfLabel;
 
-	@FXML
-	private Label currencyLabel;
+    @FXML
+    private Label confFieldLabel;
 
-	@FXML
-	private Label amountLabel;
+    @FXML
+    private TableColumn<?, ?> feePresetColumn;
 
-	@FXML
-	private JFXButton editConferenceButton;
+    @FXML
+    private TableColumn<?, ?> feeCurrencyColumn;
 
-	@FXML
-	private JFXButton closeConferenceButton;
+    @FXML
+    private TableColumn<?, ?> feeAmountColumn;
 
-	@FXML
-	private HBox detailsHbox;
+    @FXML
+    private Label confStartDate;
 
-	@FXML
-	private TableView<?> conferenceTableView;
+    @FXML
+    private Label confEndDate;
 
-	@FXML
-	private TableColumn<?, ?> confTitleColumn;
+    @FXML
+    private Label firstCallLabel;
 
-	@FXML
-	private TableColumn<?, ?> confRealizedColumn;
+    @FXML
+    private Label secondCallLabel;
 
-	@FXML
-	private JFXButton previewConferenceButton;
+    @FXML
+    private Label thirdCallLabel;
 
-	@FXML
-	private TableView<?> reviewersTableView;
+    @FXML
+    private TextArea confNotesTextArea;
 
-	@FXML
-	private TableColumn<?, ?> reviewerNameColumn;
+    @FXML
+    private JFXButton editConfButton;
 
-	@FXML
-	private TableColumn<?, ?> reviewerLastNameColumn;
-
-	@FXML
-	private TableColumn<?, ?> reviewerInstitutionColumn;
-
-	@FXML
-	private TableColumn<?, ?> reviewerContactColumn;
-
-	@FXML
-	private TableColumn<?, ?> reviewerEmailColumn;
-
-	@FXML
-	private JFXButton addReviewerButton;
-
-	@FXML
-	private JFXButton editReviewerButton;
-
-	@FXML
-	private JFXButton deleteReviewerButton;
-
+    @FXML
+    private JFXButton closeConfButton;
+    
+    
 	BooleanProperty conferenceActive = new SimpleBooleanProperty(false);
 	BooleanProperty noActiveConference = new SimpleBooleanProperty(true);
 	BooleanProperty addingConferenceActive = new SimpleBooleanProperty(false);
@@ -171,61 +151,45 @@ public class ConferenceTabController {
 	}
 
 	@FXML
-	void createNewConference(ActionEvent event) {
-		noActiveConference.set(false);
-		addingConferenceActive.set(true);
-	}
+    void clearPopup(ActionEvent event) {
 
-	@FXML
-	void cancelAddConference(ActionEvent event) {
-		addingConferenceActive.set(false);
-		noActiveConference.set(true);
-	}
+    }
 
-	@FXML
-	void saveConference(ActionEvent event) {
-		addingConferenceActive.set(false);
-		conferenceActive.set(true);
-	}
+    @FXML
+    void closeConf(ActionEvent event) {
 
-	@FXML
-	void editConference(ActionEvent event) {
-		conferenceActive.set(false);
-		addingConferenceActive.set(true);
-	}
+    }
 
-	@FXML
-	void closeConference(ActionEvent event) {
-		conferenceActive.set(false);
-		noActiveConference.set(true);
-	}
+    @FXML
+    void closePopup(ActionEvent event) {
 
-	@FXML
-	void previewConference(ActionEvent event) {
+    }
 
-	}
+    @FXML
+    void createNewConference(ActionEvent event) {
 
-	@FXML
-	void addReviewer(ActionEvent event) {
+    }
 
-	}
+    @FXML
+    void editConf(ActionEvent event) {
 
-	@FXML
-	void editReviewer(ActionEvent event) {
+    }
 
-	}
+    @FXML
+    void insertFees(ActionEvent event) {
 
-	@FXML
-	void deleteReviewer(ActionEvent event) {
+    }
 
-	}
+    @FXML
+    void saveConference(ActionEvent event) {
+
+    }
 
 	public void disablePartsForAdminAccess(LoginData ld) {
 		if (ld.getRoleID() == 2) {
 			newConferenceButton.setVisible(false);
-			editConferenceButton.setVisible(false);
-			closeConferenceButton.setVisible(false);
-			detailsHbox.setVisible(false);
+			editConfButton.setVisible(false);
+			closeConfButton.setVisible(false);
 		}
 	}
 }

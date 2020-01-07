@@ -17,6 +17,54 @@
 	-fx-font-style: italic;
 }
 
+#hyperlink:hover {
+	-fx-text-fill: #a299e0;
+	-fx-border-color: transparent;
+	-fx-font-style: italic;
+}
+
+#label {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#labelInverse {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#labelBig {
+	-fx-text-fill: #272343;
+	-fx-font-size: 3.0em;
+	-fx-font-weight: bold;
+}
+
+#labelNegativeSm {
+	-fx-text-fill: darkred;
+	-fx-font-size: 1.5em;
+	-fx-font-weight: bold;
+}
+
+#labelNegativeBg {
+	-fx-text-fill: darkred;
+	-fx-font-size: 2.5em;
+	-fx-font-weight: bold;
+}
+
+#labelPositive {
+	-fx-text-fill: darkgreen;
+	-fx-font-size: 1.5em;
+	-fx-font-weight: bold;
+}
+
+#labelPositiveBg {
+	-fx-text-fill: darkgreen;
+	-fx-font-size: 2.5em;
+	-fx-font-weight: bold;
+}
+
 #tabPane .tab-header-background {
 	-fx-background-color: #090a0c,
 		linear-gradient(#272343 0.0%, #1f2429 20.0%, #272343 100.0%),
@@ -25,6 +73,11 @@
 		rgba(255.0, 255.0, 255.0, 0.0));
 	-fx-text-fill: white;
 }
+
+#tabPane .tab-header-area .headers-region .tab :hover{
+    -fx-text-fill: #a299e0;
+}
+
 
 #tabPane .tab-selected-line {
     -fx-pref-width: 125.0;
@@ -46,46 +99,158 @@
 }
 
 #button {
-	-fx-background-color:#272343;
-	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
-	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
-	-fx-text-fill: white;
-	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
-	-fx-font-family: "Arial";
-	-fx-padding: 10.0 20.0 10.0 20.0;
-	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
-	-fx-font-weight: bold;
-	-fx-font-size: 1.2em;
+    -fx-padding: 8.0 15.0 15.0 15.0;
+    -fx-background-insets: 0.0,0.0 0.0 5.0 0.0, 0.0 0.0 6.0 0.0, 0.0 0.0 7.0 0.0;
+    -fx-background-radius: 3.0;
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #272343 0.0%, #fff 100.0%),
+        #4e4780,
+        #272343,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #272343, #272343);
+    -fx-effect: dropshadow( gaussian , rgba(0.0,0.0,0.0,0.75) , 4.0,0.0,0.0,1.0 );
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+}
+
+#button:hover {
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #d9d8de 0.0%, #272343 100.0%),
+        #272343,
+        #d9d8de,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #d9d8de, #d9d8de);
+   	-fx-text-fill:#272343;
+}
+
+#button:pressed {
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
 }
 
 #buttonInverse {
-	-fx-background-color:#d9d8de;
-	-fx-background-radius: 5.0, 4.0, 3.0, 5.0;
-	-fx-background-insets: 0.0, 1.0, 2.0, 0.0;
-	-fx-text-fill: #272343;
-	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
-	-fx-font-family: "Arial";
-	-fx-padding: 10.0 20.0 10.0 20.0;
-	-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.75), 4.0, 0.0, 0.0, 1.0);
-	-fx-font-weight: bold;
-	-fx-font-size: 1.2em;
+    -fx-padding: 8.0 15.0 15.0 15.0;
+    -fx-background-insets: 0.0,0.0 0.0 5.0 0.0, 0.0 0.0 6.0 0.0, 0.0 0.0 7.0 0.0;
+    -fx-background-radius: 3.0;
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #272343 0.0%, #272343 100.0%),
+        #272343,
+        #272343,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #d9d8de, #d9d8de);
+    -fx-effect: dropshadow( gaussian , rgba(0.0,0.0,0.0,0.75) , 4.0,0.0,0.0,1.0 );
+    -fx-text-fill:#272343;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
 }
 
-#quitButton {
+#buttonInverse:hover {
+    -fx-background-color: 
+        linear-gradient(from 0.0% 93.0% to 0.0% 100.0%, #a299e0 0.0%, #272343 100.0%),
+        #272343,
+        #a299e0,
+        radial-gradient(center 50.0% 50.0%, radius 100.0%, #a299e0, #a299e0);
+   	-fx-text-fill:#272343;
+}
+
+#buttonInverse:pressed {
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
+}
+
+#miniButton {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 1.0;
+    -fx-background-color: #f4f4f4;
+}
+
+#miniButton:hover {
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButton:pressed {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+}
+
+#miniButtonTransparent {
+	-fx-border-color: #272343;
+    -fx-border-radius: 2.0;
+    -fx-background-radius: 2.0;
+    -fx-background-color: #d9d8de;
+}
+
+#miniButtonTransparent:hover {
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButtonTransparent:pressed {
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButtonInverse {
 	-fx-border-color: transparent;
     -fx-border-width: 0.0;
-    -fx-background-radius: 0.0;
-    -fx-background-color: transparent;
+    -fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+    -fx-background-radius: 5.0;
+    -fx-background-color: #d9d8de;
 }
 
-#quitButton:hover {
+#miniButtonInverse:hover {
 	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
 }
 
-#minimizeButton:hover {
+#miniButtonInverse:pressed {
 	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+    -fx-padding: 10.0 15.0 13.0 15.0;
+    -fx-background-insets: 2.0 0.0 0.0 0.0,2.0 0.0 3.0 0.0, 2.0 0.0 4.0 0.0, 2.0 0.0 5.0 0.0;
 }
 
+#miniButtonTrBottom {
+	-fx-rotate: 90.0;
+	-fx-border-color: #272343;
+    -fx-border-radius: 2.0;
+    -fx-background-radius: 2.0;
+    -fx-background-color: #d9d8de;
+}
+
+#miniButtonTrBottom:hover {
+	-fx-rotate: 270.0;
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButtonTrBottom:pressed {
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButtonTrLeft {
+	-fx-rotate: 180.0;
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 1.0;
+    -fx-background-color: #f4f4f4;
+}
+
+#miniButtonTrLeft:hover {
+	-fx-rotate: 360.0;
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButtonTrLeft:pressed {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+}
 
 #tableView {
 	-fx-border-style: solid solid solid solid;
@@ -103,31 +268,18 @@
 	-fx-border-width: 1.0;
 }
 
-#detailsVbox {
-	-fx-background-color: #272343;
-	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
-}
-
-#detailsLabel {
-	-fx-text-fill: white;
-	-fx-font-size: 1.4em;
-	-fx-font-weight: bold;
-}
-
-#detailsTextArea {
-	-fx-background-color: #d9d8de;
-	-fx-background-radius: 5.0, 5.0, 5.0, 5.0;
-	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
-		0.0, 0.0, 1.0);
-	-fx-border-style: solid solid solid solid;
-	-fx-border-width: 3.0;
-	-fx-border-color: #272343;
-	-fx-text-fill: #272343;
-	-fx-font-size: 1.2em;
-}
-
-#popup {
+#tableViewMini {
 	-fx-border-style: solid solid solid solid;
 	-fx-border-width: 2.0;
 	-fx-border-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0,
+		0.0, 0.0, 1.0);
+	-fx-border-radius: 3.0, 3.0, 3.0, 3.0;
+}
+
+#tableViewMini .column-header-background .label {
+	-fx-background-color: #d9d8de;
+	-fx-text-fill: #272343;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
 }

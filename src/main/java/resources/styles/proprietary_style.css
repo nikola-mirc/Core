@@ -1,0 +1,131 @@
+/*login*/
+#vBox {
+	-fx-background-color: #272343;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 4.0;
+	-fx-border-color: #272343;
+}
+
+#vBoxInverse {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 4.0;
+	-fx-border-color: #272343;
+}
+
+#loginLabel {
+	-fx-text-fill: #272343;
+	-fx-font-family: "Impact";
+	-fx-font-size: 2.6em;
+	-fx-font-weight: bold;
+}
+
+#loginText {
+	-fx-font-size: 1.4em;
+	-jfx-focus-color: #272343;
+	-fx-prompt-text-fill: #272343;
+	-fx-text-fill: #272343;
+}
+
+#mainVbox {
+	-fx-background-color: #d9d8de;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+    -fx-border-radius: 10.0 0.0 0.0 10.0;
+    -fx-background-radius: 10.0 0.0 0.0 10.0;
+}
+
+#mainVboxVertical {
+	-fx-background-color: #d9d8de;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+    -fx-border-radius:  0 0 10.0 10.0;
+    -fx-background-radius: 0 0 10.0 10.0;
+}
+
+#popupVbox {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-background-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+    -fx-border-radius: 10.0 0.0 0.0 10.0;
+    -fx-background-radius: 10.0 0.0 0.0 10.0;
+}
+
+#popupVboxRound {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-background-color: #272343;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+    -fx-border-radius: 10.0 10.0 10.0 10.0;
+    -fx-background-radius: 10.0 10.0 10.0 10.0;
+}
+
+#popupVboxRoundLight {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-background-color: #d9d8de;
+	-fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.6), 5.0, 0.0, 0.0, 1.0);
+    -fx-border-radius: 10.0 10.0 10.0 10.0;
+    -fx-background-radius: 10.0 10.0 10.0 10.0;
+}
+
+#errorText {
+	-fx-font-family: 'Arial Unicode MS';
+	-fx-font-style: italic;
+	-fx-text-fill: red;
+}
+
+#comboBoxText {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.2em;
+}
+
+#radio {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.4em;
+	-jfx-selected-color: #272343;
+	-jfx-checked-color: #272343;
+}
+
+#textField {
+	-fx-text-fill: #272343;
+	-fx-font-size: 1.2em;
+}
+
+#tableView {
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 2.0;
+	-fx-border-color: #272343;
+}
+
+#tableView .column-header-background .label {
+	-fx-background-color: #272343;
+	-fx-text-fill: white;
+	-fx-border-style: solid solid solid solid;
+	-fx-border-width: 1.0;
+}
+
+#chartAxis {
+	-fx-tick-label-fill: white;
+}
+
+#activityChart {
+	-fx-background-color: #272343;
+	-fx-background-radius: 10.0 0.0 0.0 10.0;
+}
+
+#activityChart .chart-title {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}
+
+#activityChart .axis-label {
+	-fx-text-fill: white;
+	-fx-font-size: 1.4em;
+	-fx-font-weight: bold;
+}

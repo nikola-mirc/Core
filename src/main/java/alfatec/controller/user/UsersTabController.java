@@ -51,7 +51,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import util.DateUtil;
-import util.Password;
 
 public class UsersTabController {
 
@@ -97,8 +96,9 @@ public class UsersTabController {
 	private UserLoginConnection userData;
 	private ObservableList<UserLoginConnection> users;
 	private ObservableList<UserAudit> audit;
-	private String role, email;
+	private String role, email, password;
 	private boolean editAction;
+	private boolean addAction;
 
 	@FXML
 	private void initialize() throws IOException {
@@ -117,19 +117,22 @@ public class UsersTabController {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
-					userData = usersTableView.getSelectionModel().getSelectedItem();
-					email = userData.getLoginData().getUserEmail();
-					role = userData.getLoginData().getRoleName();
-					transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
-					mainVbox.setVisible(true);
-					usernameLabel.setText(
-							userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
-					roleLabel.setText(role);
-					emailLabel.setText(email);
-					contactLabel.setText(userData.getUser().getContactTelephone());
-					dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
-					audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
-					createChart();
+					if (usersTableView.getSelectionModel().getSelectedItem() != null) {
+						userData = usersTableView.getSelectionModel().getSelectedItem();
+						email = userData.getLoginData().getUserEmail();
+						password = userData.getLoginData().getPasswordHash();
+						role = userData.getLoginData().getRoleName();
+						transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+						mainVbox.setVisible(true);
+						usernameLabel.setText(
+								userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
+						roleLabel.setText(role);
+						emailLabel.setText(email);
+						contactLabel.setText(userData.getUser().getContactTelephone());
+						dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
+						audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
+						createChart();
+					}
 				}
 			}
 		});
@@ -138,6 +141,7 @@ public class UsersTabController {
 	@FXML
 	void addUser(ActionEvent event) {
 		closePopup();
+		isAddAction(true);
 		transitionPopupX(popupVbox, 940, 0, Interpolator.EASE_IN, 500);
 		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
 		popupVbox.setVisible(true);
@@ -147,6 +151,7 @@ public class UsersTabController {
 	void editUser(ActionEvent event) {
 		closePopup();
 		isEditAction(true);
+		userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
 			transitionPopupX(popupVbox, 340, 0, Interpolator.EASE_IN, 500);
 			roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
@@ -191,6 +196,15 @@ public class UsersTabController {
 		usersTableView.refresh();
 	}
 
+	private void handleEditUserWithoutPWchange() {
+		setFirstName();
+		setLastName();
+		setContact();
+		setEmail();
+		setRoleType();
+		usersTableView.refresh();
+	}
+
 	private void handleSearch() {
 		FilteredList<UserLoginConnection> filteredData = new FilteredList<>(users, p -> true);
 		searchUserTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -220,24 +234,81 @@ public class UsersTabController {
 
 	@FXML
 	void saveUser(ActionEvent event) {
-		if (isValidInput() && !isEmailAlreadyInDB() && !isEditAction()) {
-			userData = getNewUser();
-			users.add(userData);
-			refresh();
-		} else if (isValidInput() && isEditAction()) {
-			if (isEmailAlreadyInDB()) {
-				if (emailTextField.getText().equals(email)) {
-					handleEditUser();
-					usersTableView.refresh();
-					closePopup();
-				} else
-					emailErrorLabel.setText("Already exists.");
-			} else {
-				handleEditUser();
+
+		if (isAddAction()) {
+			if (isValidInput() && !isEmailAlreadyInDB()) {
+				userData = getNewUser();
+				users.add(userData);
 				refresh();
+				closePopup();
 			}
-		} else if (isEmailAlreadyInDB())
-			emailErrorLabel.setText("Already exists.");
+		} else if (isEditAction()) {
+			if (isValidInput()) {
+				if (isEmailAlreadyInDB()) {
+					if (emailTextField.getText().equals(email)) {
+						if (passwordField.getText().equals(password)) {
+							handleEditUserWithoutPWchange();
+							refresh();
+							closePopup();
+						} else {
+							handleEditUser();
+							refresh();
+							closePopup();
+						}
+					} else {
+						emailErrorLabel.setText("Already exists.");
+					}
+				} else {
+					if (passwordField.getText().equals(password)) {
+						handleEditUserWithoutPWchange();
+						refresh();
+						closePopup();
+					} else {
+						handleEditUser();
+						refresh();
+						closePopup();
+					}
+				}
+			}
+
+		}
+
+//		if (isValidInput() && !isEmailAlreadyInDB() && !isEditAction() && isAddAction()) {
+//			userData = getNewUser();
+//			users.add(userData);
+//			refresh();
+//		} else if (isValidInput() && isEditAction()) {
+//			if (isEmailAlreadyInDB()) {
+//				if (emailTextField.getText().equals(email)) {
+//					if (passwordField.getText().equals(password)) {
+//						System.out.println(password);
+//						System.out.println(passwordField.getText());
+//						System.out.println("equals");
+//						handleEditUserWithoutPWchange();
+//						refresh();
+//						closePopup();
+//					} else {
+//						System.out.println("not equals");
+//						handleEditUser();
+//						refresh();
+//						closePopup();
+//					}
+//				} else
+//					emailErrorLabel.setText("Already exists.");
+//			} else {
+//				handleEditUser();
+//				refresh();
+//			}
+//		} else if (isEmailAlreadyInDB())
+//			emailErrorLabel.setText("Already exists.");
+	}
+
+	private boolean isAddAction() {
+		return addAction;
+	}
+
+	private void isAddAction(boolean action) {
+		this.addAction = action;
 	}
 
 	private boolean isEditAction() {
@@ -363,8 +434,11 @@ public class UsersTabController {
 	}
 
 	public void setPassword() {
-		if (!Password.checkPassword(passwordField.getText(), userData.getLoginData().getPasswordHash()))
-			LoginDataDAO.getInstance().updatePassword(userData.getLoginData(), passwordField.getText());
+//		if (!password.equals(userData.getLoginData().getPasswordHash())
+//				&& !Password.checkPassword(passwordField.getText(), userData.getLoginData().getPasswordHash())) {
+		LoginDataDAO.getInstance().updatePassword(userData.getLoginData(), passwordField.getText());
+		password = userData.getLoginData().getPasswordHash();
+//		}
 	}
 
 	private void transitionPopupX(Node node, double endingCoordinate, double startingCoordinate,
@@ -403,6 +477,13 @@ public class UsersTabController {
 		roleComboBox.setValue(RoleEnum.USER);
 		passwordField.clear();
 		confirmPasswordField.clear();
+
+		firstNameErrorLabel.setText("");
+		lastNameErrorLabel.setText("");
+		emailErrorLabel.setText("");
+		passwordErrorLabel.setText("");
+		confirmPasswordErrorLabel.setText("");
+
 	}
 
 	private void refresh() {

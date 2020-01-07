@@ -1,56 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTabPane?>
-<?import com.jfoenix.controls.JFXTextArea?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.CheckBox?>
+<?import com.jfoenix.controls.JFXButton ?>
+<?import com.jfoenix.controls.JFXTabPane ?>
+<?import com.jfoenix.controls.JFXTextArea ?>
+<?import javafx.geometry.Insets ?>
+<?import javafx.scene.control.Button ?>
+<?import javafx.scene.control.Hyperlink ?>
+<?import javafx.scene.control.Label ?>
+<?import javafx.scene.control.Tab ?>
+<?import javafx.scene.control.TableColumn ?>
+<?import javafx.scene.control.TableView ?>
+<?import javafx.scene.control.TextField ?>
+<?import javafx.scene.control.ToolBar ?>
+<?import javafx.scene.image.Image ?>
+<?import javafx.scene.image.ImageView ?>
+<?import javafx.scene.layout.AnchorPane ?>
+<?import javafx.scene.layout.BorderPane ?>
+<?import javafx.scene.layout.ColumnConstraints ?>
+<?import javafx.scene.layout.GridPane ?>
+<?import javafx.scene.layout.HBox ?>
+<?import javafx.scene.layout.RowConstraints ?>
+<?import javafx.scene.layout.VBox ?>
+<?import javafx.scene.control.RadioButton ?>
+<?import javafx.scene.control.ToggleGroup ?>
+<?import javafx.scene.control.CheckBox ?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
-	minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-	prefWidth="1200.0" stylesheets="@../styles/main_style.css"
-	xmlns="http://javafx.com/javafx/11.0.1"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="alfatec.controller.main.MainInterfaceController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" stylesheets="@../styles/main_style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.main.MainInterfaceController">
 	<top>
-		<GridPane id="header" maxHeight="-Infinity"
-			maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			onMouseDragged="#dragged" onMousePressed="#pressed"
-			prefHeight="100.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+		<GridPane id="header" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="100.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
 			<columnConstraints>
-				<ColumnConstraints halignment="LEFT"
-					hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-				<ColumnConstraints hgrow="SOMETIMES"
-					minWidth="10.0" prefWidth="100.0" />
-				<ColumnConstraints halignment="RIGHT"
-					hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+				<ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+				<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
 			</columnConstraints>
 			<rowConstraints>
-				<RowConstraints minHeight="10.0" prefHeight="75.0"
-					vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="75.0" vgrow="SOMETIMES" />
 			</rowConstraints>
 			<children>
-				<ImageView fitHeight="75.0" fitWidth="200.0"
-					pickOnBounds="true" preserveRatio="true">
+				<ImageView fitHeight="75.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
 					<image>
 						<Image url="@../images/logo.png" />
 					</image>
@@ -58,39 +45,27 @@
 						<Insets left="20.0" />
 					</GridPane.margin>
 				</ImageView>
-				<VBox alignment="BOTTOM_RIGHT" maxHeight="-Infinity"
-					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-					prefHeight="90.0" prefWidth="400.0" GridPane.columnIndex="2">
+				<VBox alignment="BOTTOM_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="400.0" GridPane.columnIndex="2">
 					<children>
-						<HBox alignment="TOP_RIGHT" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="25.0" prefWidth="150.0" spacing="7.0">
+						<HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" spacing="9.0">
 							<children>
-								<Button fx:id="minimizeButton" maxHeight="-Infinity"
-									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									mnemonicParsing="false" onAction="#minimizeApp"
-									prefHeight="23.0" prefWidth="25.0">
+								<Button id="miniButton" fx:id="minimizeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#minimizeApp" prefHeight="20.0" prefWidth="20.0">
 									<graphic>
-										<ImageView fitHeight="25.0" fitWidth="25.0"
-											pickOnBounds="true" preserveRatio="true">
+										<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
 											<image>
-												<Image url="@../images/minimize_icon.png" />
+												<Image url="@../images/minimize.png" />
 											</image>
 										</ImageView>
 									</graphic>
 									<HBox.margin>
-										<Insets top="1.0" />
+										<Insets />
 									</HBox.margin>
 								</Button>
-								<Button fx:id="quitButton" maxHeight="-Infinity"
-									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									mnemonicParsing="false" onAction="#quitApp" prefHeight="25.0"
-									prefWidth="25.0">
+								<Button id="miniButton" fx:id="quitButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#quitApp" prefHeight="20.0" prefWidth="20.0">
 									<graphic>
-										<ImageView fitHeight="25.0" fitWidth="25.0"
-											pickOnBounds="true" preserveRatio="true">
+										<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true">
 											<image>
-												<Image url="@../images/quit_icon.png" />
+												<Image url="@../images/exit.png" />
 											</image>
 										</ImageView>
 									</graphic>
@@ -100,11 +75,7 @@
 								<Insets right="7.0" top="7.0" />
 							</VBox.margin>
 						</HBox>
-						<Label fx:id="welcomeLabel" alignment="TOP_RIGHT"
-							contentDisplay="RIGHT" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity"
-							nodeOrientation="LEFT_TO_RIGHT" prefHeight="23.0"
-							prefWidth="250.0" text="Welcome, user!">
+						<Label fx:id="welcomeLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="23.0" prefWidth="250.0" text="Welcome, user!">
 							<padding>
 								<Insets right="10.0" />
 							</padding>
@@ -112,20 +83,12 @@
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<Hyperlink id="hyperlink"
-							fx:id="changePasswordHyperlink" alignment="CENTER_RIGHT"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" onAction="#changePassword" prefHeight="17.0"
-							prefWidth="250.0" text="change password">
+						<Hyperlink id="hyperlink" fx:id="changePasswordHyperlink" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#changePassword" prefHeight="17.0" prefWidth="250.0" text="change password">
 							<padding>
 								<Insets right="10.0" />
 							</padding>
 						</Hyperlink>
-						<Hyperlink id="hyperlink" fx:id="logoutHyperlink"
-							alignment="CENTER_RIGHT" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							onAction="#logout" prefHeight="17.0" prefWidth="250.0"
-							text="logout">
+						<Hyperlink id="hyperlink" fx:id="logoutHyperlink" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#logout" prefHeight="17.0" prefWidth="250.0" text="logout">
 							<padding>
 								<Insets right="10.0" />
 							</padding>
@@ -136,87 +99,48 @@
 		</GridPane>
 	</top>
 	<center>
-		<JFXTabPane fx:id="tabPane" maxHeight="-Infinity"
-			maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			prefHeight="605.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE"
-			tabMinHeight="40.0" tabMinWidth="125.0" BorderPane.alignment="CENTER">
+		<JFXTabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="605.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" tabMinHeight="40.0" tabMinWidth="125.0" BorderPane.alignment="CENTER">
 			<tabs>
 				<Tab id="authorsTab" closable="false" text="Authors">
 					<content>
-						<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="555.0"
-							prefWidth="1200.0">
+						<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="1200.0">
 							<children>
-								<TableView id="tableView" fx:id="authorsTableView"
-									layoutX="7.0" layoutY="99.0" maxHeight="-Infinity"
-									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									prefHeight="400.0" prefWidth="900.0">
+								<TableView id="tableView" fx:id="authorsTableView" layoutX="7.0" layoutY="99.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="900.0">
 									<columns>
-										<TableColumn fx:id="authorNameColumn"
-											editable="false" maxWidth="150.0" minWidth="100.0"
-											prefWidth="101.5999755859375" text="First name" />
-										<TableColumn fx:id="authorLastNameColumn"
-											editable="false" maxWidth="250.0" minWidth="100.0"
-											prefWidth="249.20001220703125" text="Last name" />
-										<TableColumn fx:id="authorInstitutionColumn"
-											editable="false" maxWidth="150.0" minWidth="125.0"
-											prefWidth="75.0" text="Institution" />
-										<TableColumn fx:id="authorEmailColumn"
-											editable="false" maxWidth="250.0" minWidth="250.0"
-											prefWidth="75.0" text="E-mail" />
-										<TableColumn fx:id="authorCountryColumn"
-											editable="false" maxWidth="150.0" minWidth="90.0"
-											prefWidth="100.0" text="Country" />
+										<TableColumn fx:id="authorNameColumn" editable="false" maxWidth="150.0" minWidth="100.0" prefWidth="101.5999755859375" text="First name" />
+										<TableColumn fx:id="authorLastNameColumn" editable="false" maxWidth="250.0" minWidth="100.0" prefWidth="249.20001220703125" text="Last name" />
+										<TableColumn fx:id="authorInstitutionColumn" editable="false" maxWidth="150.0" minWidth="125.0" prefWidth="75.0" text="Institution" />
+										<TableColumn fx:id="authorEmailColumn" editable="false" maxWidth="250.0" minWidth="250.0" prefWidth="75.0" text="E-mail" />
+										<TableColumn fx:id="authorCountryColumn" editable="false" maxWidth="150.0" minWidth="90.0" prefWidth="100.0" text="Country" />
 									</columns>
 									<columnResizePolicy>
 										<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
 									</columnResizePolicy>
 								</TableView>
-								<HBox alignment="CENTER" layoutX="7.0" layoutY="500.0"
-									maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
-									prefWidth="900.0" spacing="30.0">
+								<HBox alignment="CENTER" layoutX="7.0" layoutY="500.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="900.0" spacing="30.0">
 									<children>
-										<JFXButton id="button" fx:id="firstCallButton"
-											buttonType="RAISED" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" onAction="#makeFirstCall"
-											prefHeight="40.0" prefWidth="200.0" text="Make First Call">
+										<JFXButton id="button" fx:id="firstCallButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#makeFirstCall" prefHeight="40.0" prefWidth="200.0" text="Make First Call">
 											<HBox.margin>
 												<Insets top="5.0" />
 											</HBox.margin>
 										</JFXButton>
-										<JFXButton id="button" fx:id="secondCallButton"
-											buttonType="RAISED" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" onAction="#makeSecondCall"
-											prefHeight="40.0" prefWidth="200.0" text="Make Second Call">
+										<JFXButton id="button" fx:id="secondCallButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#makeSecondCall" prefHeight="40.0" prefWidth="200.0" text="Make Second Call">
 											<HBox.margin>
 												<Insets top="5.0" />
 											</HBox.margin>
 										</JFXButton>
-										<JFXButton id="button" fx:id="thirdCallButton"
-											buttonType="RAISED" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" onAction="#makeThirdCall"
-											prefHeight="40.0" prefWidth="200.0" text="Make Third Call">
+										<JFXButton id="button" fx:id="thirdCallButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#makeThirdCall" prefHeight="40.0" prefWidth="200.0" text="Make Third Call">
 											<HBox.margin>
 												<Insets top="5.0" />
 											</HBox.margin>
 										</JFXButton>
 									</children>
 								</HBox>
-								<ToolBar id="searchToolbar" layoutX="14.0"
-									layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0"
-									prefWidth="500.0">
+								<ToolBar id="searchToolbar" layoutX="14.0" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="500.0">
 									<items>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-											prefWidth="40.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="40.0">
 											<children>
-												<ImageView fitHeight="30.0" fitWidth="40.0"
-													pickOnBounds="true" preserveRatio="true">
+												<ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
 													<image>
 														<Image url="@../images/search_icon.png" />
 													</image>
@@ -226,70 +150,41 @@
 												<Insets right="5.0" />
 											</padding>
 										</HBox>
-										<TextField id="searchTextField"
-											fx:id="searchAuthorTextField" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" prefHeight="40.0" prefWidth="440.0"
-											promptText="Search authors..." />
+										<TextField id="searchTextField" fx:id="searchAuthorTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="440.0" promptText="Search authors..." />
 									</items>
 									<opaqueInsets>
 										<Insets />
 									</opaqueInsets>
 								</ToolBar>
-								<HBox alignment="CENTER" layoutX="514.0" layoutY="44.0"
-									maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
-									prefWidth="400.0" spacing="30.0">
+								<HBox alignment="CENTER" layoutX="514.0" layoutY="44.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="400.0" spacing="30.0">
 									<children>
-										<JFXButton id="button" fx:id="addAuthorButton"
-											buttonType="RAISED" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" onAction="#addAuthor" prefHeight="40.0"
-											prefWidth="100.0" text="Add">
+										<JFXButton id="button" fx:id="addAuthorButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addAuthor" prefHeight="40.0" prefWidth="100.0" text="Add">
 											<HBox.margin>
 												<Insets />
 											</HBox.margin>
 										</JFXButton>
-										<JFXButton id="button" fx:id="editAuthorButton"
-											buttonType="RAISED" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" onAction="#editAuthor" prefHeight="40.0"
-											prefWidth="100.0" text="Edit">
+										<JFXButton id="button" fx:id="editAuthorButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editAuthor" prefHeight="40.0" prefWidth="100.0" text="Edit">
 											<HBox.margin>
 												<Insets />
 											</HBox.margin>
 										</JFXButton>
-										<JFXButton id="button" fx:id="deleteAuthorButton"
-											buttonType="RAISED" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" onAction="#deleteAuthor"
-											prefHeight="40.0" prefWidth="100.0" text="Delete">
+										<JFXButton id="button" fx:id="deleteAuthorButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteAuthor" prefHeight="40.0" prefWidth="100.0" text="Delete">
 											<HBox.margin>
 												<Insets />
 											</HBox.margin>
 										</JFXButton>
 									</children>
 								</HBox>
-								<VBox id="detailsVbox" alignment="TOP_CENTER"
-									fillWidth="false" layoutX="920.0" layoutY="-8.0"
-									prefHeight="570.0" prefWidth="280.0">
+								<VBox id="detailsVbox" alignment="TOP_CENTER" fillWidth="false" layoutX="920.0" layoutY="-8.0" prefHeight="570.0" prefWidth="280.0">
 									<children>
-										<Label id="detailsLabel" alignment="CENTER"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0"
-											prefWidth="260.0" text="Details:">
+										<Label id="detailsLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="260.0" text="Notes:">
 											<VBox.margin>
 												<Insets bottom="10.0" top="20.0" />
 											</VBox.margin>
 										</Label>
-										<VBox id="detailsVbox" alignment="TOP_CENTER"
-											fillWidth="false" layoutX="920.0" layoutY="-28.0"
-											prefHeight="100.0" prefWidth="280.0">
+										<VBox id="detailsVbox" alignment="TOP_CENTER" fillWidth="false" layoutX="920.0" layoutY="-28.0" prefHeight="100.0" prefWidth="280.0">
 											<children>
-												<RadioButton id="detailsLabel" fx:id="radio1"
-													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="20.0" prefWidth="200.0" text="First Call">
+												<RadioButton id="detailsLabel" fx:id="radio1" layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" text="First Call">
 													<VBox.margin>
 														<Insets top="5.0" />
 													</VBox.margin>
@@ -297,10 +192,7 @@
 														<ToggleGroup fx:id="group" />
 													</toggleGroup>
 												</RadioButton>
-												<RadioButton id="detailsLabel" fx:id="radio2"
-													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="20.0" prefWidth="200.0" text="Second Call">
+												<RadioButton id="detailsLabel" fx:id="radio2" layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" text="Second Call">
 													<VBox.margin>
 														<Insets top="5.0" />
 													</VBox.margin>
@@ -308,10 +200,7 @@
 														<fx:reference source="group" />
 													</toggleGroup>
 												</RadioButton>
-												<RadioButton id="detailsLabel" fx:id="radio3"
-													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="20.0" prefWidth="200.0" text="Third Call">
+												<RadioButton id="detailsLabel" fx:id="radio3" layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" text="Third Call">
 													<VBox.margin>
 														<Insets top="5.0" />
 													</VBox.margin>
@@ -319,28 +208,15 @@
 														<fx:reference source="group" />
 													</toggleGroup>
 												</RadioButton>
-												<CheckBox id="detailsLabel" fx:id="checkBox"
-													layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="20.0" prefWidth="200.0"
-													text="Is interested">
+												<CheckBox id="detailsLabel" fx:id="checkBox" layoutX="950.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" text="Is interested">
 													<VBox.margin>
 														<Insets top="5.0" />
 													</VBox.margin>
 												</CheckBox>
 											</children>
 										</VBox>
-										<JFXTextArea fx:id="detailsTextArea"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="355.0"
-											prefWidth="260.0" />
-										<JFXButton id="buttonInverse"
-											fx:id="sendEmailButton" buttonType="RAISED"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity"
-											onAction="#sendEmail" prefHeight="40.0" prefWidth="200.0"
-											text="Send e-mail">
-										</JFXButton>
+										<JFXTextArea fx:id="detailsTextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="260.0" />
+										<JFXButton id="buttonInverse" fx:id="sendEmailButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#sendEmail" prefHeight="40.0" prefWidth="200.0" text="Send e-mail"></JFXButton>
 									</children>
 								</VBox>
 							</children>
