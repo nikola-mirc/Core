@@ -24,7 +24,7 @@
 	<children>
 		<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="260.0">
 			<children>
-				<ToolBar id="searchToolbar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="239.0">
+				<ToolBar id="searchToolbar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="240.0">
 					<items>
 						<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="40.0">
 							<children>
@@ -129,7 +129,7 @@
 				</HBox>
 			</children>
 		</VBox>
-		<VBox id="popupVbox" fx:id="popupVbox" alignment="TOP_CENTER" layoutX="860.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="340.0" visible="false">
+		<VBox id="popupVbox" fx:id="popupVbox" alignment="TOP_CENTER" layoutX="860.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="340.0">
 			<children>
 				<HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="340.0">
 					<children>

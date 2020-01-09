@@ -89,7 +89,7 @@
 		<HBox id="mainVboxVertical" fx:id="addConferenceHbox"
 			alignment="CENTER" layoutX="8.0" maxHeight="-Infinity"
 			maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			prefHeight="560.0" prefWidth="870.0" visible="false">
+			prefHeight="560.0" prefWidth="870.0">
 			<children>
 				<VBox fillWidth="false" maxHeight="-Infinity"
 					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
@@ -120,7 +120,7 @@
 						<ComboBox id="comboBoxText"
 							fx:id="conferenceFieldComboBox" editable="true"
 							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="25.0" prefWidth="250.0"
+							minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0"
 							promptText="Please select">
 							<VBox.margin>
 								<Insets bottom="10.0" />

@@ -252,6 +252,23 @@
 	-fx-background-radius: 100.0;
 }
 
+#miniButtonLogin {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 1.0;
+    -fx-background-color: transparent;
+}
+
+#miniButtonLogin:hover {
+	-fx-background-color: #a299e0;
+	-fx-border-radius: 5.0, 5.0, 5.0, 5.0;
+	-fx-background-radius: 5.0;
+}
+
+#miniButtonLogin:pressed {
+	-fx-background-color: #a299e0;
+	-fx-background-radius: 100.0;
+}
+
 #tableView {
 	-fx-border-style: solid solid solid solid;
 	-fx-border-width: 2.0;

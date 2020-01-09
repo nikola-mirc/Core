@@ -1,9 +1,11 @@
 package alfatec.controller.user;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +20,7 @@ import alfatec.model.enums.RoleEnum;
 import alfatec.model.user.LoginData;
 import alfatec.model.user.User;
 import alfatec.model.user.UserAudit;
+import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.UserLoginConnection;
 import javafx.animation.Interpolator;
@@ -31,6 +34,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -52,7 +56,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import util.DateUtil;
 
-public class UsersTabController {
+public class UsersTabController extends GUIUtils implements Initializable {
 
 	@FXML
 	private TableView<UserLoginConnection> usersTableView;
@@ -100,8 +104,9 @@ public class UsersTabController {
 	private boolean editAction;
 	private boolean addAction;
 
-	@FXML
-	private void initialize() throws IOException {
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		usersTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
 		populateUsersTable();
 		Utility.setUpStringCell(usersTableView);
 		usersTableView.setItems(users);
@@ -162,7 +167,7 @@ public class UsersTabController {
 
 	@FXML
 	void deleteUser(ActionEvent event) {
-		UserLoginConnection userData = usersTableView.getSelectionModel().getSelectedItem();
+		userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.initStyle(StageStyle.UNDECORATED);
@@ -441,15 +446,6 @@ public class UsersTabController {
 //		}
 	}
 
-	private void transitionPopupX(Node node, double endingCoordinate, double startingCoordinate,
-			Interpolator interpolator, int durrationInMillis) {
-		node.translateXProperty().set(endingCoordinate);
-		KeyValue kv = new KeyValue(node.translateXProperty(), startingCoordinate, interpolator);
-		KeyFrame kf = new KeyFrame(Duration.millis(durrationInMillis), kv);
-		Timeline tl = new Timeline(kf);
-		tl.play();
-	}
-
 	@FXML
 	private void clearPopup(ActionEvent event) {
 		clearPopup();
@@ -526,4 +522,5 @@ public class UsersTabController {
 			list.add(new XYChart.Data<String, Number>(data.toString(), count(eventType, data)));
 		return new LineChart.Series<String, Number>(eventType, list);
 	}
+
 }

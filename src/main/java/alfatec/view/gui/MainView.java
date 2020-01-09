@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -98,43 +99,7 @@ public class MainView {
 		}
 	}
 
-	public AuthorsPopupController loadEdit(AuthorsPopupController controller, Author author) {
-		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(
-					getClass().getClassLoader().getResource("resources/fxml/authors_popup.fxml"));
-			Parent root = (Parent) fxmlLoader.load();
-			Stage stage = new Stage();
-			stage.initStyle(StageStyle.UNDECORATED);
-			stage.setScene(new Scene(root));
-			controller = fxmlLoader.getController();
-			controller.setDisplayStage(stage);
-			controller.setAuthor(author);
-			stage.showAndWait();
-		} catch (Exception e) {
-			System.out.println("Error editing author.");
-			e.printStackTrace();
-		}
-		return controller;
-	}
-
-	public AuthorsPopupController loadAdd(AuthorsPopupController controller) {
-		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(
-					getClass().getClassLoader().getResource("resources/fxml/authors_popup.fxml"));
-			Parent root = (Parent) fxmlLoader.load();
-			Stage stage = new Stage();
-			stage.initStyle(StageStyle.UNDECORATED);
-			stage.setScene(new Scene(root));
-			controller = fxmlLoader.getController();
-			controller.setAuthor(new Author());
-			controller.setDisplayStage(stage);
-			stage.showAndWait();
-		} catch (Exception e) {
-			System.out.println("Error adding author.");
-			e.printStackTrace();
-		}
-		return controller;
-	}
+	
 
 	public void closeMainView(ActionEvent event) {
 		try {
@@ -157,6 +122,7 @@ public class MainView {
 			Stage stage = new Stage();
 			stage.setScene(new Scene(root));
 			stage.initStyle(StageStyle.UNDECORATED);
+			stage.initModality(Modality.APPLICATION_MODAL);
 			controller = fxmlLoader.getController();
 			controller.setLogin(loginData);
 			controller.setDisplayStage(stage);
