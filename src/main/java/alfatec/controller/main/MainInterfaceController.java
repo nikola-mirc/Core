@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.controlsfx.control.PrefixSelectionComboBox;
 
@@ -30,6 +32,7 @@ import alfatec.model.user.User;
 import alfatec.view.gui.MainView;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
+import database.DatabaseUtility;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -90,7 +93,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private HBox authorDetailsHbox, invitesHbox;
 
 	@FXML
-	private VBox popupVbox;
+	private VBox popupVbox, detailsVbox;
 
 	@FXML
 	private JFXRadioButton firstRadio, secondRadio, thirdRadio;
@@ -122,13 +125,14 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		authorsTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
-		populateAuthorTable();
 		Utility.setUpStringCell(authorsTableView);
-		authorsTableView.setItems(authorsData);
+		authorsData = AuthorDAO.getInstance().getAllAuthors();
+		populateAuthorTable();
 		handleSearch();
 		setUpRadioButton(firstRadio);
 		setUpRadioButton(secondRadio);
 		setUpRadioButton(thirdRadio);
+		setUpBoxes();
 	}
 
 	public void setWelcomeMessage(LoginData ld) {
@@ -148,22 +152,16 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	public void disableOptionsForUsers(LoginData lgData) {
 		if (lgData.getRoleID() == 1 || ConferenceDAO.getInstance().getCurrentConference() == null) {
 			sendEmailButton.setVisible(false);
-			firstInviteButton.setDisable(true);
-			secondInviteButton.setDisable(true);
-			thirdInvButton.setDisable(true);
-			firstRadio.setDisable(true);
-			secondRadio.setDisable(true);
-			thirdRadio.setDisable(true);
-			interestedCheckbox.setDisable(true);
+			detailsVbox.setDisable(true);
 			invitesHbox.setVisible(false);
 		}
 	}
 
 	private void populateAuthorTable() {
-		authorsData = AuthorDAO.getInstance().getAllAuthors();
 		authorColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorFirstNameProperty().concat(" ")
 				.concat(cellData.getValue().getAuthorLastNameProperty()));
 		emailColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorEmailProperty());
+		authorsTableView.setItems(authorsData);
 		authorsTableView.setOnMousePressed(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -173,16 +171,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 						if (isPopupOpen()) {
 							closePopup();
 						}
-						author = authorsTableView.getSelectionModel().getSelectedItem();
-						email = author.getAuthorEmail();
 						transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
-						authorDetailsHbox.setVisible(true);
-						firstNameLabel.setText(author.getAuthorFirstName() + " " + author.getAuthorLastName());
-						emailLabel.setText(email);
-						institutionLabel.setText(author.getInstitution().name());
-						institutionNameLabel.setText(author.getInstitutionName());
-						countryLabel.setText(author.countryProperty().get());
-						noteTextField.setText(author.getNote());
+						showAuthor(authorsTableView.getSelectionModel().getSelectedItem());
 					}
 				}
 			}
@@ -192,7 +182,9 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private void handleSearch() {
 		searchAuthorTextField.setOnKeyTyped(event -> {
 			String search = searchAuthorTextField.getText();
-			if (search.length() > 0) {
+			Pattern pattern = Pattern.compile("[@()]");
+			Matcher matcher = pattern.matcher(search);
+			if (search.length() > 0 && !matcher.find()) {
 				ObservableList<Author> searched = AuthorDAO.getInstance().searchForAuthors(search);
 				authorsTableView.getItems().setAll(searched);
 			} else {
@@ -204,13 +196,12 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	void addAuthor(ActionEvent event) {
+		setUpBoxes();
 		if (isPopupOpen()) {
 			closePopup();
 		}
 		setAddAction(true);
 		transitionPopupX(popupVbox, 940, 0, Interpolator.EASE_IN, 500);
-		institutionComboBox.setItems(FXCollections.observableArrayList(Institution.values()));
-		countryComboBox.setItems(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
 		popupVbox.setVisible(true);
 		setPopupOpen(true);
 	}
@@ -224,8 +215,6 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
 			transitionPopupX(popupVbox, 520, 0, Interpolator.EASE_IN, 500);
-			institutionComboBox.setItems(FXCollections.observableArrayList(Institution.values()));
-			countryComboBox.setItems(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
 			setAuthor(author);
 			popupVbox.setVisible(true);
 			setPopupOpen(true);
@@ -245,10 +234,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				AuthorDAO.getInstance().getAllAuthors().remove(author);
 				authorsData.remove(author);
 				authorsTableView.getItems().remove(author);
-				int row = authorsData.size() - 1;
-				authorsTableView.requestFocus();
-				authorsTableView.getSelectionModel().select(row);
-				authorsTableView.scrollTo(row);
+				refresh(authorsData.size() - 1);
 				closeDetails();
 			}
 		}
@@ -257,39 +243,28 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	@FXML
 	void saveAuthor(ActionEvent event) {
 		if (isAddAction()) {
+			setAddAction(false);
 			if (isValidInput() && !isEmailAlreadyInDB()) {
-				author = getNewAuthor();
+				getNewAuthor();
 				authorsData.add(author);
-				refresh();
-				closePopup();
-				setPopupOpen(false);
+				refresh(authorsData.size() - 1);
 				closeDetails();
-				author = authorsTableView.getSelectionModel().getSelectedItem();
-				email = author.getAuthorEmail();
 				transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
-				authorDetailsHbox.setVisible(true);
-				firstNameLabel.setText(author.getAuthorFirstName() + " " + author.getAuthorLastName());
-				emailLabel.setText(email);
-				institutionLabel.setText(author.getInstitution().name());
-				institutionNameLabel.setText(author.getInstitutionName());
-				countryLabel.setText(author.countryProperty().get());
-				noteTextField.setText(author.getNote());
+				showAuthor(author);
 			} else if (isEmailAlreadyInDB()) {
 				emailErrorLabel.setText("E-mail already exists in database.");
 			}
 		} else if (isEditAction()) {
+			setEditAction(false);
 			author = authorsTableView.getSelectionModel().getSelectedItem();
 			email = author.getAuthorEmail();
 			if (isValidInput()) {
-				if (isEmailAlreadyInDB()) {
-					if (emailTextField.getText().equals(email)) {
-						handleEditAuthor();
-						refresh();
-						closePopup();
-						setPopupOpen(false);
-					}
-				} else {
-					emailErrorLabel.setText("Already exists.");
+				if (!emailTextField.getText().equals(email) && isEmailAlreadyInDB())
+					emailErrorLabel.setText("Database already has enter with the same e-mail address.");
+				else {
+					handleEditAuthor();
+					refresh(authorsTableView.getSelectionModel().getSelectedIndex());
+					showAuthor(author);
 				}
 			}
 		}
@@ -322,9 +297,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		firstNameTextField.setText(author.getAuthorFirstName());
 		lastNameTextField.setText(author.getAuthorLastName());
 		emailTextField.setText(author.getAuthorEmail());
-		countryComboBox.setItems(CountryDAO.getInstance().getAllCountries());
 		countryComboBox.getSelectionModel().select(author.getCountryID() - 1);
-		institutionComboBox.setItems(FXCollections.observableArrayList(Institution.values()));
 		institutionComboBox.getSelectionModel().select(author.getInstitution());
 		institutionNameTextField.setText(author.getInstitutionName());
 		noteTextArea.setText(author.getNote());
@@ -390,6 +363,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	void quitApp() {
+		DatabaseUtility.getInstance().databaseDisconnect();
 		Platform.exit();
 	}
 
@@ -468,13 +442,11 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		}
 	}
 
-	public String setInstitutionName() {
-		if (institutionNameTextField.getText() == null) {
-			return "";
-		}
-		if (!institutionNameTextField.getText().equalsIgnoreCase(author.getInstitutionName()))
+	public void setInstitutionName() {
+		if (institutionNameTextField.getText() == null)
+			return;
+		if (!institutionNameTextField.getText().equals(author.getInstitutionName()))
 			AuthorDAO.getInstance().updateAuthorInstitutionName(author, institutionNameTextField.getText());
-		return institutionNameTextField.getText();
 	}
 
 	public void setCountry() {
@@ -483,12 +455,11 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					countryComboBox.getSelectionModel().getSelectedItem().getCountryName());
 	}
 
-	public String setNote() {
+	public void setNote() {
 		if (noteTextArea.getText() == null)
-			noteTextArea.setText("");
+			return;
 		if (!noteTextArea.getText().equalsIgnoreCase(author.getNote()))
 			AuthorDAO.getInstance().updateAuthorNote(author, noteTextArea.getText());
-		return noteTextArea.getText();
 	}
 
 	@FXML
@@ -515,23 +486,41 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		firstNameTextField.clear();
 		lastNameTextField.clear();
 		emailTextField.clear();
-		institutionComboBox.setValue(null);
 		institutionComboBox.setPromptText("Please select...");
 		institutionNameTextField.clear();
-		countryComboBox.setItems(null);
 		noteTextArea.clear();
-
+		setUpBoxes();
 		firstNameErrorLabel.setText("");
 		lastNameErrorLabel.setText("");
 		emailErrorLabel.setText("");
 	}
 
-	private void refresh() {
+	private void refresh(int row) {
 		authorsTableView.refresh();
 		authorsTableView.requestFocus();
-		int row = authorsData.size() - 1;
 		authorsTableView.getSelectionModel().select(row);
 		authorsTableView.scrollTo(row);
+		closePopup();
+		setPopupOpen(false);
+	}
+
+	private void setUpBoxes() {
+		institutionComboBox.getItems().setAll(FXCollections.observableArrayList(Institution.values()));
+		institutionComboBox.setValue(Institution.UNIVERSITY);
+		countryComboBox.getItems()
+				.setAll(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
+		countryComboBox.setValue(CountryDAO.getInstance().getCountry(195));
+	}
+
+	private void showAuthor(Author author) {
+		email = author.getAuthorEmail();
+		authorDetailsHbox.setVisible(true);
+		firstNameLabel.setText(author.getAuthorFirstName() + " " + author.getAuthorLastName());
+		emailLabel.setText(email);
+		institutionLabel.setText(author.getInstitution().name());
+		institutionNameLabel.setText(author.getInstitutionName());
+		countryLabel.setText(author.countryProperty().get());
+		noteTextField.setText(author.getNoteProperty().get());
 	}
 
 }

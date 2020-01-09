@@ -7,12 +7,10 @@ import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
 
 import alfatec.Main;
-import alfatec.controller.author.AuthorsPopupController;
 import alfatec.controller.conference.ConferenceTabController;
 import alfatec.controller.email.GroupCallController;
 import alfatec.controller.email.SendEmailController;
 import alfatec.controller.user.ChangePasswordController;
-import alfatec.model.person.Author;
 import alfatec.model.user.LoginData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
