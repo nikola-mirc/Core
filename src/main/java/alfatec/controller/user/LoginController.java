@@ -14,12 +14,10 @@ import alfatec.view.gui.LoginView;
 import alfatec.view.utils.GUIUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import util.Password;
 
 public class LoginController extends GUIUtils implements Initializable {
@@ -49,7 +47,7 @@ public class LoginController extends GUIUtils implements Initializable {
 			controller.disableOptionsForUsers(loginData);
 			Logging.getInstance().setUser(loginData);
 		} else {
-			alert("Invalid credentials", "Invalid credentials", "Wrong username or password. Please try again.", AlertType.INFORMATION);
+			alert("Invalid credentials", "Wrong username or password. Please try again.", AlertType.INFORMATION);
 			passwordField.clear();
 		}
 	}
@@ -66,15 +64,6 @@ public class LoginController extends GUIUtils implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		usernameTextField.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-
-				usernameTextField.clear();
-			}
-		});
-
+		usernameTextField.setOnMousePressed(event -> usernameTextField.clear());
 	}
 }

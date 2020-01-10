@@ -1,6 +1,5 @@
 package alfatec.controller.user;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -24,22 +23,16 @@ import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.UserLoginConnection;
 import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -49,11 +42,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import util.DateUtil;
 
 public class UsersTabController extends GUIUtils implements Initializable {
@@ -92,11 +83,6 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	@FXML
 	private PasswordField passwordField, confirmPasswordField;
 
-	private static final int FIRST_NAME_LENGTH = 30;
-	private static final int LAST_NAME_LENGTH = 50;
-	private static final int EMAIL_LENGTH = 50;
-	private static final int PASSWORD_LENGTH = 50;
-
 	private UserLoginConnection userData;
 	private ObservableList<UserLoginConnection> users;
 	private ObservableList<UserAudit> audit;
@@ -106,40 +92,39 @@ public class UsersTabController extends GUIUtils implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		usersTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
-		populateUsersTable();
+		usersTableView.setPlaceholder(new Label("Database table \"users\" is empty"));
 		Utility.setUpStringCell(usersTableView);
-		usersTableView.setItems(users);
+		users = UserLoginDAO.getInstance().getAllData();
+		populateUsersTable();
 		handleSearch();
+		setUpFields();
+		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
+		mainVbox.setVisible(false);
+		popupVbox.setVisible(false);
 	}
 
 	private void populateUsersTable() {
-		users = UserLoginDAO.getInstance().getAllData();
 		userColumn.setCellValueFactory(cellData -> cellData.getValue().getUser().getUserFirstNameProperty().concat(" ")
 				.concat(cellData.getValue().getUser().getUserLastNameProperty()));
-		usersTableView.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.getButton() == MouseButton.PRIMARY) {
-					if (usersTableView.getSelectionModel().getSelectedItem() != null) {
-						userData = usersTableView.getSelectionModel().getSelectedItem();
-						email = userData.getLoginData().getUserEmail();
-						password = userData.getLoginData().getPasswordHash();
-						role = userData.getLoginData().getRoleName();
-						transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
-						mainVbox.setVisible(true);
-						usernameLabel.setText(
-								userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
-						roleLabel.setText(role);
-						emailLabel.setText(email);
-						contactLabel.setText(userData.getUser().getContactTelephone());
-						dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
-						audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
-						createChart();
-					}
+		usersTableView.setItems(users);
+		usersTableView.setOnMousePressed(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+				if (usersTableView.getSelectionModel().getSelectedItem() != null) {
+					userData = usersTableView.getSelectionModel().getSelectedItem();
+					email = userData.getLoginData().getUserEmail();
+					password = userData.getLoginData().getPasswordHash();
+					role = userData.getLoginData().getRoleName();
+					transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+					mainVbox.setVisible(true);
+					usernameLabel.setText(
+							userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
+					roleLabel.setText(role);
+					emailLabel.setText(email);
+					contactLabel.setText(userData.getUser().getContactTelephone());
+					dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
+					audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
+					createChart();
 				}
-			}
 		});
 	}
 
@@ -148,7 +133,6 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		closePopup();
 		isAddAction(true);
 		transitionPopupX(popupVbox, 940, 0, Interpolator.EASE_IN, 500);
-		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
 		popupVbox.setVisible(true);
 	}
 
@@ -159,7 +143,6 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
 			transitionPopupX(popupVbox, 340, 0, Interpolator.EASE_IN, 500);
-			roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
 			setUser(userData);
 			popupVbox.setVisible(true);
 		}
@@ -169,36 +152,26 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	void deleteUser(ActionEvent event) {
 		userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
-			Alert alert = new Alert(AlertType.CONFIRMATION);
-			alert.initStyle(StageStyle.UNDECORATED);
-			alert.setTitle("Confirm action:");
-			alert.setHeaderText("Are you sure you want to delete credentials for user "
-					+ userData.getUser().getUserFirstName().concat(" ").concat(userData.getUser().getUserLastName())
-					+ "?");
-			alert.showAndWait();
-			if (alert.getResult() == ButtonType.OK) {
+			ButtonType button = confirmationAlert(
+					"Confirm action:", "Are you sure you want to delete credentials for user " + userData.getUser()
+							.getUserFirstName().concat(" ").concat(userData.getUser().getUserLastName()) + "?",
+					AlertType.CONFIRMATION);
+			if (button == ButtonType.OK) {
 				Logging.getInstance().change("Delete", "Delete user: " + userData.toString());
 				UserDAO.getInstance().deleteUser(userData.getUser());
 				UserDAO.getInstance().getAllUsers().remove(userData.getUser());
 				users.remove(userData);
+				int row = usersTableView.getSelectionModel().getSelectedIndex() - 1;
 				usersTableView.getItems().remove(userData);
-				int row = users.size() - 1;
-				usersTableView.requestFocus();
-				usersTableView.getSelectionModel().select(row);
-				usersTableView.scrollTo(row);
+				refresh(row);
 				closeDetails();
 			}
 		}
 	}
 
 	private void handleEditUser() {
-		setFirstName();
-		setLastName();
-		setContact();
-		setEmail();
-		setRoleType();
 		setPassword();
-		usersTableView.refresh();
+		handleEditUserWithoutPWchange();
 	}
 
 	private void handleEditUserWithoutPWchange() {
@@ -214,21 +187,18 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		FilteredList<UserLoginConnection> filteredData = new FilteredList<>(users, p -> true);
 		searchUserTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredData.setPredicate(UserLoginConnection -> {
-				if (newValue == null || newValue.isEmpty()) {
+				if (newValue == null || newValue.isEmpty())
 					return true;
-				}
 				String lowerCaseFilter = newValue.toLowerCase();
 				if (cyrillicToLatin(String.valueOf(UserLoginConnection.getUser().getUserFirstName()).toLowerCase())
-						.startsWith(lowerCaseFilter)) {
+						.startsWith(lowerCaseFilter))
 					return true;
-				} else if (cyrillicToLatin(
-						String.valueOf(UserLoginConnection.getUser().getUserLastName()).toLowerCase())
-								.startsWith(lowerCaseFilter)) {
+				else if (cyrillicToLatin(String.valueOf(UserLoginConnection.getUser().getUserLastName()).toLowerCase())
+						.startsWith(lowerCaseFilter))
 					return true;
-				} else if (String.valueOf(UserLoginConnection.getLoginData().getUserEmail()).toLowerCase()
-						.startsWith(lowerCaseFilter)) {
+				else if (String.valueOf(UserLoginConnection.getLoginData().getUserEmail()).toLowerCase()
+						.startsWith(lowerCaseFilter))
 					return true;
-				}
 				return false;
 			});
 		});
@@ -239,73 +209,30 @@ public class UsersTabController extends GUIUtils implements Initializable {
 
 	@FXML
 	void saveUser(ActionEvent event) {
-
 		if (isAddAction()) {
 			if (isValidInput() && !isEmailAlreadyInDB()) {
 				userData = getNewUser();
 				users.add(userData);
-				refresh();
-				closePopup();
+				refresh(users.size() - 1);
 			}
-		} else if (isEditAction()) {
-			if (isValidInput()) {
-				if (isEmailAlreadyInDB()) {
+		} else if (isEditAction())
+			if (isValidInput())
+				if (isEmailAlreadyInDB())
 					if (emailTextField.getText().equals(email)) {
-						if (passwordField.getText().equals(password)) {
+						if (passwordField.getText().equals(password))
 							handleEditUserWithoutPWchange();
-							refresh();
-							closePopup();
-						} else {
+						else
 							handleEditUser();
-							refresh();
-							closePopup();
-						}
-					} else {
+						refresh(usersTableView.getSelectionModel().getSelectedIndex());
+					} else
 						emailErrorLabel.setText("Already exists.");
-					}
-				} else {
-					if (passwordField.getText().equals(password)) {
+				else {
+					if (passwordField.getText().equals(password))
 						handleEditUserWithoutPWchange();
-						refresh();
-						closePopup();
-					} else {
+					else
 						handleEditUser();
-						refresh();
-						closePopup();
-					}
+					refresh(usersTableView.getSelectionModel().getSelectedIndex());
 				}
-			}
-
-		}
-
-//		if (isValidInput() && !isEmailAlreadyInDB() && !isEditAction() && isAddAction()) {
-//			userData = getNewUser();
-//			users.add(userData);
-//			refresh();
-//		} else if (isValidInput() && isEditAction()) {
-//			if (isEmailAlreadyInDB()) {
-//				if (emailTextField.getText().equals(email)) {
-//					if (passwordField.getText().equals(password)) {
-//						System.out.println(password);
-//						System.out.println(passwordField.getText());
-//						System.out.println("equals");
-//						handleEditUserWithoutPWchange();
-//						refresh();
-//						closePopup();
-//					} else {
-//						System.out.println("not equals");
-//						handleEditUser();
-//						refresh();
-//						closePopup();
-//					}
-//				} else
-//					emailErrorLabel.setText("Already exists.");
-//			} else {
-//				handleEditUser();
-//				refresh();
-//			}
-//		} else if (isEmailAlreadyInDB())
-//			emailErrorLabel.setText("Already exists.");
 	}
 
 	private boolean isAddAction() {
@@ -349,16 +276,11 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	}
 
 	private boolean isValidInput() {
-		firstNameErrorLabel.setText((isValidFirstName() && firstNameTextField.getLength() < FIRST_NAME_LENGTH) ? ""
-				: "Empty first name field.");
-		lastNameErrorLabel.setText((isValidLastName() && lastNameTextField.getLength() < LAST_NAME_LENGTH) ? ""
-				: "Empty last name field.");
+		firstNameErrorLabel.setText(isValidFirstName() ? "" : "Empty first name field.");
+		lastNameErrorLabel.setText(isValidLastName() ? "" : "Empty last name field.");
 		roleErrorLabel.setText(isValidRole() ? "" : "Please select your role");
-		emailErrorLabel.setText(
-				(isValidEmail() && emailTextField.getLength() < EMAIL_LENGTH) ? "" : "Empty or invalid email field.");
-		passwordErrorLabel
-				.setText((isValidPassword() && !editAction ? passwordField.getLength() < PASSWORD_LENGTH : true) ? ""
-						: "Empty or invalid password field.");
+		emailErrorLabel.setText(isValidEmail() ? "" : "Empty or invalid email field.");
+		passwordErrorLabel.setText(isValidPassword() && !editAction ? "" : "Empty or invalid password field.");
 		confirmPasswordErrorLabel
 				.setText(isEditAction() && isValidConfirmPassword() ? "" : "Empty or invalid confirm password field.");
 		return isValidFirstName() && isValidLastName() && isValidEmail() && isValidRole() && isValidPassword()
@@ -439,11 +361,8 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	}
 
 	public void setPassword() {
-//		if (!password.equals(userData.getLoginData().getPasswordHash())
-//				&& !Password.checkPassword(passwordField.getText(), userData.getLoginData().getPasswordHash())) {
 		LoginDataDAO.getInstance().updatePassword(userData.getLoginData(), passwordField.getText());
 		password = userData.getLoginData().getPasswordHash();
-//		}
 	}
 
 	@FXML
@@ -461,7 +380,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		clearPopup();
 	}
 
-	void closeDetails() {
+	private void closeDetails() {
 		transitionPopupX(mainVbox, 0, 1200, Interpolator.EASE_IN, 500);
 	}
 
@@ -482,13 +401,13 @@ public class UsersTabController extends GUIUtils implements Initializable {
 
 	}
 
-	private void refresh() {
+	private void refresh(int row) {
 		usersTableView.refresh();
 		usersTableView.requestFocus();
-		int row = users.size() - 1;
 		usersTableView.getSelectionModel().select(row);
 		usersTableView.scrollTo(row);
 		closePopup();
+		popupVbox.setVisible(false);
 	}
 
 	private void createChart() {
@@ -521,6 +440,14 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		for (LocalDate data : dates)
 			list.add(new XYChart.Data<String, Number>(data.toString(), count(eventType, data)));
 		return new LineChart.Series<String, Number>(eventType, list);
+	}
+
+	private void setUpFields() {
+		firstNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getFirstNameLength())));
+		lastNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getLastNameLength())));
+		emailTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getEmailLength())));
+		contactTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getContactTelephoneLength())));
+		passwordField.setTextFormatter(new TextFormatter<String>(rejectChange(getPasswordLength())));
 	}
 
 }

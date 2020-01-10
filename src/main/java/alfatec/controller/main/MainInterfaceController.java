@@ -38,7 +38,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
@@ -52,9 +51,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -76,7 +75,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private JFXTabPane tabPane;
 
 	@FXML
-	private TextField searchAuthorTextField, noteTextField, firstNameTextField, lastNameTextField, emailTextField,
+	private TextField searchAuthorTextField, firstNameTextField, lastNameTextField, emailTextField,
 			institutionNameTextField;
 
 	@FXML
@@ -108,7 +107,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private PrefixSelectionComboBox<Country> countryComboBox;
 
 	@FXML
-	private TextArea noteTextArea;
+	private TextArea noteTextArea, noteTextAreaPreview;
 
 	@FXML
 	private ToggleGroup group;
@@ -133,6 +132,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		setUpRadioButton(secondRadio);
 		setUpRadioButton(thirdRadio);
 		setUpBoxes();
+		setUpFields();
 	}
 
 	public void setWelcomeMessage(LoginData ld) {
@@ -162,20 +162,14 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				.concat(cellData.getValue().getAuthorLastNameProperty()));
 		emailColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorEmailProperty());
 		authorsTableView.setItems(authorsData);
-		authorsTableView.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.getButton() == MouseButton.PRIMARY) {
-					if (authorsTableView.getSelectionModel().getSelectedItem() != null) {
-						if (isPopupOpen()) {
-							closePopup();
-						}
-						transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
-						showAuthor(authorsTableView.getSelectionModel().getSelectedItem());
-					}
+		authorsTableView.setOnMousePressed(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+				if (authorsTableView.getSelectionModel().getSelectedItem() != null) {
+					if (isPopupOpen())
+						closePopup();
+					transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
+					showAuthor(authorsTableView.getSelectionModel().getSelectedItem());
 				}
-			}
 		});
 	}
 
@@ -197,9 +191,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	@FXML
 	void addAuthor(ActionEvent event) {
 		setUpBoxes();
-		if (isPopupOpen()) {
+		if (isPopupOpen())
 			closePopup();
-		}
 		setAddAction(true);
 		transitionPopupX(popupVbox, 940, 0, Interpolator.EASE_IN, 500);
 		popupVbox.setVisible(true);
@@ -208,9 +201,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	void editAuthor() {
-		if (isPopupOpen()) {
+		if (isPopupOpen())
 			closePopup();
-		}
 		setEditAction(true);
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
@@ -225,16 +217,15 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	void deleteAuthor(ActionEvent event) {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
-			ButtonType bt = confAlert(
-					"Confirmation dialog", "Please confirm:", "Are you sure you want to delete data for "
-							+ author.getAuthorFirstName() + " " + author.getAuthorLastName() + "?",
-					AlertType.CONFIRMATION);
+			ButtonType bt = confirmationAlert("Please confirm:", "Are you sure you want to delete data for "
+					+ author.getAuthorFirstName() + " " + author.getAuthorLastName() + "?", AlertType.CONFIRMATION);
 			if (bt == ButtonType.OK) {
 				AuthorDAO.getInstance().deleteAuthor(author);
 				AuthorDAO.getInstance().getAllAuthors().remove(author);
 				authorsData.remove(author);
+				int row = authorsTableView.getSelectionModel().getSelectedIndex() - 1;
 				authorsTableView.getItems().remove(author);
-				refresh(authorsData.size() - 1);
+				refresh(row);
 				closeDetails();
 			}
 		}
@@ -251,14 +242,13 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				closeDetails();
 				transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
 				showAuthor(author);
-			} else if (isEmailAlreadyInDB()) {
+			} else if (isEmailAlreadyInDB())
 				emailErrorLabel.setText("E-mail already exists in database.");
-			}
 		} else if (isEditAction()) {
 			setEditAction(false);
 			author = authorsTableView.getSelectionModel().getSelectedItem();
 			email = author.getAuthorEmail();
-			if (isValidInput()) {
+			if (isValidInput())
 				if (!emailTextField.getText().equals(email) && isEmailAlreadyInDB())
 					emailErrorLabel.setText("Database already has enter with the same e-mail address.");
 				else {
@@ -266,7 +256,6 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					refresh(authorsTableView.getSelectionModel().getSelectedIndex());
 					showAuthor(author);
 				}
-			}
 		}
 	}
 
@@ -520,7 +509,16 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		institutionLabel.setText(author.getInstitution().name());
 		institutionNameLabel.setText(author.getInstitutionName());
 		countryLabel.setText(author.countryProperty().get());
-		noteTextField.setText(author.getNoteProperty().get());
+		noteTextAreaPreview.setText(author.getNoteProperty().get());
 	}
 
+	private void setUpFields() {
+		firstNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getFirstNameLength())));
+		lastNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getLastNameLength())));
+		emailTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getEmailLength())));
+		institutionNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getInstitutionNameLength())));
+		noteTextArea.setTextFormatter(new TextFormatter<String>(rejectChange(getNoteLength())));
+		noteTextArea.setWrapText(true);
+		noteTextAreaPreview.setWrapText(true);
+	}
 }
