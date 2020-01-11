@@ -467,7 +467,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		clearPopup();
 	}
 
-	void closeDetails() {
+	private void closeDetails() {
 		transitionPopupX(authorDetailsHbox, 0, 1200, Interpolator.EASE_IN, 500);
 	}
 

@@ -122,7 +122,6 @@ public class GroupCallController extends GUIUtils {
 	private String collectEmails() {
 		StringBuilder builder = new StringBuilder();
 		recievers.forEach(s -> builder.append(s).append(","));
-		System.out.println(builder.toString());
 		if (builder.length() > 0)
 			return builder.substring(0, builder.length() - 1);
 		return null;

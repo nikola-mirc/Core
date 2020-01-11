@@ -398,7 +398,6 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		emailErrorLabel.setText("");
 		passwordErrorLabel.setText("");
 		confirmPasswordErrorLabel.setText("");
-
 	}
 
 	private void refresh(int row) {

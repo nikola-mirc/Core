@@ -14,7 +14,6 @@ public class CustomCell<S, T> extends TableCell<S, T> {
 		else {
 			Tooltip tooltip = new Tooltip();
 			tooltip.setWrapText(true);
-			tooltip.prefWidthProperty().bind(widthProperty());
 			tooltip.textProperty().bind(itemProperty().asString());
 			setTooltip(tooltip);
 		}

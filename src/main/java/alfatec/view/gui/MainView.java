@@ -18,7 +18,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,10 +26,7 @@ import javafx.stage.StageStyle;
 public class MainView {
 
 	private static MainView instance;
-	private Stage mainViewDisplay;
 	private boolean logout;
-	private double x;
-	private double y;
 
 	private MainView() {
 	}
@@ -44,49 +40,18 @@ public class MainView {
 		return instance;
 	}
 
-	public void setMainDisplay(Stage display) {
-		mainViewDisplay = display;
-	}
-
-	public void pressed(MouseEvent event) {
-		x = event.getSceneX();
-		y = event.getSceneY();
-	}
-
-	public void dragged(MouseEvent event) {
-		Node node = (Node) event.getSource();
-		mainViewDisplay = (Stage) node.getScene().getWindow();
-		mainViewDisplay.setX(event.getScreenX() - x);
-		mainViewDisplay.setY(event.getScreenY() - y);
-	}
-
 	public void loadTabs(JFXTabPane tabPane, LoginData loginData) {
-		Tab scientificWorkTab = new Tab("Scientific work");
-		Tab conferenceTab = new Tab("Conference");
-		Tab confManagementTab = new Tab("Conf. management");
-		Tab usersTab = new Tab("Users");
-		Tab emailWebTab = new Tab("Email");
-		AnchorPane scientificWorkAnchor;
-		AnchorPane conferenceAnchor;
-		AnchorPane confManagementAnchor;
-		AnchorPane usersAnchor;
-		AnchorPane emailAnchor;
+		Tab scientificWorkTab = new Tab("Scientific work"), conferenceTab = new Tab("Conference"),
+				confManagementTab = new Tab("Conf. management"), usersTab = new Tab("Users"),
+				emailWebTab = new Tab("Email");
 		try {
-			usersAnchor = FXMLLoader.load(getClass().getClassLoader().getResource("resources/fxml/users_tab.fxml"));
-			usersTab.setContent(usersAnchor);
-			conferenceAnchor = FXMLLoader
-					.load(getClass().getClassLoader().getResource("resources/fxml/conference_tab.fxml"));
-			conferenceTab.setContent(conferenceAnchor);
+			setUp(usersTab, "resources/fxml/users_tab.fxml");
+			AnchorPane conferenceAnchor = setUp(conferenceTab, "resources/fxml/conference_tab.fxml");
+			setUp(confManagementTab, "resources/fxml/conference_management_tab.fxml");
+			setUp(scientificWorkTab, "resources/fxml/scientific_work_tab.fxml");
+			setUp(emailWebTab, "resources/fxml/emailTab.fxml");
 			ConferenceTabController conferenceController = (ConferenceTabController) getController(conferenceAnchor);
 			conferenceController.disablePartsForAdminAccess(loginData);
-			confManagementAnchor = FXMLLoader
-					.load(getClass().getClassLoader().getResource("resources/fxml/conference_management_tab.fxml"));
-			confManagementTab.setContent(confManagementAnchor);
-			scientificWorkAnchor = FXMLLoader
-					.load(getClass().getClassLoader().getResource("resources/fxml/scientific_work_tab.fxml"));
-			scientificWorkTab.setContent(scientificWorkAnchor);
-			emailAnchor = FXMLLoader.load(getClass().getClassLoader().getResource("resources/fxml/emailTab.fxml"));
-			emailWebTab.setContent(emailAnchor);
 			if (loginData.getRoleID() == 3)
 				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, confManagementTab, usersTab, emailWebTab);
 			else
@@ -97,7 +62,11 @@ public class MainView {
 		}
 	}
 
-	
+	private AnchorPane setUp(Tab tab, String resource) throws IOException {
+		AnchorPane pane = FXMLLoader.load(getClass().getClassLoader().getResource(resource));
+		tab.setContent(pane);
+		return pane;
+	}
 
 	public void closeMainView(ActionEvent event) {
 		try {
@@ -156,7 +125,7 @@ public class MainView {
 		return logout;
 	}
 
-	public static Object getController(Node node) {
+	public Object getController(Node node) {
 		Object controller = null;
 		do {
 			controller = node.getProperties().get("foo");
@@ -183,5 +152,4 @@ public class MainView {
 		}
 		return controller;
 	}
-
 }

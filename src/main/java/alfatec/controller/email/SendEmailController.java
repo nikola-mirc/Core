@@ -13,18 +13,15 @@ import com.jfoenix.controls.JFXTextField;
 
 import alfatec.dao.conference.ConferenceDAO;
 import alfatec.dao.utils.Logging;
+import alfatec.view.utils.GUIUtils;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import util.LoopiaEmail;
 
-public class SendEmailController {
+public class SendEmailController extends GUIUtils {
 
 	@FXML
 	private JFXTextField emailid, subject, recieverid, selected;
@@ -39,23 +36,6 @@ public class SendEmailController {
 	private List<File> selectedFiles;
 	private List<String> attachFiles;
 	private Stage display;
-	private double x = 0;
-	private double y = 0;
-	private Node node;
-
-	@FXML
-	void pressed(MouseEvent event) {
-		x = event.getSceneX();
-		y = event.getSceneY();
-	}
-
-	@FXML
-	void dragged(MouseEvent event) {
-		node = (Node) event.getSource();
-		display = (Stage) node.getScene().getWindow();
-		display.setX(event.getScreenX() - x);
-		display.setY(event.getScreenY() - y);
-	}
 
 	@FXML
 	private void initialize() {
@@ -69,8 +49,8 @@ public class SendEmailController {
 			password.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword());
 			setListeners(new JFXTextField[] { emailid, subject, recieverid }, password, message);
 		} catch (Exception e) {
-			alert(AlertType.ERROR, "No active conference",
-					"Send email to selected author via loopia server with your own credentials.");
+			alert("No active conference", "Send email to selected author via loopia server with your own credentials.",
+					AlertType.ERROR);
 		}
 	}
 
@@ -85,26 +65,19 @@ public class SendEmailController {
 		try {
 			loopia.sendEmail(emailid.getText(), password.getText(), recieverid.getText(), subject.getText(),
 					message.getText(), false, files);
-			alert(AlertType.INFORMATION, "Message sent", "Message was sent to " + recieverid.getText() + ".");
+			alert("Message sent", "Message was sent to " + recieverid.getText() + ".", AlertType.INFORMATION);
 			Logging.getInstance().change("email", "SEND EMAIL TO " + recieverid.getText());
 		} catch (MessagingException | IOException e) {
-			alert(AlertType.ERROR, "Empty or invalid fields",
+			alert("Empty or invalid fields",
 					"In order to send email, You must provide accurate credentials.\nMessage was not sent to "
-							+ recieverid.getText() + ".");
+							+ recieverid.getText() + ".",
+					AlertType.ERROR);
 		}
 		display.close();
 	}
 
 	public void setDisplayStage(Stage stage) {
 		this.display = stage;
-	}
-
-	private void alert(AlertType type, String headerText, String contentText) {
-		Alert alert = new Alert(type);
-		alert.initStyle(StageStyle.UNDECORATED);
-		alert.setHeaderText(headerText);
-		alert.setContentText(contentText);
-		alert.showAndWait();
 	}
 
 	private void setListeners(JFXTextField[] textArray, JFXPasswordField pass, JFXTextArea area) {

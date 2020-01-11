@@ -4,46 +4,30 @@ import com.jfoenix.controls.JFXButton;
 
 import alfatec.dao.user.LoginDataDAO;
 import alfatec.model.user.LoginData;
+import alfatec.view.utils.GUIUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import util.Password;
 
-public class ChangePasswordController {
+public class ChangePasswordController extends GUIUtils {
 
 	@FXML
 	private Button closeButton;
 
 	@FXML
-	private PasswordField oldPasswordField;
+	private PasswordField oldPasswordField, newPasswordField, repeatPasswordField;
 
 	@FXML
-	private Label oldPasswordErrorLabel;
-
-	@FXML
-	private PasswordField newPasswordField;
-
-	@FXML
-	private Label newPasswordErrorLabel;
-
-	@FXML
-	private PasswordField repeatPasswordField;
-
-	@FXML
-	private Label repeatPasswordErrorLabel;
+	private Label oldPasswordErrorLabel, newPasswordErrorLabel, repeatPasswordErrorLabel;
 
 	@FXML
 	private JFXButton saveButton;
 
 	private Stage display;
-	private double x = 0;
-	private double y = 0;
-	private Node node;
 	private LoginData loginData;
 
 	public void setLogin(LoginData loginData) {
@@ -57,29 +41,13 @@ public class ChangePasswordController {
 		setListener(repeatPasswordField, repeatPasswordErrorLabel);
 	}
 
-	@FXML
-	void pressed(MouseEvent event) {
-		x = event.getSceneX();
-		y = event.getSceneY();
-	}
-
-	@FXML
-	void dragged(MouseEvent event) {
-		node = (Node) event.getSource();
-		display = (Stage) node.getScene().getWindow();
-		display.setX(event.getScreenX() - x);
-		display.setY(event.getScreenY() - y);
-	}
-
 	public void setDisplayStage(Stage stage) {
 		this.display = stage;
 	}
 
 	@FXML
 	void close(ActionEvent event) {
-		Node node = (Node) event.getSource();
-		Stage stage = (Stage) node.getScene().getWindow();
-		stage.close();
+		display.close();
 	}
 
 	@FXML
@@ -103,10 +71,7 @@ public class ChangePasswordController {
 			if (field.getText() != null && field.getText().length() != 0) {
 				boolean newPass = field == repeatPasswordField && !matchNewPassword();
 				boolean oldPass = field == oldPasswordField && !matchOldPassword();
-				if (newPass || oldPass)
-					label.setText("Password doesn't match.");
-				else
-					label.setText("");
+				label.setText(newPass || oldPass ? "Password doesn't match." : "");
 			} else
 				label.setText("Please fill out this field.");
 		});
