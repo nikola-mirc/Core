@@ -46,7 +46,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -120,6 +119,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private Author author;
 	private LoginData loginData;
 	private boolean addAction, editAction, popupOpen;
+	private ConferenceCall call;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -128,11 +128,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		authorsData = AuthorDAO.getInstance().getAllAuthors();
 		populateAuthorTable();
 		handleSearch();
-		setUpRadioButton(firstRadio);
-		setUpRadioButton(secondRadio);
-		setUpRadioButton(thirdRadio);
-		setUpBoxes();
-		setUpFields();
+		setUpDetails();
 	}
 
 	public void setWelcomeMessage(LoginData ld) {
@@ -356,10 +352,6 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		Platform.exit();
 	}
 
-	private void setUpRadioButton(RadioButton button) {
-		button.setToggleGroup(group);
-	}
-
 	private boolean isAddAction() {
 		return addAction;
 	}
@@ -502,6 +494,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	}
 
 	private void showAuthor(Author author) {
+		call = ConferenceCallDAO.getInstance().getCurrentAnswer(author.getAuthorID());
 		email = author.getAuthorEmail();
 		authorDetailsHbox.setVisible(true);
 		firstNameLabel.setText(author.getAuthorFirstName() + " " + author.getAuthorLastName());
@@ -510,6 +503,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		institutionNameLabel.setText(author.getInstitutionName());
 		countryLabel.setText(author.countryProperty().get());
 		noteTextAreaPreview.setText(author.getNoteProperty().get());
+		showDetails();
 	}
 
 	private void setUpFields() {
@@ -520,5 +514,53 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		noteTextArea.setTextFormatter(new TextFormatter<String>(rejectChange(getNoteLength())));
 		noteTextArea.setWrapText(true);
 		noteTextAreaPreview.setWrapText(true);
+	}
+
+	private void setUpDetails() {
+		setUpBoxes();
+		setUpFields();
+		group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+			try {
+				if ((newValue == firstRadio && !call.isFirstCallAnswered()) || oldValue == firstRadio)
+					ConferenceCallDAO.getInstance().updateFirstCall(call.getAuthorID(), newValue == firstRadio);
+				if ((newValue == secondRadio && !call.isSecondCallAnswered()) || oldValue == secondRadio)
+					ConferenceCallDAO.getInstance().updateSecondCall(call.getAuthorID(), newValue == secondRadio);
+				if ((newValue == thirdRadio && !call.isThirdCallAnswered()) || oldValue == thirdRadio)
+					ConferenceCallDAO.getInstance().updateThirdCall(call.getAuthorID(), newValue == thirdRadio);
+			} catch (NullPointerException e) {
+				group.getToggles().forEach(button -> button.setSelected(false));
+			}
+		});
+		interestedCheckbox.setOnAction(event -> {
+			try {
+				ConferenceCallDAO.getInstance().updateInterested(call.getAuthorID(), interestedCheckbox.isSelected());
+			} catch (NullPointerException e) {
+				interestedCheckbox.setSelected(false);
+			}
+		});
+	}
+
+	private void showRadioButton(JFXRadioButton button) {
+		try {
+			button.setSelected(button == firstRadio ? call.isFirstCallAnswered()
+					: button == secondRadio ? call.isSecondCallAnswered() : call.isThirdCallAnswered());
+		} catch (NullPointerException e) {
+			button.setSelected(false);
+		}
+	}
+
+	private void showCheckBox() {
+		try {
+			interestedCheckbox.setSelected(call.isInterested());
+		} catch (NullPointerException e) {
+			interestedCheckbox.setSelected(false);
+		}
+	}
+
+	private void showDetails() {
+		showRadioButton(firstRadio);
+		showRadioButton(secondRadio);
+		showRadioButton(thirdRadio);
+		showCheckBox();
 	}
 }
