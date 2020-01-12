@@ -38,21 +38,18 @@ public class RegistrationFeeDAO {
 	private RegistrationFeeDAO() {
 		table = new TableUtility(new DatabaseTable("registration_fee", "registration_id",
 				new String[] { "registration_name", "currency", "for_conference", "registration_price" }));
-		getRegistration = new Getter<RegistrationFee>() {
-			@Override
-			public RegistrationFee get(ResultSet rs) {
-				RegistrationFee fee = new RegistrationFee();
-				try {
-					fee.setRegistrationFeeID(rs.getInt(table.getTable().getPrimaryKey()));
-					fee.setRegistrationName(rs.getString(table.getTable().getColumnName(1)));
-					fee.setCurrency(rs.getString(table.getTable().getColumnName(2)));
-					fee.setConferenceID(rs.getInt(table.getTable().getColumnName(3)));
-					fee.setRegistrationPrice(rs.getBigDecimal(table.getTable().getColumnName(4)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return fee;
+		getRegistration = (ResultSet rs) -> {
+			RegistrationFee fee = new RegistrationFee();
+			try {
+				fee.setRegistrationFeeID(rs.getInt(table.getTable().getPrimaryKey()));
+				fee.setRegistrationName(rs.getString(table.getTable().getColumnName(1)));
+				fee.setCurrency(rs.getString(table.getTable().getColumnName(2)));
+				fee.setConferenceID(rs.getInt(table.getTable().getColumnName(3)));
+				fee.setRegistrationPrice(rs.getBigDecimal(table.getTable().getColumnName(4)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return fee;
 		};
 	}
 

@@ -40,23 +40,20 @@ public class ConferenceCallDAO {
 	private ConferenceCallDAO() {
 		table = new TableUtility(new DatabaseTable("conference_call", "cc_id", new String[] { "conference_id",
 				"first_call_answer", "second_call_answer", "third_call_answer", "interested", "author_id" }));
-		getCall = new Getter<ConferenceCall>() {
-			@Override
-			public ConferenceCall get(ResultSet rs) {
-				ConferenceCall call = new ConferenceCall();
-				try {
-					call.setConferenceCallID(rs.getLong(table.getTable().getPrimaryKey()));
-					call.setConferenceID(rs.getInt(table.getTable().getColumnName(1)));
-					call.setFirstCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(2))));
-					call.setSecondCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(3))));
-					call.setThirdCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(4))));
-					call.setInterested(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(5))));
-					call.setAuthorID(rs.getLong(table.getTable().getColumnName(6)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return call;
+		getCall = (ResultSet rs) -> {
+			ConferenceCall call = new ConferenceCall();
+			try {
+				call.setConferenceCallID(rs.getLong(table.getTable().getPrimaryKey()));
+				call.setConferenceID(rs.getInt(table.getTable().getColumnName(1)));
+				call.setFirstCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(2))));
+				call.setSecondCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(3))));
+				call.setThirdCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(4))));
+				call.setInterested(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(5))));
+				call.setAuthorID(rs.getLong(table.getTable().getColumnName(6)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return call;
 		};
 	}
 

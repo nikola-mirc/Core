@@ -41,24 +41,21 @@ public class ReviewerDAO {
 		table = new TableUtility(
 				new DatabaseTable("reviewer", "reviewer_id", new String[] { "reviewer_name", "reviewer_last_name",
 						"reviewer_email", "reviewer_telephone", "reviewer_institution", "note", "country_id" }));
-		getReviewer = new Getter<Reviewer>() {
-			@Override
-			public Reviewer get(ResultSet rs) {
-				Reviewer reviewer = new Reviewer();
-				try {
-					reviewer.setReviewerID(rs.getInt(table.getTable().getPrimaryKey()));
-					reviewer.setReviewerFirstName(rs.getString(table.getTable().getColumnName(1)));
-					reviewer.setReviewerLastName(rs.getString(table.getTable().getColumnName(2)));
-					reviewer.setReviewerEmail(rs.getString(table.getTable().getColumnName(3)));
-					reviewer.setContactTelephone(rs.getString(table.getTable().getColumnName(4)));
-					reviewer.setInstitutionName(rs.getString(table.getTable().getColumnName(5)));
-					reviewer.setNote(rs.getString(table.getTable().getColumnName(6)));
-					reviewer.setCountryID(rs.getInt(table.getTable().getColumnName(7)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return reviewer;
+		getReviewer = (ResultSet rs) -> {
+			Reviewer reviewer = new Reviewer();
+			try {
+				reviewer.setReviewerID(rs.getInt(table.getTable().getPrimaryKey()));
+				reviewer.setReviewerFirstName(rs.getString(table.getTable().getColumnName(1)));
+				reviewer.setReviewerLastName(rs.getString(table.getTable().getColumnName(2)));
+				reviewer.setReviewerEmail(rs.getString(table.getTable().getColumnName(3)));
+				reviewer.setContactTelephone(rs.getString(table.getTable().getColumnName(4)));
+				reviewer.setInstitutionName(rs.getString(table.getTable().getColumnName(5)));
+				reviewer.setNote(rs.getString(table.getTable().getColumnName(6)));
+				reviewer.setCountryID(rs.getInt(table.getTable().getColumnName(7)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return reviewer;
 		};
 	}
 

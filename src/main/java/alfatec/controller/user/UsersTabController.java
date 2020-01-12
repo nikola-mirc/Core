@@ -3,6 +3,7 @@ package alfatec.controller.user;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -10,6 +11,8 @@ import java.util.stream.Stream;
 
 import com.jfoenix.controls.JFXButton;
 
+import alfatec.controller.utils.ClearPopUp;
+import alfatec.controller.utils.Utils;
 import alfatec.dao.user.LoginDataDAO;
 import alfatec.dao.user.UserAuditDAO;
 import alfatec.dao.user.UserDAO;
@@ -42,7 +45,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import util.DateUtil;
@@ -87,69 +89,45 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	private ObservableList<UserLoginConnection> users;
 	private ObservableList<UserAudit> audit;
 	private String role, email, password;
-	private boolean editAction;
-	private boolean addAction;
+	private ClearPopUp popup;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		usersTableView.setPlaceholder(new Label("Database table \"users\" is empty"));
-		Utility.setUpStringCell(usersTableView);
+		popup = () -> {
+			clearFields(Arrays.asList(firstNameTextField, lastNameTextField, emailTextField, contactTextField),
+					Arrays.asList(firstNameErrorLabel, lastNameErrorLabel, emailErrorLabel));
+			clearFields(Arrays.asList(passwordField, confirmPasswordField),
+					Arrays.asList(passwordErrorLabel, confirmPasswordErrorLabel));
+			roleComboBox.setValue(RoleEnum.USER);
+		};
 		users = UserLoginDAO.getInstance().getAllData();
 		populateUsersTable();
 		handleSearch();
 		setUpFields();
-		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
-		mainVbox.setVisible(false);
-		popupVbox.setVisible(false);
-	}
-
-	private void populateUsersTable() {
-		userColumn.setCellValueFactory(cellData -> cellData.getValue().getUser().getUserFirstNameProperty().concat(" ")
-				.concat(cellData.getValue().getUser().getUserLastNameProperty()));
-		usersTableView.setItems(users);
-		usersTableView.setOnMousePressed(event -> {
-			if (event.getButton() == MouseButton.PRIMARY)
-				if (usersTableView.getSelectionModel().getSelectedItem() != null) {
-					userData = usersTableView.getSelectionModel().getSelectedItem();
-					email = userData.getLoginData().getUserEmail();
-					password = userData.getLoginData().getPasswordHash();
-					role = userData.getLoginData().getRoleName();
-					transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
-					mainVbox.setVisible(true);
-					usernameLabel.setText(
-							userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
-					roleLabel.setText(role);
-					emailLabel.setText(email);
-					contactLabel.setText(userData.getUser().getContactTelephone());
-					dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
-					audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
-					createChart();
-				}
-		});
 	}
 
 	@FXML
-	void addUser(ActionEvent event) {
-		closePopup();
-		isAddAction(true);
-		transitionPopupX(popupVbox, 940, 0, Interpolator.EASE_IN, 500);
-		popupVbox.setVisible(true);
+	private void addUser(ActionEvent event) {
+		if (isPopupOpen())
+			closePopup(popupVbox, 340, popup);
+		setAddAction(true);
+		openPopup(popupVbox, 940);
 	}
 
 	@FXML
-	void editUser(ActionEvent event) {
-		closePopup();
-		isEditAction(true);
+	private void editUser(ActionEvent event) {
+		if (isPopupOpen())
+			closePopup(popupVbox, 340, popup);
+		setEditAction(true);
 		userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
-			transitionPopupX(popupVbox, 340, 0, Interpolator.EASE_IN, 500);
 			setUser(userData);
-			popupVbox.setVisible(true);
+			openPopup(popupVbox, 340);
 		}
 	}
 
 	@FXML
-	void deleteUser(ActionEvent event) {
+	private void deleteUser(ActionEvent event) {
 		userData = usersTableView.getSelectionModel().getSelectedItem();
 		if (userData != null) {
 			ButtonType button = confirmationAlert(
@@ -161,12 +139,139 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				UserDAO.getInstance().deleteUser(userData.getUser());
 				UserDAO.getInstance().getAllUsers().remove(userData.getUser());
 				users.remove(userData);
-				int row = usersTableView.getSelectionModel().getSelectedIndex() - 1;
 				usersTableView.getItems().remove(userData);
-				refresh(row);
-				closeDetails();
+				refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex() - 1, popupVbox, popup);
+				closeDetails(mainVbox);
 			}
 		}
+	}
+
+	@FXML
+	private void saveUser(ActionEvent event) {
+		if (isAddAction()) {
+			setAddAction(false);
+			if (isValidInput() && !isEmailAlreadyInDB()) {
+				users.add(getNewUser());
+				refresh(usersTableView, users.size() - 1, popupVbox, popup);
+				closeDetails(mainVbox);
+				transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+				showUser(userData);
+			} else if (isEmailAlreadyInDB())
+				emailErrorLabel.setText("E-mail already exists in database.");
+		} else if (isEditAction()) {
+			setEditAction(false);
+			userData = usersTableView.getSelectionModel().getSelectedItem();
+			if (isValidInput() && isEmailAlreadyInDB())
+				if (emailTextField.getText().equals(email)) {
+					if (passwordField.getText().equals(password))
+						handleEditUserWithoutPWchange();
+					else
+						handleEditUser();
+					refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex(), popupVbox, popup);
+					showUser(userData);
+				} else
+					emailErrorLabel.setText("Already exists.");
+			else if (!isEmailAlreadyInDB()) {
+				if (passwordField.getText().equals(password))
+					handleEditUserWithoutPWchange();
+				else
+					handleEditUser();
+				refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex(), popupVbox, popup);
+				showUser(userData);
+			}
+		}
+	}
+
+	@FXML
+	private void clearPopup(ActionEvent event) {
+		popup.clear();
+	}
+
+	@FXML
+	private void closePopup(ActionEvent event) {
+		closePopup(popupVbox, 340, popup);
+	}
+
+	private void populateUsersTable() {
+		usersTableView.setPlaceholder(new Label("Database table \"users\" is empty"));
+		Utility.setUpStringCell(usersTableView);
+		userColumn.setCellValueFactory(cellData -> cellData.getValue().getUser().getUserFirstNameProperty().concat(" ")
+				.concat(cellData.getValue().getUser().getUserLastNameProperty()));
+		usersTableView.setItems(users);
+		usersTableView.setOnMousePressed(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+				if (usersTableView.getSelectionModel().getSelectedItem() != null) {
+					if (isPopupOpen())
+						closePopup(popupVbox, 340, popup);
+					transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+					showUser(usersTableView.getSelectionModel().getSelectedItem());
+				}
+		});
+	}
+
+	private void handleSearch() {
+		FilteredList<UserLoginConnection> filteredData = new FilteredList<>(users, p -> true);
+		searchUserTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData.setPredicate(UserLoginConnection -> {
+				if (newValue == null || newValue.isEmpty())
+					return true;
+				String lowerCaseFilter = newValue.toLowerCase();
+				if (Utils
+						.cyrillicToLatin(String.valueOf(UserLoginConnection.getUser().getUserFirstName()).toLowerCase())
+						.startsWith(lowerCaseFilter))
+					return true;
+				else if (Utils
+						.cyrillicToLatin(String.valueOf(UserLoginConnection.getUser().getUserLastName()).toLowerCase())
+						.startsWith(lowerCaseFilter))
+					return true;
+				else if (String.valueOf(UserLoginConnection.getLoginData().getUserEmail()).toLowerCase()
+						.startsWith(lowerCaseFilter))
+					return true;
+				return false;
+			});
+		});
+		SortedList<UserLoginConnection> sortedData = new SortedList<>(filteredData);
+		sortedData.comparatorProperty().bind(usersTableView.comparatorProperty());
+		usersTableView.setItems(sortedData);
+	}
+	
+	private void setUser(UserLoginConnection userData) {
+		this.userData = userData;
+		firstNameTextField.setText(userData.getUser().getUserFirstName());
+		lastNameTextField.setText(userData.getUser().getUserLastName());
+		emailTextField.setText(userData.getLoginData().getUserEmail());
+		contactTextField.setText(userData.getUser().getContactTelephone());
+		passwordField.setText(userData.getLoginData().getPasswordHash());
+		confirmPasswordField.setText(userData.getLoginData().getPasswordHash());
+		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
+		roleComboBox.getSelectionModel().select(userData.getLoginData().getRoleID() - 1);
+	}
+	
+	private void showUser(UserLoginConnection userData) {
+		email = userData.getLoginData().getUserEmail();
+		password = userData.getLoginData().getPasswordHash();
+		role = userData.getLoginData().getRoleName();
+		transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+		mainVbox.setVisible(true);
+		usernameLabel.setText(userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
+		roleLabel.setText(role);
+		emailLabel.setText(email);
+		contactLabel.setText(userData.getUser().getContactTelephone());
+		dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
+		audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
+		createChart();
+	}
+	
+	private UserLoginConnection getNewUser() {
+		if (isValidInput()) {
+			User user = UserDAO.getInstance().createUser(firstNameTextField.getText(), lastNameTextField.getText(),
+					contactTextField.getText());
+			LoginData ld = LoginDataDAO.getInstance().createLoginData(emailTextField.getText(), passwordField.getText(),
+					user.getUserID(), roleComboBox.getSelectionModel().getSelectedItem().getRoleID());
+			userData = new UserLoginConnection(user, ld);
+			Logging.getInstance().change("Create", "Add user: " + userData.toString());
+		}
+		return userData;
 	}
 
 	private void handleEditUser() {
@@ -183,138 +288,19 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		usersTableView.refresh();
 	}
 
-	private void handleSearch() {
-		FilteredList<UserLoginConnection> filteredData = new FilteredList<>(users, p -> true);
-		searchUserTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredData.setPredicate(UserLoginConnection -> {
-				if (newValue == null || newValue.isEmpty())
-					return true;
-				String lowerCaseFilter = newValue.toLowerCase();
-				if (cyrillicToLatin(String.valueOf(UserLoginConnection.getUser().getUserFirstName()).toLowerCase())
-						.startsWith(lowerCaseFilter))
-					return true;
-				else if (cyrillicToLatin(String.valueOf(UserLoginConnection.getUser().getUserLastName()).toLowerCase())
-						.startsWith(lowerCaseFilter))
-					return true;
-				else if (String.valueOf(UserLoginConnection.getLoginData().getUserEmail()).toLowerCase()
-						.startsWith(lowerCaseFilter))
-					return true;
-				return false;
-			});
-		});
-		SortedList<UserLoginConnection> sortedData = new SortedList<>(filteredData);
-		sortedData.comparatorProperty().bind(usersTableView.comparatorProperty());
-		usersTableView.setItems(sortedData);
-	}
-
-	@FXML
-	void saveUser(ActionEvent event) {
-		if (isAddAction()) {
-			if (isValidInput() && !isEmailAlreadyInDB()) {
-				userData = getNewUser();
-				users.add(userData);
-				refresh(users.size() - 1);
-			}
-		} else if (isEditAction())
-			if (isValidInput())
-				if (isEmailAlreadyInDB())
-					if (emailTextField.getText().equals(email)) {
-						if (passwordField.getText().equals(password))
-							handleEditUserWithoutPWchange();
-						else
-							handleEditUser();
-						refresh(usersTableView.getSelectionModel().getSelectedIndex());
-					} else
-						emailErrorLabel.setText("Already exists.");
-				else {
-					if (passwordField.getText().equals(password))
-						handleEditUserWithoutPWchange();
-					else
-						handleEditUser();
-					refresh(usersTableView.getSelectionModel().getSelectedIndex());
-				}
-	}
-
-	private boolean isAddAction() {
-		return addAction;
-	}
-
-	private void isAddAction(boolean action) {
-		this.addAction = action;
-	}
-
-	private boolean isEditAction() {
-		return editAction;
-	}
-
-	private void isEditAction(boolean action) {
-		this.editAction = action;
-	}
-
-	public void setUser(UserLoginConnection userData) {
-		this.userData = userData;
-		firstNameTextField.setText(userData.getUser().getUserFirstName());
-		lastNameTextField.setText(userData.getUser().getUserLastName());
-		emailTextField.setText(userData.getLoginData().getUserEmail());
-		contactTextField.setText(userData.getUser().getContactTelephone());
-		passwordField.setText(userData.getLoginData().getPasswordHash());
-		confirmPasswordField.setText(userData.getLoginData().getPasswordHash());
-		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
-		roleComboBox.getSelectionModel().select(userData.getLoginData().getRoleID() - 1);
-	}
-
-	public UserLoginConnection getNewUser() {
-		if (isValidInput()) {
-			User user = UserDAO.getInstance().createUser(firstNameTextField.getText(), lastNameTextField.getText(),
-					contactTextField.getText());
-			LoginData ld = LoginDataDAO.getInstance().createLoginData(emailTextField.getText(), passwordField.getText(),
-					user.getUserID(), roleComboBox.getSelectionModel().getSelectedItem().getRoleID());
-			userData = new UserLoginConnection(user, ld);
-			Logging.getInstance().change("Create", "Add user: " + userData.toString());
-		}
-		return userData;
-	}
-
 	private boolean isValidInput() {
-		firstNameErrorLabel.setText(isValidFirstName() ? "" : "Empty first name field.");
-		lastNameErrorLabel.setText(isValidLastName() ? "" : "Empty last name field.");
+		firstNameErrorLabel.setText(isValidName(firstNameTextField) ? "" : "Empty first name field.");
+		lastNameErrorLabel.setText(isValidName(lastNameTextField) ? "" : "Empty last name field.");
 		roleErrorLabel.setText(isValidRole() ? "" : "Please select your role");
-		emailErrorLabel.setText(isValidEmail() ? "" : "Empty or invalid email field.");
-		passwordErrorLabel.setText(isValidPassword() && !editAction ? "" : "Empty or invalid password field.");
+		emailErrorLabel.setText(isValidEmail(emailTextField) ? "" : "Empty or invalid email field.");
+		passwordErrorLabel
+				.setText(isValidPassword(passwordField) && !isEditAction() ? "" : "Empty or invalid password field.");
 		confirmPasswordErrorLabel
-				.setText(isEditAction() && isValidConfirmPassword() ? "" : "Empty or invalid confirm password field.");
-		return isValidFirstName() && isValidLastName() && isValidEmail() && isValidRole() && isValidPassword()
-				&& isValidConfirmPassword();
-	}
-
-	public static String cyrillicToLatin(String text) {
-		char[] abcCyr = { 'а', 'б', 'в', 'г', 'д', 'ђ', 'е', 'ж', 'з', 'и', 'ј', 'к', 'л', 'љ', 'м', 'н', 'њ', 'о', 'п',
-				'р', 'с', 'т', 'ћ', 'у', 'ф', 'х', 'ц', 'ч', 'џ', 'ш' };
-		String[] abcLat = { "a", "b", "v", "g", "d", "đ", "e", "ž", "z", "i", "j", "k", "l", "lj", "m", "n", "nj", "o",
-				"p", "r", "s", "t", "ć", "u", "f", "h", "c", "č", "dž", "š" };
-		StringBuilder builder = new StringBuilder();
-		outer: for (int i = 0; i < text.length(); i++) {
-			for (int x = 0; x < abcCyr.length; x++)
-				if (text.charAt(i) == abcCyr[x]) {
-					builder.append(abcLat[x]);
-					continue outer;
-				}
-			builder.append(text.charAt(i));
-		}
-		return builder.toString();
-	}
-
-	private boolean isValidFirstName() {
-		return firstNameTextField.getText() != null && firstNameTextField.getText().length() != 0;
-	}
-
-	private boolean isValidLastName() {
-		return lastNameTextField.getText() != null && lastNameTextField.getText().length() != 0;
-	}
-
-	private boolean isValidEmail() {
-		return emailTextField.getText() != null && emailTextField.getText().length() != 0
-				&& emailTextField.getText().contains(".") && emailTextField.getText().contains("@");
+				.setText(isEditAction() && isValidConfirmPassword(passwordField, confirmPasswordField) ? ""
+						: "Empty or invalid confirm password field.");
+		return isValidName(firstNameTextField) && isValidName(lastNameTextField) && isValidEmail(emailTextField)
+				&& isValidRole() && isValidPassword(passwordField)
+				&& isValidConfirmPassword(passwordField, confirmPasswordField);
 	}
 
 	private boolean isEmailAlreadyInDB() {
@@ -325,88 +311,36 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		return roleComboBox.getSelectionModel().getSelectedItem() != null;
 	}
 
-	private boolean isValidPassword() {
-		return passwordField.getText() != null && passwordField.getText().length() != 0;
-	}
-
-	private boolean isValidConfirmPassword() {
-		return confirmPasswordField.getText() != null && confirmPasswordField.getText().equals(passwordField.getText());
-	}
-
-	public void setFirstName() {
+	private void setFirstName() {
 		if (!firstNameTextField.getText().equalsIgnoreCase(userData.getUser().getUserFirstName()))
 			UserDAO.getInstance().updateUserFirstName(userData.getUser(), firstNameTextField.getText());
 	}
 
-	public void setLastName() {
+	private void setLastName() {
 		if (!lastNameTextField.getText().equalsIgnoreCase(userData.getUser().getUserLastName()))
 			UserDAO.getInstance().updateUserLastName(userData.getUser(), lastNameTextField.getText());
 	}
 
-	public void setEmail() {
+	private void setEmail() {
 		if (!emailTextField.getText().equalsIgnoreCase(userData.getLoginData().getUserEmail()))
 			LoginDataDAO.getInstance().updateEmail(userData.getLoginData(), emailTextField.getText());
 	}
 
-	public void setContact() {
+	private void setContact() {
 		if (!contactTextField.getText().equalsIgnoreCase(userData.getUser().getContactTelephone()))
 			UserDAO.getInstance().updateUserTelephone(userData.getUser(), contactTextField.getText());
 	}
 
-	public void setRoleType() {
+	private void setRoleType() {
 		if (!roleComboBox.getSelectionModel().getSelectedItem().name()
 				.equalsIgnoreCase(userData.getLoginData().getRoleName()))
 			LoginDataDAO.getInstance().updateRole(userData.getLoginData(),
 					roleComboBox.getSelectionModel().getSelectedItem().name().toUpperCase());
 	}
 
-	public void setPassword() {
+	private void setPassword() {
 		LoginDataDAO.getInstance().updatePassword(userData.getLoginData(), passwordField.getText());
 		password = userData.getLoginData().getPasswordHash();
-	}
-
-	@FXML
-	private void clearPopup(ActionEvent event) {
-		clearPopup();
-	}
-
-	@FXML
-	private void closePopup(ActionEvent event) {
-		closePopup();
-	}
-
-	private void closePopup() {
-		transitionPopupX(popupVbox, 0, 340, Interpolator.EASE_IN, 500);
-		clearPopup();
-	}
-
-	private void closeDetails() {
-		transitionPopupX(mainVbox, 0, 1200, Interpolator.EASE_IN, 500);
-	}
-
-	private void clearPopup() {
-		firstNameTextField.clear();
-		lastNameTextField.clear();
-		emailTextField.clear();
-		contactTextField.clear();
-		roleComboBox.setValue(RoleEnum.USER);
-		passwordField.clear();
-		confirmPasswordField.clear();
-
-		firstNameErrorLabel.setText("");
-		lastNameErrorLabel.setText("");
-		emailErrorLabel.setText("");
-		passwordErrorLabel.setText("");
-		confirmPasswordErrorLabel.setText("");
-	}
-
-	private void refresh(int row) {
-		usersTableView.refresh();
-		usersTableView.requestFocus();
-		usersTableView.getSelectionModel().select(row);
-		usersTableView.scrollTo(row);
-		closePopup();
-		popupVbox.setVisible(false);
 	}
 
 	private void createChart() {
@@ -442,11 +376,11 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	}
 
 	private void setUpFields() {
-		firstNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getFirstNameLength())));
-		lastNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getLastNameLength())));
-		emailTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getEmailLength())));
-		contactTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getContactTelephoneLength())));
-		passwordField.setTextFormatter(new TextFormatter<String>(rejectChange(getPasswordLength())));
+		setUpFields(new TextField[] { firstNameTextField, lastNameTextField, emailTextField, contactTextField },
+				new int[] { getFirstNameLength(), getLastNameLength(), getEmailLength(), getContactTelephoneLength() });
+		setUpFields(new PasswordField[] { passwordField }, new int[] { getPasswordLength() });
+		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
+		mainVbox.setVisible(false);
+		popupVbox.setVisible(false);
 	}
-
 }

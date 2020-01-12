@@ -23,6 +23,7 @@ import util.DateUtil;
 public class UserAuditDAO {
 
 	private static UserAuditDAO instance;
+
 	public static UserAuditDAO getInstance() {
 		if (instance == null)
 			synchronized (UserAuditDAO.class) {
@@ -31,6 +32,7 @@ public class UserAuditDAO {
 			}
 		return instance;
 	}
+
 	private final TableUtility table;
 
 	private Getter<UserAudit> getAudit;
@@ -38,21 +40,18 @@ public class UserAuditDAO {
 	private UserAuditDAO() {
 		table = new TableUtility(new DatabaseTable("user_audit", "audit_id",
 				new String[] { "event_type", "description", "time", "login_id" }));
-		getAudit = new Getter<UserAudit>() {
-			@Override
-			public UserAudit get(ResultSet rs) {
-				UserAudit user = new UserAudit();
-				try {
-					user.setUserAuditID(rs.getInt(table.getTable().getPrimaryKey()));
-					user.setEventType(rs.getString(table.getTable().getColumnName(1)));
-					user.setDescription(rs.getString(table.getTable().getColumnName(2)));
-					user.setTimestamp(rs.getTimestamp(table.getTable().getColumnName(3)).toLocalDateTime());
-					user.setLoginID(rs.getInt(table.getTable().getColumnName(4)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return user;
+		getAudit = (ResultSet rs) -> {
+			UserAudit user = new UserAudit();
+			try {
+				user.setUserAuditID(rs.getInt(table.getTable().getPrimaryKey()));
+				user.setEventType(rs.getString(table.getTable().getColumnName(1)));
+				user.setDescription(rs.getString(table.getTable().getColumnName(2)));
+				user.setTimestamp(rs.getTimestamp(table.getTable().getColumnName(3)).toLocalDateTime());
+				user.setLoginID(rs.getInt(table.getTable().getColumnName(4)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return user;
 		};
 	}
 

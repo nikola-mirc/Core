@@ -40,20 +40,17 @@ public class CollectionDAO {
 	private CollectionDAO() {
 		table = new TableUtility(new DatabaseTable("collection", "collection_id",
 				new String[] { "from_conference", "for_special_issue", "research_id" }));
-		getCollection = new Getter<Collection>() {
-			@Override
-			public Collection get(ResultSet rs) {
-				Collection collection = new Collection();
-				try {
-					collection.setCollectionID(rs.getLong(table.getTable().getPrimaryKey()));
-					collection.setConferenceID(rs.getInt(table.getTable().getColumnName(1)));
-					collection.setForSpecialIssue(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(2))));
-					collection.setResearchID(rs.getLong(table.getTable().getColumnName(3)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return collection;
+		getCollection = (ResultSet rs) -> {
+			Collection collection = new Collection();
+			try {
+				collection.setCollectionID(rs.getLong(table.getTable().getPrimaryKey()));
+				collection.setConferenceID(rs.getInt(table.getTable().getColumnName(1)));
+				collection.setForSpecialIssue(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(2))));
+				collection.setResearchID(rs.getLong(table.getTable().getColumnName(3)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return collection;
 		};
 	}
 

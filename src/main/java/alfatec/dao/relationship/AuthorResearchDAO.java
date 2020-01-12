@@ -26,19 +26,16 @@ public class AuthorResearchDAO {
 	private AuthorResearchDAO() {
 		table = new TableUtility(new DatabaseTable("author_research", "author_research_id",
 				new String[] { "research_id", "author_id" }));
-		getAR = new Getter<AuthorResearch>() {
-			@Override
-			public AuthorResearch get(ResultSet rs) {
-				AuthorResearch ar = new AuthorResearch();
-				try {
-					ar.setAuthorResearchID(rs.getLong(table.getTable().getPrimaryKey()));
-					ar.setResearchID(rs.getLong(table.getTable().getColumnName(1)));
-					ar.setAuthorID(rs.getLong(table.getTable().getColumnName(2)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return ar;
+		getAR = (ResultSet rs) -> {
+			AuthorResearch ar = new AuthorResearch();
+			try {
+				ar.setAuthorResearchID(rs.getLong(table.getTable().getPrimaryKey()));
+				ar.setResearchID(rs.getLong(table.getTable().getColumnName(1)));
+				ar.setAuthorID(rs.getLong(table.getTable().getColumnName(2)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return ar;
 		};
 	}
 

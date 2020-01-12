@@ -41,21 +41,18 @@ public class UserDAO {
 	private UserDAO() {
 		table = new TableUtility(new DatabaseTable("user", "user_id",
 				new String[] { "user_first_name", "user_last_name", "contact_telephone", "created_time" }));
-		getUser = new Getter<User>() {
-			@Override
-			public User get(ResultSet rs) {
-				User user = new User();
-				try {
-					user.setUserID(rs.getInt(table.getTable().getPrimaryKey()));
-					user.setUserFirstName(rs.getString(table.getTable().getColumnName(1)));
-					user.setUserLastName(rs.getString(table.getTable().getColumnName(2)));
-					user.setContactTelephone(rs.getString(table.getTable().getColumnName(3)));
-					user.setCreatedTime(rs.getTimestamp(table.getTable().getColumnName(4)).toLocalDateTime());
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return user;
+		getUser = (ResultSet rs) -> {
+			User user = new User();
+			try {
+				user.setUserID(rs.getInt(table.getTable().getPrimaryKey()));
+				user.setUserFirstName(rs.getString(table.getTable().getColumnName(1)));
+				user.setUserLastName(rs.getString(table.getTable().getColumnName(2)));
+				user.setContactTelephone(rs.getString(table.getTable().getColumnName(3)));
+				user.setCreatedTime(rs.getTimestamp(table.getTable().getColumnName(4)).toLocalDateTime());
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return user;
 		};
 	}
 

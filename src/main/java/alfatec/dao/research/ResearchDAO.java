@@ -46,28 +46,25 @@ public class ResearchDAO {
 	private ResearchDAO() {
 		table = new TableUtility(
 				new DatabaseTable("research", "research_id", new String[] { "research_title", "paper", "note" }));
-		getResearch = new Getter<Research>() {
-			@Override
-			public Research get(ResultSet rs) {
-				Research research = new Research();
-				try {
-					research.setResearchID(rs.getLong(table.getTable().getPrimaryKey()));
-					research.setResearchTitle(rs.getString(table.getTable().getColumnName(1)));
-					Path path = Paths.get("src/resources/file/" + research.getResearchTitle());
-					if (Files.notExists(path)) {
-						File file = new File("src/resources/file/" + research.getResearchTitle());
-						InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
-						if (blob != null)
-							FileUtils.copyInputStreamToFile(blob, file);
-						research.setPaperFile(file);
-						file.deleteOnExit();
-					}
-					research.setNote(rs.getString(table.getTable().getColumnName(3)));
-				} catch (SQLException | IOException e) {
-					e.printStackTrace();
+		getResearch = (ResultSet rs) -> {
+			Research research = new Research();
+			try {
+				research.setResearchID(rs.getLong(table.getTable().getPrimaryKey()));
+				research.setResearchTitle(rs.getString(table.getTable().getColumnName(1)));
+				Path path = Paths.get("src/resources/file/" + research.getResearchTitle());
+				if (Files.notExists(path)) {
+					File file = new File("src/resources/file/" + research.getResearchTitle());
+					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
+					if (blob != null)
+						FileUtils.copyInputStreamToFile(blob, file);
+					research.setPaperFile(file);
+					file.deleteOnExit();
 				}
-				return research;
+				research.setNote(rs.getString(table.getTable().getColumnName(3)));
+			} catch (SQLException | IOException e) {
+				e.printStackTrace();
 			}
+			return research;
 		};
 	}
 

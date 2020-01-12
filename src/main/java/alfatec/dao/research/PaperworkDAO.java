@@ -43,25 +43,22 @@ public class PaperworkDAO {
 		table = new TableUtility(new DatabaseTable("paperwork", "paperwork_id",
 				new String[] { "presentation", "presentation_date", "submittet_work", "sent_to_review", "conference_id",
 						"registration_fee", "for_collection", "research_id" }));
-		getPaperwork = new Getter<Paperwork>() {
-			@Override
-			public Paperwork get(ResultSet rs) {
-				Paperwork work = new Paperwork();
-				try {
-					work.setPaperworkID(rs.getLong(table.getTable().getPrimaryKey()));
-					work.setPresentation(rs.getString(table.getTable().getColumnName(1)));
-					work.setPresentationTimestamp(rs.getObject(table.getTable().getColumnName(2), LocalDateTime.class));
-					work.setConferenceID(rs.getInt(table.getTable().getColumnName(3)));
-					work.setSubmittetWork(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(4))));
-					work.setSentToReview(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(5))));
-					work.setRegistrationFeeID(rs.getInt(table.getTable().getColumnName(6)));
-					work.setForCollection(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(7))));
-					work.setResearchID(rs.getLong(table.getTable().getColumnName(8)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return work;
+		getPaperwork = (ResultSet rs) -> {
+			Paperwork work = new Paperwork();
+			try {
+				work.setPaperworkID(rs.getLong(table.getTable().getPrimaryKey()));
+				work.setPresentation(rs.getString(table.getTable().getColumnName(1)));
+				work.setPresentationTimestamp(rs.getObject(table.getTable().getColumnName(2), LocalDateTime.class));
+				work.setConferenceID(rs.getInt(table.getTable().getColumnName(3)));
+				work.setSubmittetWork(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(4))));
+				work.setSentToReview(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(5))));
+				work.setRegistrationFeeID(rs.getInt(table.getTable().getColumnName(6)));
+				work.setForCollection(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(7))));
+				work.setResearchID(rs.getLong(table.getTable().getColumnName(8)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return work;
 		};
 	}
 

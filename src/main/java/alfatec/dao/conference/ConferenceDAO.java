@@ -47,33 +47,30 @@ public class ConferenceDAO {
 	private ConferenceDAO() {
 		table = new TableUtility(new DatabaseTable("conference", "conference_id", new String[] { "conference_title",
 				"conference_email", "email_password", "conference_bcc", "note", "report", "field_id", "realized" }));
-		getConference = new Getter<Conference>() {
-			@Override
-			public Conference get(ResultSet rs) {
-				Conference conference = new Conference();
-				try {
-					conference.setConferenceID(rs.getInt(table.getTable().getPrimaryKey()));
-					conference.setConferenceTitle(rs.getString(table.getTable().getColumnName(1)));
-					conference.setConferenceEmail(rs.getString(table.getTable().getColumnName(2)));
-					conference.readPasswordFromDB(rs.getString(table.getTable().getColumnName(3)));
-					conference.setConferenceBcc(rs.getString(table.getTable().getColumnName(4)));
-					conference.setNote(rs.getString(table.getTable().getColumnName(5)));
-					Path path = Paths.get("src/resources/file/" + conference.getConferenceTitle());
-					if (Files.notExists(path)) {
-						File file = new File("src/resources/file/" + conference.getConferenceTitle());
-						InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(6));
-						if (blob != null)
-							FileUtils.copyInputStreamToFile(blob, file);
-						conference.setReport(file);
-						file.deleteOnExit();
-					}
-					conference.setFieldID(rs.getInt(table.getTable().getColumnName(7)));
-					conference.setRealized(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(8))));
-				} catch (SQLException | IOException e) {
-					e.printStackTrace();
+		getConference = (ResultSet rs) -> {
+			Conference conference = new Conference();
+			try {
+				conference.setConferenceID(rs.getInt(table.getTable().getPrimaryKey()));
+				conference.setConferenceTitle(rs.getString(table.getTable().getColumnName(1)));
+				conference.setConferenceEmail(rs.getString(table.getTable().getColumnName(2)));
+				conference.readPasswordFromDB(rs.getString(table.getTable().getColumnName(3)));
+				conference.setConferenceBcc(rs.getString(table.getTable().getColumnName(4)));
+				conference.setNote(rs.getString(table.getTable().getColumnName(5)));
+				Path path = Paths.get("src/resources/file/" + conference.getConferenceTitle());
+				if (Files.notExists(path)) {
+					File file = new File("src/resources/file/" + conference.getConferenceTitle());
+					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(6));
+					if (blob != null)
+						FileUtils.copyInputStreamToFile(blob, file);
+					conference.setReport(file);
+					file.deleteOnExit();
 				}
-				return conference;
+				conference.setFieldID(rs.getInt(table.getTable().getColumnName(7)));
+				conference.setRealized(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(8))));
+			} catch (SQLException | IOException e) {
+				e.printStackTrace();
 			}
+			return conference;
 		};
 	}
 

@@ -41,18 +41,15 @@ public class SpecialIssueDAO {
 	private SpecialIssueDAO() {
 		table = new TableUtility(
 				new DatabaseTable("special_issue", "special_issue_id", new String[] { "collection_id" }));
-		getSpecial = new Getter<SpecialIssue>() {
-			@Override
-			public SpecialIssue get(ResultSet rs) {
-				SpecialIssue si = new SpecialIssue();
-				try {
-					si.setSpecialIssueID(rs.getInt(table.getTable().getPrimaryKey()));
-					si.setCollectionID(rs.getInt(table.getTable().getColumnName(1)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return si;
+		getSpecial = (ResultSet rs) -> {
+			SpecialIssue si = new SpecialIssue();
+			try {
+				si.setSpecialIssueID(rs.getInt(table.getTable().getPrimaryKey()));
+				si.setCollectionID(rs.getInt(table.getTable().getColumnName(1)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return si;
 		};
 	}
 

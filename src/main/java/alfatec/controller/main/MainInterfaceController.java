@@ -2,6 +2,7 @@ package alfatec.controller.main;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -17,6 +18,7 @@ import com.jfoenix.controls.JFXTabPane;
 import alfatec.controller.email.GroupCallController;
 import alfatec.controller.email.SendEmailController;
 import alfatec.controller.user.ChangePasswordController;
+import alfatec.controller.utils.ClearPopUp;
 import alfatec.dao.conference.ConferenceDAO;
 import alfatec.dao.country.CountryDAO;
 import alfatec.dao.person.AuthorDAO;
@@ -50,7 +52,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -118,99 +119,46 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private String email;
 	private Author author;
 	private LoginData loginData;
-	private boolean addAction, editAction, popupOpen;
 	private ConferenceCall call;
+	private ClearPopUp popup;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		authorsTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
-		Utility.setUpStringCell(authorsTableView);
+		popup = () -> {
+			clearFields(Arrays.asList(firstNameTextField, lastNameTextField, emailTextField, institutionNameTextField),
+					Arrays.asList(firstNameLabel, lastNameErrorLabel, emailErrorLabel));
+			noteTextArea.clear();
+			setUpBoxes();
+		};
 		authorsData = AuthorDAO.getInstance().getAllAuthors();
 		populateAuthorTable();
 		handleSearch();
 		setUpDetails();
 	}
 
-	public void setWelcomeMessage(LoginData ld) {
-		User user = UserDAO.getInstance().getUser(ld.getUserID());
-		welcomeLabel.setText("Welcome, " + user.getUserFirstName());
-	}
-
-	public void setLoginData(LoginData data) {
-		this.loginData = data;
-	}
-
-	public void loadTabs(LoginData lgData) {
-		if (lgData.getRoleID() != 1)
-			MainView.getInstance().loadTabs(tabPane, lgData);
-	}
-
-	public void disableOptionsForUsers(LoginData lgData) {
-		if (lgData.getRoleID() == 1 || ConferenceDAO.getInstance().getCurrentConference() == null) {
-			sendEmailButton.setVisible(false);
-			detailsVbox.setDisable(true);
-			invitesHbox.setVisible(false);
-		}
-	}
-
-	private void populateAuthorTable() {
-		authorColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorFirstNameProperty().concat(" ")
-				.concat(cellData.getValue().getAuthorLastNameProperty()));
-		emailColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorEmailProperty());
-		authorsTableView.setItems(authorsData);
-		authorsTableView.setOnMousePressed(event -> {
-			if (event.getButton() == MouseButton.PRIMARY)
-				if (authorsTableView.getSelectionModel().getSelectedItem() != null) {
-					if (isPopupOpen())
-						closePopup();
-					transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
-					showAuthor(authorsTableView.getSelectionModel().getSelectedItem());
-				}
-		});
-	}
-
-	private void handleSearch() {
-		searchAuthorTextField.setOnKeyTyped(event -> {
-			String search = searchAuthorTextField.getText();
-			Pattern pattern = Pattern.compile("[@()]");
-			Matcher matcher = pattern.matcher(search);
-			if (search.length() > 0 && !matcher.find()) {
-				ObservableList<Author> searched = AuthorDAO.getInstance().searchForAuthors(search);
-				authorsTableView.getItems().setAll(searched);
-			} else {
-				authorsData = AuthorDAO.getInstance().getAllAuthors();
-				authorsTableView.getItems().setAll(authorsData);
-			}
-		});
-	}
-
 	@FXML
-	void addAuthor(ActionEvent event) {
+	private void addAuthor(ActionEvent event) {
 		setUpBoxes();
 		if (isPopupOpen())
-			closePopup();
+			closePopup(popupVbox, 520, popup);
 		setAddAction(true);
-		transitionPopupX(popupVbox, 940, 0, Interpolator.EASE_IN, 500);
-		popupVbox.setVisible(true);
-		setPopupOpen(true);
+		openPopup(popupVbox, 940);
 	}
 
 	@FXML
-	void editAuthor() {
+	private void editAuthor() {
 		if (isPopupOpen())
-			closePopup();
+			closePopup(popupVbox, 520, popup);
 		setEditAction(true);
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
-			transitionPopupX(popupVbox, 520, 0, Interpolator.EASE_IN, 500);
 			setAuthor(author);
-			popupVbox.setVisible(true);
-			setPopupOpen(true);
+			openPopup(popupVbox, 520);
 		}
 	}
 
 	@FXML
-	void deleteAuthor(ActionEvent event) {
+	private void deleteAuthor(ActionEvent event) {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
 			ButtonType bt = confirmationAlert("Please confirm:", "Are you sure you want to delete data for "
@@ -219,23 +167,22 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				AuthorDAO.getInstance().deleteAuthor(author);
 				AuthorDAO.getInstance().getAllAuthors().remove(author);
 				authorsData.remove(author);
-				int row = authorsTableView.getSelectionModel().getSelectedIndex() - 1;
 				authorsTableView.getItems().remove(author);
-				refresh(row);
-				closeDetails();
+				refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex() - 1, popupVbox,
+						popup);
+				closeDetails(authorDetailsHbox);
 			}
 		}
 	}
 
 	@FXML
-	void saveAuthor(ActionEvent event) {
+	private void saveAuthor(ActionEvent event) {
 		if (isAddAction()) {
 			setAddAction(false);
 			if (isValidInput() && !isEmailAlreadyInDB()) {
-				getNewAuthor();
-				authorsData.add(author);
-				refresh(authorsData.size() - 1);
-				closeDetails();
+				authorsData.add(getNewAuthor());
+				refresh(authorsTableView, authorsData.size() - 1, popupVbox, popup);
+				closeDetails(authorDetailsHbox);
 				transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
 				showAuthor(author);
 			} else if (isEmailAlreadyInDB())
@@ -243,53 +190,20 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		} else if (isEditAction()) {
 			setEditAction(false);
 			author = authorsTableView.getSelectionModel().getSelectedItem();
-			email = author.getAuthorEmail();
 			if (isValidInput())
 				if (!emailTextField.getText().equals(email) && isEmailAlreadyInDB())
 					emailErrorLabel.setText("Database already has enter with the same e-mail address.");
 				else {
 					handleEditAuthor();
-					refresh(authorsTableView.getSelectionModel().getSelectedIndex());
+					refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex(), popupVbox,
+							popup);
 					showAuthor(author);
 				}
 		}
 	}
 
-	public Author getNewAuthor() {
-		if (isValidInput()) {
-			author = AuthorDAO.getInstance().createAuthor(firstNameTextField.getText(), lastNameTextField.getText(),
-					emailTextField.getText(), countryComboBox.getSelectionModel().getSelectedItem().getCountryName(),
-					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase(),
-					institutionNameTextField.getText(), noteTextArea.getText());
-			Logging.getInstance().change("Create", "Create author: " + author.getAuthorEmail());
-		}
-		return author;
-	}
-
-	private void handleEditAuthor() {
-		setFirstName();
-		setLastName();
-		setEmail();
-		setCountry();
-		setInstitutionType();
-		setInstitutionName();
-		setNote();
-		authorsTableView.refresh();
-	}
-
-	public void setAuthor(Author author) {
-		this.author = author;
-		firstNameTextField.setText(author.getAuthorFirstName());
-		lastNameTextField.setText(author.getAuthorLastName());
-		emailTextField.setText(author.getAuthorEmail());
-		countryComboBox.getSelectionModel().select(author.getCountryID() - 1);
-		institutionComboBox.getSelectionModel().select(author.getInstitution());
-		institutionNameTextField.setText(author.getInstitutionName());
-		noteTextArea.setText(author.getNote());
-	}
-
 	@FXML
-	void sendEmail() {
+	private void sendEmail() {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null)
 			send = MainView.getInstance().loadEmailWindow(send, author.getAuthorEmail());
@@ -331,166 +245,101 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	}
 
 	@FXML
-	void changePassword(ActionEvent event) {
+	private void changePassword(ActionEvent event) {
 		changePasswordController = MainView.getInstance().loadChangePassword(changePasswordController, loginData);
 	}
 
 	@FXML
-	void minimizeApp() {
+	private void minimizeApp() {
 		Stage stage = (Stage) minimizeButton.getScene().getWindow();
 		stage.setIconified(true);
 	}
 
 	@FXML
-	void logout(ActionEvent event) {
+	private void logout(ActionEvent event) {
 		MainView.getInstance().closeMainView(event);
 	}
 
 	@FXML
-	void quitApp() {
+	private void quitApp() {
 		DatabaseUtility.getInstance().databaseDisconnect();
 		Platform.exit();
 	}
 
-	private boolean isAddAction() {
-		return addAction;
-	}
-
-	private void setAddAction(boolean action) {
-		this.addAction = action;
-	}
-
-	private boolean isEditAction() {
-		return editAction;
-	}
-
-	private void setEditAction(boolean action) {
-		this.editAction = action;
-	}
-
-	private boolean isPopupOpen() {
-		return popupOpen;
-	}
-
-	private void setPopupOpen(boolean action) {
-		this.popupOpen = action;
-	}
-
-	private boolean isValidInput() {
-		firstNameErrorLabel.setText(isValidFirstName() ? "" : "Empty first name field.");
-		lastNameErrorLabel.setText(isValidLastName() ? "" : "Empty last name field.");
-		emailErrorLabel.setText(isValidEmail() ? "" : "Empty or invalid email field.");
-		return isValidEmail() && isValidFirstName() && isValidLastName();
-	}
-
-	private boolean isValidFirstName() {
-		return firstNameTextField.getText() != null && firstNameTextField.getText().length() != 0;
-	}
-
-	private boolean isValidLastName() {
-		return lastNameTextField.getText() != null && lastNameTextField.getText().length() != 0;
-	}
-
-	private boolean isValidEmail() {
-		return emailTextField.getText() != null && emailTextField.getText().length() != 0
-				&& emailTextField.getText().contains(".") && emailTextField.getText().contains("@");
-	}
-
-	private boolean isEmailAlreadyInDB() {
-		return AuthorDAO.getInstance().findAuthorByExactEmail(emailTextField.getText()) != null;
-	}
-
-	public void setFirstName() {
-		if (!firstNameTextField.getText().equalsIgnoreCase(author.getAuthorFirstName()))
-			AuthorDAO.getInstance().updateAuthorFirstName(author, firstNameTextField.getText());
-	}
-
-	public void setLastName() {
-		if (!lastNameTextField.getText().equalsIgnoreCase(author.getAuthorLastName()))
-			AuthorDAO.getInstance().updateAuthorLastName(author, lastNameTextField.getText());
-	}
-
-	public void setEmail() {
-		if (!emailTextField.getText().equalsIgnoreCase(author.getAuthorEmail()))
-			AuthorDAO.getInstance().updateAuthorEmail(author, emailTextField.getText());
-	}
-
-	public void setInstitutionType() {
-		if (!institutionComboBox.getSelectionModel().getSelectedItem().name()
-				.equalsIgnoreCase(author.getInstitution().name())) {
-			AuthorDAO.getInstance().updateAuthorInstitution(author,
-					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase());
-		}
-	}
-
-	public void setInstitutionName() {
-		if (institutionNameTextField.getText() == null)
-			return;
-		if (!institutionNameTextField.getText().equals(author.getInstitutionName()))
-			AuthorDAO.getInstance().updateAuthorInstitutionName(author, institutionNameTextField.getText());
-	}
-
-	public void setCountry() {
-		if (countryComboBox.getSelectionModel().getSelectedItem().getCountryID() != author.getCountryID())
-			AuthorDAO.getInstance().updateAuthorCountry(author,
-					countryComboBox.getSelectionModel().getSelectedItem().getCountryName());
-	}
-
-	public void setNote() {
-		if (noteTextArea.getText() == null)
-			return;
-		if (!noteTextArea.getText().equalsIgnoreCase(author.getNote()))
-			AuthorDAO.getInstance().updateAuthorNote(author, noteTextArea.getText());
-	}
-
 	@FXML
 	private void clearPopup(ActionEvent event) {
-		clearPopup();
+		popup.clear();
 	}
 
 	@FXML
 	private void closePopup(ActionEvent event) {
-		closePopup();
-		setPopupOpen(false);
+		closePopup(popupVbox, 520, popup);
 	}
 
-	private void closePopup() {
-		transitionPopupX(popupVbox, 0, 520, Interpolator.EASE_IN, 500);
-		clearPopup();
+	public void setWelcomeMessage(LoginData ld) {
+		User user = UserDAO.getInstance().getUser(ld.getUserID());
+		welcomeLabel.setText("Welcome, " + user.getUserFirstName());
 	}
 
-	private void closeDetails() {
-		transitionPopupX(authorDetailsHbox, 0, 1200, Interpolator.EASE_IN, 500);
+	public void setLoginData(LoginData data) {
+		this.loginData = data;
 	}
 
-	private void clearPopup() {
-		firstNameTextField.clear();
-		lastNameTextField.clear();
-		emailTextField.clear();
-		institutionComboBox.setPromptText("Please select...");
-		institutionNameTextField.clear();
-		noteTextArea.clear();
-		setUpBoxes();
-		firstNameErrorLabel.setText("");
-		lastNameErrorLabel.setText("");
-		emailErrorLabel.setText("");
+	public void loadTabs(LoginData lgData) {
+		if (lgData.getRoleID() != 1)
+			MainView.getInstance().loadTabs(tabPane, lgData);
 	}
 
-	private void refresh(int row) {
-		authorsTableView.refresh();
-		authorsTableView.requestFocus();
-		authorsTableView.getSelectionModel().select(row);
-		authorsTableView.scrollTo(row);
-		closePopup();
-		setPopupOpen(false);
+	public void disableOptionsForUsers(LoginData lgData) {
+		if (lgData.getRoleID() == 1 || ConferenceDAO.getInstance().getCurrentConference() == null) {
+			sendEmailButton.setVisible(false);
+			detailsVbox.setDisable(true);
+			invitesHbox.setVisible(false);
+		}
 	}
 
-	private void setUpBoxes() {
-		institutionComboBox.getItems().setAll(FXCollections.observableArrayList(Institution.values()));
-		institutionComboBox.setValue(Institution.UNIVERSITY);
-		countryComboBox.getItems()
-				.setAll(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
-		countryComboBox.setValue(CountryDAO.getInstance().getCountry(195));
+	private void populateAuthorTable() {
+		authorsTableView.setPlaceholder(new Label("Database table \"author\" is empty"));
+		Utility.setUpStringCell(authorsTableView);
+		authorColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorFirstNameProperty().concat(" ")
+				.concat(cellData.getValue().getAuthorLastNameProperty()));
+		emailColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorEmailProperty());
+		authorsTableView.setItems(authorsData);
+		authorsTableView.setOnMousePressed(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+				if (authorsTableView.getSelectionModel().getSelectedItem() != null) {
+					if (isPopupOpen())
+						closePopup(popupVbox, 520, popup);
+					transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
+					showAuthor(authorsTableView.getSelectionModel().getSelectedItem());
+				}
+		});
+	}
+
+	private void handleSearch() {
+		searchAuthorTextField.setOnKeyTyped(event -> {
+			String search = searchAuthorTextField.getText();
+			Pattern pattern = Pattern.compile("[@()]");
+			Matcher matcher = pattern.matcher(search);
+			if (search.length() > 0 && !matcher.find()) {
+				ObservableList<Author> searched = AuthorDAO.getInstance().searchForAuthors(search);
+				authorsTableView.getItems().setAll(searched);
+			} else {
+				authorsData = AuthorDAO.getInstance().getAllAuthors();
+				authorsTableView.getItems().setAll(authorsData);
+			}
+		});
+	}
+
+	private void setAuthor(Author author) {
+		this.author = author;
+		firstNameTextField.setText(author.getAuthorFirstName());
+		lastNameTextField.setText(author.getAuthorLastName());
+		emailTextField.setText(author.getAuthorEmail());
+		countryComboBox.getSelectionModel().select(author.getCountryID() - 1);
+		institutionComboBox.getSelectionModel().select(author.getInstitution());
+		institutionNameTextField.setText(author.getInstitutionName());
+		noteTextArea.setText(author.getNote());
 	}
 
 	private void showAuthor(Author author) {
@@ -506,12 +355,93 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		showDetails();
 	}
 
+	private Author getNewAuthor() {
+		if (isValidInput()) {
+			author = AuthorDAO.getInstance().createAuthor(firstNameTextField.getText(), lastNameTextField.getText(),
+					emailTextField.getText(), countryComboBox.getSelectionModel().getSelectedItem().getCountryName(),
+					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase(),
+					institutionNameTextField.getText(), noteTextArea.getText());
+			Logging.getInstance().change("Create", "Create author: " + author.getAuthorEmail());
+		}
+		return author;
+	}
+
+	private void handleEditAuthor() {
+		setFirstName();
+		setLastName();
+		setEmail();
+		setCountry();
+		setInstitutionType();
+		setInstitutionName();
+		setNote();
+		authorsTableView.refresh();
+	}
+
+	private boolean isValidInput() {
+		firstNameErrorLabel.setText(isValidName(firstNameTextField) ? "" : "Empty first name field.");
+		lastNameErrorLabel.setText(isValidName(lastNameTextField) ? "" : "Empty last name field.");
+		emailErrorLabel.setText(isValidEmail(emailTextField) ? "" : "Empty or invalid email field.");
+		return isValidEmail(emailTextField) && isValidName(firstNameTextField) && isValidName(lastNameTextField);
+	}
+
+	private boolean isEmailAlreadyInDB() {
+		return AuthorDAO.getInstance().findAuthorByExactEmail(emailTextField.getText()) != null;
+	}
+
+	private void setFirstName() {
+		if (!firstNameTextField.getText().equalsIgnoreCase(author.getAuthorFirstName()))
+			AuthorDAO.getInstance().updateAuthorFirstName(author, firstNameTextField.getText());
+	}
+
+	private void setLastName() {
+		if (!lastNameTextField.getText().equalsIgnoreCase(author.getAuthorLastName()))
+			AuthorDAO.getInstance().updateAuthorLastName(author, lastNameTextField.getText());
+	}
+
+	private void setEmail() {
+		if (!emailTextField.getText().equalsIgnoreCase(author.getAuthorEmail()))
+			AuthorDAO.getInstance().updateAuthorEmail(author, emailTextField.getText());
+	}
+
+	private void setInstitutionType() {
+		if (!institutionComboBox.getSelectionModel().getSelectedItem().name()
+				.equalsIgnoreCase(author.getInstitution().name()))
+			AuthorDAO.getInstance().updateAuthorInstitution(author,
+					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase());
+	}
+
+	private void setInstitutionName() {
+		if (institutionNameTextField.getText() == null)
+			return;
+		if (!institutionNameTextField.getText().equals(author.getInstitutionName()))
+			AuthorDAO.getInstance().updateAuthorInstitutionName(author, institutionNameTextField.getText());
+	}
+
+	private void setCountry() {
+		if (countryComboBox.getSelectionModel().getSelectedItem().getCountryID() != author.getCountryID())
+			AuthorDAO.getInstance().updateAuthorCountry(author,
+					countryComboBox.getSelectionModel().getSelectedItem().getCountryName());
+	}
+
+	private void setNote() {
+		if (noteTextArea.getText() == null)
+			return;
+		if (!noteTextArea.getText().equalsIgnoreCase(author.getNote()))
+			AuthorDAO.getInstance().updateAuthorNote(author, noteTextArea.getText());
+	}
+
+	private void setUpBoxes() {
+		institutionComboBox.getItems().setAll(FXCollections.observableArrayList(Institution.values()));
+		institutionComboBox.setValue(Institution.UNIVERSITY);
+		countryComboBox.getItems()
+				.setAll(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
+		countryComboBox.setValue(CountryDAO.getInstance().getCountry(195));
+	}
+
 	private void setUpFields() {
-		firstNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getFirstNameLength())));
-		lastNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getLastNameLength())));
-		emailTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getEmailLength())));
-		institutionNameTextField.setTextFormatter(new TextFormatter<String>(rejectChange(getInstitutionNameLength())));
-		noteTextArea.setTextFormatter(new TextFormatter<String>(rejectChange(getNoteLength())));
+		setUpFields(new TextField[] { firstNameTextField, lastNameTextField, emailTextField, institutionNameTextField },
+				new int[] { getFirstNameLength(), getLastNameLength(), getEmailLength(), getInstitutionNameLength() });
+		setUpFields(new TextArea[] { noteTextArea }, new int[] { getNoteLength() });
 		noteTextArea.setWrapText(true);
 		noteTextAreaPreview.setWrapText(true);
 	}

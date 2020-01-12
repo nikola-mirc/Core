@@ -40,21 +40,18 @@ public class ReviewDAO {
 	private ReviewDAO() {
 		table = new TableUtility(new DatabaseTable("review", "review_id",
 				new String[] { "review_opinion", "reviewer_id", "author_informed", "research_id" }));
-		getReview = new Getter<Review>() {
-			@Override
-			public Review get(ResultSet rs) {
-				Review review = new Review();
-				try {
-					review.setReviewID(rs.getLong(table.getTable().getPrimaryKey()));
-					review.setOpinion(rs.getString(table.getTable().getColumnName(1)));
-					review.setReviewerID(rs.getInt(table.getTable().getColumnName(2)));
-					review.setAuthorInformed(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(3))));
-					review.setResearchID(rs.getLong(table.getTable().getColumnName(4)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return review;
+		getReview = (ResultSet rs) -> {
+			Review review = new Review();
+			try {
+				review.setReviewID(rs.getLong(table.getTable().getPrimaryKey()));
+				review.setOpinion(rs.getString(table.getTable().getColumnName(1)));
+				review.setReviewerID(rs.getInt(table.getTable().getColumnName(2)));
+				review.setAuthorInformed(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(3))));
+				review.setResearchID(rs.getLong(table.getTable().getColumnName(4)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return review;
 		};
 	}
 

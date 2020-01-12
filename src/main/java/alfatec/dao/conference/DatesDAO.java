@@ -40,23 +40,20 @@ public class DatesDAO {
 	private DatesDAO() {
 		table = new TableUtility(new DatabaseTable("dates", "dates_id", new String[] { "start_date", "first_call_date",
 				"second_call_date", "third_call_date", "end_date", "conference_id" }));
-		getDate = new Getter<Dates>() {
-			@Override
-			public Dates get(ResultSet rs) {
-				Dates dates = new Dates();
-				try {
-					dates.setDatesID(rs.getInt(table.getTable().getPrimaryKey()));
-					dates.setStartDate(rs.getTimestamp(table.getTable().getColumnName(1)).toLocalDateTime());
-					dates.setFirstCallDate(rs.getDate(table.getTable().getColumnName(2)).toLocalDate());
-					dates.setSecondCallDate(rs.getDate(table.getTable().getColumnName(3)).toLocalDate());
-					dates.setThirdCallDate(rs.getDate(table.getTable().getColumnName(4)).toLocalDate());
-					dates.setEndDate(rs.getDate(table.getTable().getColumnName(5)).toLocalDate());
-					dates.setConferenceID(rs.getInt(table.getTable().getColumnName(6)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return dates;
+		getDate = (ResultSet rs) -> {
+			Dates dates = new Dates();
+			try {
+				dates.setDatesID(rs.getInt(table.getTable().getPrimaryKey()));
+				dates.setStartDate(rs.getTimestamp(table.getTable().getColumnName(1)).toLocalDateTime());
+				dates.setFirstCallDate(rs.getDate(table.getTable().getColumnName(2)).toLocalDate());
+				dates.setSecondCallDate(rs.getDate(table.getTable().getColumnName(3)).toLocalDate());
+				dates.setThirdCallDate(rs.getDate(table.getTable().getColumnName(4)).toLocalDate());
+				dates.setEndDate(rs.getDate(table.getTable().getColumnName(5)).toLocalDate());
+				dates.setConferenceID(rs.getInt(table.getTable().getColumnName(6)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return dates;
 		};
 	}
 

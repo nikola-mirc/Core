@@ -2,11 +2,13 @@ package alfatec.controller.user;
 
 import com.jfoenix.controls.JFXButton;
 
+import alfatec.controller.utils.Utils;
 import alfatec.dao.user.LoginDataDAO;
 import alfatec.model.user.LoginData;
 import alfatec.view.utils.GUIUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -53,22 +55,30 @@ public class ChangePasswordController extends GUIUtils {
 	@FXML
 	void save(ActionEvent event) {
 		if (matchNewPassword() && matchOldPassword()) {
-			LoginDataDAO.getInstance().updatePassword(loginData, newPasswordField.getText());
-			display.close();
+			if (newPasswordField.getText().equals(oldPasswordField.getText()))
+				display.close();
+			else {
+				LoginDataDAO.getInstance().updatePassword(loginData, newPasswordField.getText());
+				display.close();
+			}
+		} else {
+			alert("Empty fields detected", "All fields must be filled out.", AlertType.INFORMATION);
 		}
 	}
 
 	private boolean matchOldPassword() {
-		return Password.checkPassword(oldPasswordField.getText(), loginData.getPasswordHash());
+		return Utils.notEmpty(oldPasswordField.getText())
+				&& Password.checkPassword(oldPasswordField.getText(), loginData.getPasswordHash());
 	}
 
 	private boolean matchNewPassword() {
-		return newPasswordField.getText().equals(repeatPasswordField.getText());
+		return Utils.notEmpty(newPasswordField.getText())
+				&& Utils.equal(newPasswordField.getText(), repeatPasswordField.getText());
 	}
 
 	private void setListener(PasswordField field, Label label) {
 		field.setOnKeyTyped(event -> {
-			if (field.getText() != null && field.getText().length() != 0) {
+			if (Utils.notEmpty(field.getText())) {
 				boolean newPass = field == repeatPasswordField && !matchNewPassword();
 				boolean oldPass = field == oldPasswordField && !matchOldPassword();
 				label.setText(newPass || oldPass ? "Password doesn't match." : "");

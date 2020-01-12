@@ -41,21 +41,18 @@ public class LoginDataDAO {
 	private LoginDataDAO() {
 		table = new TableUtility(new DatabaseTable("login_data", "login_id",
 				new String[] { "user_email", "password_hash", "user_id", "role_id" }));
-		getLogin = new Getter<LoginData>() {
-			@Override
-			public LoginData get(ResultSet rs) {
-				LoginData login = new LoginData();
-				try {
-					login.setLoginID(rs.getInt(table.getTable().getPrimaryKey()));
-					login.setUserEmail(rs.getString(table.getTable().getColumnName(1)));
-					login.readPasswordFromDB(rs.getString(table.getTable().getColumnName(2)));
-					login.setUserID(rs.getInt(table.getTable().getColumnName(3)));
-					login.setRoleID(rs.getInt(table.getTable().getColumnName(4)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return login;
+		getLogin = (ResultSet rs) -> {
+			LoginData login = new LoginData();
+			try {
+				login.setLoginID(rs.getInt(table.getTable().getPrimaryKey()));
+				login.setUserEmail(rs.getString(table.getTable().getColumnName(1)));
+				login.readPasswordFromDB(rs.getString(table.getTable().getColumnName(2)));
+				login.setUserID(rs.getInt(table.getTable().getColumnName(3)));
+				login.setRoleID(rs.getInt(table.getTable().getColumnName(4)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return login;
 		};
 	}
 

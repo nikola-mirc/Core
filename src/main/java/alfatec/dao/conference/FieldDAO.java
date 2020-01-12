@@ -37,18 +37,15 @@ public class FieldDAO {
 
 	private FieldDAO() {
 		table = new TableUtility(new DatabaseTable("field", "field_id", new String[] { "field_name" }));
-		getField = new Getter<Field>() {
-			@Override
-			public Field get(ResultSet rs) {
-				Field field = new Field();
-				try {
-					field.setFieldID(rs.getInt(table.getTable().getPrimaryKey()));
-					field.setFieldName(rs.getString(table.getTable().getColumnName(1)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return field;
+		getField = (ResultSet rs) -> {
+			Field field = new Field();
+			try {
+				field.setFieldID(rs.getInt(table.getTable().getPrimaryKey()));
+				field.setFieldName(rs.getString(table.getTable().getColumnName(1)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return field;
 		};
 	}
 

@@ -37,19 +37,16 @@ public class CountryDAO {
 
 	private CountryDAO() {
 		table = new TableUtility(new DatabaseTable("country", "country_id", new String[] { "id", "value" }));
-		getCountry = new Getter<Country>() {
-			@Override
-			public Country get(ResultSet rs) {
-				Country country = new Country();
-				try {
-					country.setCountryID(rs.getInt(table.getTable().getPrimaryKey()));
-					country.setIsoAlpha2Code(rs.getString(table.getTable().getColumnName(1)));
-					country.setCountryName(rs.getString(table.getTable().getColumnName(2)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return country;
+		getCountry = (ResultSet rs) -> {
+			Country country = new Country();
+			try {
+				country.setCountryID(rs.getInt(table.getTable().getPrimaryKey()));
+				country.setIsoAlpha2Code(rs.getString(table.getTable().getColumnName(1)));
+				country.setCountryName(rs.getString(table.getTable().getColumnName(2)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return country;
 		};
 	}
 

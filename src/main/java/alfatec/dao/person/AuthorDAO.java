@@ -41,24 +41,21 @@ public class AuthorDAO {
 	private AuthorDAO() {
 		table = new TableUtility(new DatabaseTable("author", "author_id", new String[] { "institution",
 				"author_first_name", "author_last_name", "author_email", "institution_name", "note", "country_id" }));
-		getAuthor = new Getter<Author>() {
-			@Override
-			public Author get(ResultSet rs) {
-				Author author = new Author();
-				try {
-					author.setAuthorID(rs.getLong(table.getTable().getPrimaryKey()));
-					author.setAuthorFirstName(rs.getString(table.getTable().getColumnName(2)));
-					author.setAuthorLastName(rs.getString(table.getTable().getColumnName(3)));
-					author.setAuthorEmail(rs.getString(table.getTable().getColumnName(4)));
-					author.setInstitutionType(rs.getString(table.getTable().getColumnName(1)));
-					author.setInstitutionName(rs.getString(table.getTable().getColumnName(5)));
-					author.setNote(rs.getString(table.getTable().getColumnName(6)));
-					author.setCountryID(rs.getInt(table.getTable().getColumnName(7)));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return author;
+		getAuthor = (ResultSet rs) -> {
+			Author author = new Author();
+			try {
+				author.setAuthorID(rs.getLong(table.getTable().getPrimaryKey()));
+				author.setAuthorFirstName(rs.getString(table.getTable().getColumnName(2)));
+				author.setAuthorLastName(rs.getString(table.getTable().getColumnName(3)));
+				author.setAuthorEmail(rs.getString(table.getTable().getColumnName(4)));
+				author.setInstitutionType(rs.getString(table.getTable().getColumnName(1)));
+				author.setInstitutionName(rs.getString(table.getTable().getColumnName(5)));
+				author.setNote(rs.getString(table.getTable().getColumnName(6)));
+				author.setCountryID(rs.getInt(table.getTable().getColumnName(7)));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
+			return author;
 		};
 	}
 
