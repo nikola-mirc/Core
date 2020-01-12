@@ -1,5 +1,7 @@
 package alfatec.controller.utils;
 
+import java.util.List;
+
 public class Utils {
 
 	public static String cyrillicToLatin(String text) {
@@ -25,5 +27,13 @@ public class Utils {
 
 	public static boolean equal(String original, String copy) {
 		return copy != null && copy.equals(original);
+	}
+
+	public static String mergeList(List<String> list) {
+		StringBuilder builder = new StringBuilder();
+		list.forEach(s -> builder.append(s).append(","));
+		if (builder.length() > 0)
+			return builder.substring(0, builder.length() - 1);
+		return null;
 	}
 }
