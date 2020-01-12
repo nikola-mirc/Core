@@ -77,6 +77,7 @@ public class ChangePasswordController extends GUIUtils {
 	}
 
 	private void setListener(PasswordField field, Label label) {
+		setUpFields(new PasswordField[] { field }, new int[] { getPasswordLength() });
 		field.setOnKeyTyped(event -> {
 			if (Utils.notEmpty(field.getText())) {
 				boolean newPass = field == repeatPasswordField && !matchNewPassword();
