@@ -66,6 +66,10 @@ public class RegistrationFeeDAO {
 		Logging.getInstance().change("Delete", "Delete registration fee " + fee.getRegistrationName());
 	}
 
+	public RegistrationFee getRegistration(int registrationID) {
+		return table.findBy(registrationID, getRegistration);
+	}
+
 	/**
 	 * @return all entries from table (all entries ever)
 	 */

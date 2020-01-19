@@ -1,6 +1,11 @@
 package alfatec.controller.utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Utils {
 
@@ -35,5 +40,13 @@ public class Utils {
 		if (builder.length() > 0)
 			return builder.substring(0, builder.length() - 1);
 		return null;
+	}
+
+	public static <T> ObservableList<T> removeDuplicates(ObservableList<T> list) {
+		HashSet<T> set = new HashSet<T>(list);
+		set.addAll(list);
+		List<T> list1 = new ArrayList<T>();
+		list1.addAll(set);
+		return FXCollections.observableArrayList(list1);
 	}
 }

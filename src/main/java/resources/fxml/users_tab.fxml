@@ -123,9 +123,9 @@
 							</yAxis>
 						</LineChart>
 					</children>
-               <VBox.margin>
-                  <Insets right="20.0" />
-               </VBox.margin>
+					<VBox.margin>
+						<Insets right="20.0" />
+					</VBox.margin>
 				</HBox>
 			</children>
 		</VBox>
@@ -201,8 +201,8 @@
 			</children>
 		</VBox>
 	</children>
-   <stylesheets>
-      <URL value="@../styles/main_style.css" />
-      <URL value="@../styles/proprietary_style.css" />
-   </stylesheets>
+	<stylesheets>
+		<URL value="@../styles/main_style.css" />
+		<URL value="@../styles/proprietary_style.css" />
+	</stylesheets>
 </AnchorPane>

@@ -64,9 +64,9 @@ public class Country {
 	public void setIsoAlpha2Code(String code) {
 		this.isoAlpha2Code.set(code);
 	}
-	
+
 	@Override
-		public String toString() {
-			return getCountryName();
-		}
+	public String toString() {
+		return getCountryName();
+	}
 }

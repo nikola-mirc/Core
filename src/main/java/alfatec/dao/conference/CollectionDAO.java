@@ -7,6 +7,7 @@ import alfatec.dao.research.ResearchDAO;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Collection;
+import alfatec.model.research.Research;
 import database.DatabaseTable;
 import database.Getter;
 import javafx.collections.ObservableList;
@@ -89,7 +90,7 @@ public class CollectionDAO {
 	 * @return all data for specified conference
 	 */
 	public ObservableList<Collection> getAllForConference(int conferenceID) {
-		return table.findBy(conferenceID, 2, getCollection);
+		return table.findBy(conferenceID, 1, getCollection);
 	}
 
 	/**
@@ -101,8 +102,16 @@ public class CollectionDAO {
 		return table.findWhere(columnNames, new long[] { conferenceID, 1 }, getCollection);
 	}
 
+	public Collection getCollection(Research research) {
+		try {
+			return table.findBy(research.getResearchID(), 3, getCollection).get(0);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
 	public void updateConferenceID(Collection collection, int conferenceID) {
-		table.update(collection.getCollectionID(), 2, conferenceID);
+		table.update(collection.getCollectionID(), 1, conferenceID);
 		collection.setConferenceID(conferenceID);
 	}
 
@@ -114,13 +123,13 @@ public class CollectionDAO {
 						+ " for "
 				: "Remove " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
 						+ " from ";
-		table.update(collection.getCollectionID(), 3, BooleanUtil.parse(bool));
+		table.update(collection.getCollectionID(), 2, BooleanUtil.parse(bool));
 		collection.setIsForSpecialIssue(bool);
 		Logging.getInstance().change(type, description + "special issue.");
 	}
 
 	public void updateResearchID(Collection collection, long researchID) {
-		table.update(collection.getCollectionID(), 1, researchID);
+		table.update(collection.getCollectionID(), 3, researchID);
 		collection.setResearchID(researchID);
 	}
 

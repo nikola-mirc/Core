@@ -243,11 +243,11 @@
 										<VBox id="detailsVbox" fx:id="detailsVbox" alignment="CENTER" fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="240.0" prefWidth="340.0">
 											<children>
 												<fx:define>
-       												<ToggleGroup fx:id="group" />
-       											</fx:define>
-												<JFXRadioButton id="radio" fx:id="firstRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="1st invitation" toggleGroup="$group"/>
-												<JFXRadioButton id="radio" fx:id="secondRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="2nd invitation" toggleGroup="$group"/>
-												<JFXRadioButton id="radio" fx:id="thirdRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="3rd invitation" toggleGroup="$group"/>
+													<ToggleGroup fx:id="group" />
+												</fx:define>
+												<JFXRadioButton id="radio" fx:id="firstRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="1st invitation" toggleGroup="$group" />
+												<JFXRadioButton id="radio" fx:id="secondRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="2nd invitation" toggleGroup="$group" />
+												<JFXRadioButton id="radio" fx:id="thirdRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="3rd invitation" toggleGroup="$group" />
 												<JFXCheckBox id="radio" fx:id="interestedCheckbox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Interested">
 													<VBox.margin>
 														<Insets top="15.0" />

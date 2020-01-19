@@ -31,14 +31,14 @@ public class Review {
 
 	public Review(long id, String opinion, int reviewerID, long researchID, boolean authorInformed) {
 		this.reviewID = new SimpleLongProperty(id);
-		this.opinion = new SimpleObjectProperty<Opinion>(Opinion.valueOf(opinion));
+		this.opinion = new SimpleObjectProperty<Opinion>(Opinion.lookUpByName(opinion));
 		this.reviewerID = new SimpleIntegerProperty(reviewerID);
 		this.researchID = new SimpleLongProperty(researchID);
 		this.authorInformed = new SimpleIntegerProperty(BooleanUtil.parse(authorInformed));
 	}
 
 	public String getOpinion() {
-		return opinion.get().getOpinion();
+		return opinion.get().name();
 	}
 
 	public Opinion getOpinionName() {
@@ -78,7 +78,7 @@ public class Review {
 	}
 
 	public void setOpinion(String opinion) {
-		this.opinion.set(Opinion.valueOf(opinion));
+		this.opinion.set(Opinion.lookUpByName(opinion));
 	}
 
 	public void setResearchID(long id) {

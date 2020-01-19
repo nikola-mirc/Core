@@ -3,6 +3,7 @@ package alfatec.dao.relationship;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import alfatec.dao.person.ReviewerDAO;
 import alfatec.dao.research.ResearchDAO;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
@@ -58,15 +59,13 @@ public class ReviewDAO {
 	public Review createReview(long researchID, int reviewerID, String opinion) {
 		Review review = table.create(new String[] { opinion }, new int[] { reviewerID, 0 }, new long[] { researchID },
 				getReview);
-		Logging.getInstance().change("Create",
-				"Add review to " + ResearchDAO.getInstance().getResearch(review.getResearchID()));
+		Logging.getInstance().change("Create", "Add reviewer " + ReviewerDAO.getInstance().getReviewer(reviewerID)
+				+ " to " + ResearchDAO.getInstance().getResearch(researchID).getResearchTitle());
 		return review;
 	}
 
 	public void deleteReview(Review review) {
 		table.delete(review.getReviewID());
-		Logging.getInstance().change("Delete",
-				"Delete review for " + ResearchDAO.getInstance().getResearch(review.getResearchID()));
 	}
 
 	/**
@@ -91,7 +90,11 @@ public class ReviewDAO {
 	 * @return all reviews for specified research
 	 */
 	public ObservableList<Review> getAllFor(long researchID) {
-		return table.findBy(researchID, 4, getReview);
+		try {
+			return table.findBy(researchID, 4, getReview);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -128,14 +131,14 @@ public class ReviewDAO {
 	public void updateReviewer(Review review, int reviewerID) {
 		table.update(review.getReviewID(), 2, reviewerID);
 		review.setReviewerID(reviewerID);
-		Logging.getInstance().change("Update",
-				"Update reviewer for " + ResearchDAO.getInstance().getResearch(review.getResearchID()));
+		Logging.getInstance().change("Update", "Update reviewer for "
+				+ ResearchDAO.getInstance().getResearch(review.getResearchID()).getResearchTitle());
 	}
 
 	public void updateIsAuthorInformed(Review review, boolean isInformed) {
 		table.update(review.getReviewID(), 3, BooleanUtil.parse(isInformed));
 		review.setIsAuthorInformed(isInformed);
-		Logging.getInstance().change("Update",
-				"Update author informed for " + ResearchDAO.getInstance().getResearch(review.getResearchID()));
+		Logging.getInstance().change("Update", "Update author(s) informed for "
+				+ ResearchDAO.getInstance().getResearch(review.getResearchID()).getResearchTitle());
 	}
 }

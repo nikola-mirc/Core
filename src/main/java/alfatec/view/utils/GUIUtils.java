@@ -36,7 +36,7 @@ public class GUIUtils extends DatabaseLimits {
 
 	private double x = 0;
 	private double y = 0;
-	private boolean addAction, editAction, popupOpen;
+	private boolean addAction, editAction, popupOpen, otherPopupOpen;
 
 	@FXML
 	void pressed(MouseEvent event) {
@@ -76,6 +76,14 @@ public class GUIUtils extends DatabaseLimits {
 		this.popupOpen = action;
 	}
 
+	public boolean isOtherPopupOpen() {
+		return otherPopupOpen;
+	}
+
+	public void setOtherPopupOpen(boolean otherPopupOpen) {
+		this.otherPopupOpen = otherPopupOpen;
+	}
+
 	private Alert createAlert(String header, String content, AlertType alertType) {
 		Alert alert = new Alert(alertType);
 		alert.initStyle(StageStyle.UNDECORATED);
@@ -105,20 +113,35 @@ public class GUIUtils extends DatabaseLimits {
 		tl.play();
 	}
 
-	public void closeDetails(Node box) {
-		transitionPopupX(box, 0, 1200, Interpolator.EASE_IN, 500);
+	public void closeDetails(Node box, double startingCoordinate) {
+		transitionPopupX(box, 0, startingCoordinate, Interpolator.EASE_IN, 500);
+	}
+
+	public void openDetails(Node box, double endingCoordinate) {
+		transitionPopupX(box, endingCoordinate, 0, Interpolator.EASE_IN, 500);
 	}
 
 	public void closePopup(VBox box, double startingCoordinate, ClearPopUp popup) {
-		transitionPopupX(box, 0, startingCoordinate, Interpolator.EASE_IN, 500);
+		closeDetails(box, startingCoordinate);
 		setPopupOpen(false);
 		popup.clear();
 	}
 
 	public void openPopup(VBox box, double endingCoordinate) {
-		transitionPopupX(box, endingCoordinate, 0, Interpolator.EASE_IN, 500);
+		openDetails(box, endingCoordinate);
 		box.setVisible(true);
 		setPopupOpen(true);
+	}
+
+	public void closeOtherPopup(VBox box, double startingCoordinate) {
+		closeDetails(box, startingCoordinate);
+		setOtherPopupOpen(false);
+	}
+
+	public void openOtherPopup(VBox box, double endingCoordinate) {
+		openDetails(box, endingCoordinate);
+		box.setVisible(true);
+		setOtherPopupOpen(true);
 	}
 
 	private UnaryOperator<Change> rejectChange(final int length) {
@@ -167,12 +190,12 @@ public class GUIUtils extends DatabaseLimits {
 		return Utils.equal(password.getText(), repeatedPassword.getText());
 	}
 
-	public <T> void refresh(TableView<T> table, int row, VBox box, ClearPopUp popup) {
+	public <T> void refresh(TableView<T> table, int row, VBox box, double startingCoordinate, ClearPopUp popup) {
 		table.refresh();
 		table.requestFocus();
 		table.getSelectionModel().select(row);
 		table.scrollTo(row);
-		closePopup(box, 520, popup);
+		closePopup(box, startingCoordinate, popup);
 	}
 
 	public <T> void clearFields(List<T> fields, List<Label> labels) {

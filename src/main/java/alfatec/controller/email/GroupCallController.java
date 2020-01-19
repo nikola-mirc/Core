@@ -27,6 +27,7 @@ public class GroupCallController extends EmailGUI {
 		recievers = new ArrayList<String>();
 		setSent(false);
 		try {
+			setUp();
 			bccid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceBcc());
 			setListener(bccid);
 		} catch (Exception e) {

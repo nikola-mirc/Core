@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.PrefixSelectionComboBox?>
+<?import javafx.scene.control.TextArea?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.paper.ScientificWorkTabController">
 	<children>
@@ -42,7 +43,7 @@
 						<Insets />
 					</opaqueInsets>
 				</ToolBar>
-				<TableView id="tableView" fx:id="applicationsTabbleView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="407.0" prefWidth="458.0">
+				<TableView id="tableView" fx:id="applicationsTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="407.0" prefWidth="458.0">
 					<columns>
 						<TableColumn fx:id="authorsColumn" prefWidth="139.19998168945312" text="Authors" />
 						<TableColumn fx:id="titleColumn" prefWidth="312.79998779296875" text="Title" />
@@ -52,7 +53,7 @@
 					<children>
 						<JFXButton id="button" fx:id="addApplicationButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addApplication" prefHeight="40.0" prefWidth="100.0" text="Add" />
 						<JFXButton id="button" fx:id="updateApplicationButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#updateApplication" prefHeight="40.0" prefWidth="100.0" text="Update" />
-                  <JFXButton id="buttonInverse" fx:id="sendEmailButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#sendEmail" prefHeight="40.0" prefWidth="100.0" text="Send mail" />
+						<JFXButton id="buttonInverse" fx:id="sendEmailButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#sendEmail" prefHeight="40.0" prefWidth="100.0" text="Send mail" />
 					</children>
 					<VBox.margin>
 						<Insets top="20.0" />
@@ -60,17 +61,17 @@
 				</HBox>
 			</children>
 		</VBox>
-		<VBox id="mainVbox" layoutX="480.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="720.0">
+		<VBox id="mainVbox" fx:id="details" layoutX="480.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="720.0">
 			<children>
 				<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
 					<children>
 						<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="360.0" spacing="5.0">
 							<children>
-                        <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="220.0">
-                           <children>
-                              <Label id="labelNegativeSm" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="220.0" text="Conference title" />
-                           </children>
-                        </VBox>
+								<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="220.0">
+									<children>
+										<Label id="labelNegativeSm" fx:id="conferenceTitle" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="220.0" />
+									</children>
+								</VBox>
 								<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="220.0">
 									<children>
 										<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Select authors:" />
@@ -107,7 +108,7 @@
 								</HBox>
 								<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="220.0" spacing="7.0">
 									<children>
-										<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0" text="Review:" />
+										<Label id="label" fx:id="selected" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0" text="Review:" />
 										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" spacing="20.0">
 											<children>
 												<JFXButton id="miniButtonTransparent" fx:id="rwAcceptedButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" text="Accepted" />
@@ -116,12 +117,15 @@
 										</HBox>
 										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" spacing="20.0">
 											<children>
-												<JFXButton id="miniButtonTransparent" fx:id="rwBigButton" buttonType="RAISED" prefHeight="27.0" prefWidth="100.0" text="Big review" />
 												<JFXButton id="miniButtonTransparent" fx:id="rwRejectedButton" buttonType="RAISED" prefHeight="27.0" prefWidth="100.0" text="Rejected" />
+												<JFXButton id="miniButtonTransparent" fx:id="rwBigButton" buttonType="RAISED" prefHeight="27.0" prefWidth="100.0" text="Great review" />
 											</children>
 										</HBox>
 									</children>
 								</VBox>
+							</children>
+							<children>
+								<Label fx:id="opinion" prefHeight="20.0" prefWidth="360.0" />
 							</children>
 							<padding>
 								<Insets left="40.0" />
@@ -160,9 +164,9 @@
 											</HBox.margin>
 										</VBox>
 									</children>
-                           <padding>
-                              <Insets right="3.0" />
-                           </padding>
+									<padding>
+										<Insets right="3.0" />
+									</padding>
 								</HBox>
 								<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0" text="Fee:" />
 								<PrefixSelectionComboBox id="comboBoxText" fx:id="feeComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="Please select..." />
@@ -175,28 +179,96 @@
 								<JFXRadioButton id="radio" fx:id="collectionRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="150.0" text="Collection" />
 								<JFXRadioButton id="radio" fx:id="specialIssueRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="150.0" text="Special issue" />
 								<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0" text="Notes" />
-								<TextField fx:id="swNote" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="300.0" />
-                        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="360.0">
-                           <VBox.margin>
-                              <Insets right="25.0" top="20.0" />
-                           </VBox.margin>
-                           <children>
-      										<JFXButton id="buttonInverse" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="100.0" text="Save">
-                                 <HBox.margin>
-                                    <Insets bottom="15.0" right="25.0" />
-                                 </HBox.margin>
-      										</JFXButton>
-                           </children>
-                        </HBox>
+								<TextArea fx:id="swNote" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="300.0" />
+								<HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="360.0">
+									<VBox.margin>
+										<Insets right="25.0" top="20.0" />
+									</VBox.margin>
+									<children>
+										<JFXButton id="buttonInverse" fx:id="saveButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="100.0" text="Save" onAction="#save">
+											<HBox.margin>
+												<Insets bottom="15.0" right="25.0" />
+											</HBox.margin>
+										</JFXButton>
+									</children>
+								</HBox>
 							</children>
 						</VBox>
 					</children>
 				</HBox>
 			</children>
 		</VBox>
+		<VBox id="popupVbox" fx:id="authorDetails" alignment="TOP_CENTER" layoutX="860.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="340.0" visible="false">
+			<children>
+				<HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="340.0" spacing="10.0">
+					<children>
+						<Button id="miniButtonTrLeft" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#closePopup" prefHeight="25.0" prefWidth="25.0">
+							<graphic>
+								<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+									<image>
+										<Image url="@../images/close_popup_icon.png" />
+									</image>
+								</ImageView>
+							</graphic>
+							<HBox.margin>
+								<Insets top="1.0" />
+							</HBox.margin>
+						</Button>
+					</children>
+					<padding>
+						<Insets right="7.0" top="7.0" />
+					</padding>
+				</HBox>
+				<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="320.0">
+					<children>
+						<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="320.0">
+							<children>
+								<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="First name:" />
+								<Label id="labelInverse" fx:id="firstName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" />
+								<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Last name:" />
+								<Label id="labelInverse" fx:id="lastName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" />
+								<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="E-mail:" />
+								<Label id="labelInverse" fx:id="email" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" />
+								<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Institution:" />
+								<Label id="labelInverse" fx:id="institution" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0">
+									<VBox.margin>
+										<Insets />
+									</VBox.margin>
+								</Label>
+								<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Institution name:" />
+								<Label id="labelInverse" fx:id="institutionName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" />
+								<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Country:" />
+								<Label id="labelInverse" fx:id="country" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" />
+								<Label id="labelInverse" alignment="BASELINE_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="300.0" text="Note">
+									<VBox.margin>
+										<Insets />
+									</VBox.margin>
+								</Label>
+								<TextArea fx:id="noteTextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="170.0" prefWidth="250.0">
+									<VBox.margin>
+										<Insets left="20.0" right="20.0" />
+									</VBox.margin>
+								</TextArea>
+								<JFXButton id="buttonInverse" fx:id="remove" buttonType="RAISED" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#removeAuthor" prefHeight="40.0" prefWidth="290.0" text="Remove From Authors List">
+									<VBox.margin>
+										<Insets top="35.0" />
+									</VBox.margin>
+								</JFXButton>
+							</children>
+							<padding>
+								<Insets left="10.0" />
+							</padding>
+							<HBox.margin>
+								<Insets left="10.0" top="20.0" />
+							</HBox.margin>
+						</VBox>
+					</children>
+				</HBox>
+			</children>
+		</VBox>
 	</children>
-   <stylesheets>
-      <URL value="@../styles/main_style.css" />
-      <URL value="@../styles/proprietary_style.css" />
-   </stylesheets>
+	<stylesheets>
+		<URL value="@../styles/main_style.css" />
+		<URL value="@../styles/proprietary_style.css" />
+	</stylesheets>
 </AnchorPane>

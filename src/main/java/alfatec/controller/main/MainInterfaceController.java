@@ -35,7 +35,6 @@ import alfatec.view.gui.MainView;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import database.DatabaseUtility;
-import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -168,9 +167,9 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				AuthorDAO.getInstance().getAllAuthors().remove(author);
 				authorsData.remove(author);
 				authorsTableView.getItems().remove(author);
-				refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex() - 1, popupVbox,
+				refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex() - 1, popupVbox, 520,
 						popup);
-				closeDetails(authorDetailsHbox);
+				closeDetails(authorDetailsHbox, 1200);
 			}
 		}
 	}
@@ -181,9 +180,9 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 			setAddAction(false);
 			if (isValidInput() && !isEmailAlreadyInDB()) {
 				authorsData.add(getNewAuthor());
-				refresh(authorsTableView, authorsData.size() - 1, popupVbox, popup);
-				closeDetails(authorDetailsHbox);
-				transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
+				refresh(authorsTableView, authorsData.size() - 1, popupVbox, 520, popup);
+				closeDetails(authorDetailsHbox, 1200);
+				openDetails(authorDetailsHbox, 1200);
 				showAuthor(author);
 			} else if (isEmailAlreadyInDB())
 				emailErrorLabel.setText("E-mail already exists in database.");
@@ -195,7 +194,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					emailErrorLabel.setText("Database already has enter with the same e-mail address.");
 				else {
 					handleEditAuthor();
-					refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex(), popupVbox,
+					refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex(), popupVbox, 520,
 							popup);
 					showAuthor(author);
 				}
@@ -310,7 +309,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				if (authorsTableView.getSelectionModel().getSelectedItem() != null) {
 					if (isPopupOpen())
 						closePopup(popupVbox, 520, popup);
-					transitionPopupX(authorDetailsHbox, 1200, 0, Interpolator.EASE_IN, 500);
+					openDetails(authorDetailsHbox, 1200);
 					showAuthor(authorsTableView.getSelectionModel().getSelectedItem());
 				}
 		});
@@ -319,7 +318,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private void handleSearch() {
 		searchAuthorTextField.setOnKeyTyped(event -> {
 			String search = searchAuthorTextField.getText();
-			Pattern pattern = Pattern.compile("[@()]");
+			Pattern pattern = Pattern.compile("[@()\\\\<>+~%\\*\\-\\'\"]");
 			Matcher matcher = pattern.matcher(search);
 			if (search.length() > 0 && !matcher.find()) {
 				ObservableList<Author> searched = AuthorDAO.getInstance().searchForAuthors(search);

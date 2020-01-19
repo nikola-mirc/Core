@@ -18,11 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
-	minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0"
-	prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="alfatec.controller.conference.ConferenceTabController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.conference.ConferenceTabController">
 	<!-- store controller as userData property -->
 	<userData>
 		<fx:reference source="controller" />
@@ -34,50 +30,30 @@
 		</foo>
 	</properties>
 	<children>
-		<VBox id="mainVbox" alignment="CENTER" layoutX="890.0"
-			layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity"
-			minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0"
-			prefWidth="310.0">
+		<VBox id="mainVbox" alignment="CENTER" layoutX="890.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="310.0">
 			<children>
-				<Label id="label" alignment="CENTER" maxHeight="-Infinity"
-					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-					prefHeight="27.0" prefWidth="150.0" text="History">
+				<Label id="label" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="History">
 					<VBox.margin>
 						<Insets bottom="5.0" />
 					</VBox.margin>
 				</Label>
-				<TableView id="tableView" fx:id="confTableView"
-					maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-					minWidth="-Infinity" prefHeight="490.0" prefWidth="290.0">
+				<TableView id="tableView" fx:id="confTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="290.0">
 					<columns>
-						<TableColumn fx:id="confTitleColumn" editable="false"
-							prefWidth="288.0000733375549" text="Conferences" />
+						<TableColumn fx:id="confTitleColumn" editable="false" prefWidth="288.0000733375549" text="Conferences" />
 					</columns>
 				</TableView>
 			</children>
 		</VBox>
-		<HBox id="mainVboxVertical" fx:id="noConferenceHbox"
-			alignment="CENTER" layoutX="9.0" maxHeight="-Infinity"
-			maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			prefHeight="560.0" prefWidth="870.0" visible="false">
+		<HBox id="mainVboxVertical" fx:id="noConferenceHbox" alignment="CENTER" layoutX="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="870.0" visible="false">
 			<children>
-				<VBox alignment="TOP_CENTER" maxHeight="-Infinity"
-					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-					prefHeight="250.0" prefWidth="800.0">
+				<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="800.0">
 					<children>
-						<Label id="labelNegativeBg" fx:id="confLabel"
-							alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="45.0"
-							prefWidth="800.0" text="No active conference">
+						<Label id="labelNegativeBg" fx:id="confLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="45.0" prefWidth="800.0" text="No active conference">
 							<VBox.margin>
 								<Insets top="30.0" />
 							</VBox.margin>
 						</Label>
-						<JFXButton id="button" fx:id="newConferenceButton"
-							buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity"
-							onAction="#createNewConference" prefHeight="40.0"
-							prefWidth="160.0" text="New conference">
+						<JFXButton id="button" fx:id="newConferenceButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#createNewConference" prefHeight="40.0" prefWidth="160.0" text="New conference">
 							<VBox.margin>
 								<Insets top="20.0" />
 							</VBox.margin>
@@ -86,74 +62,44 @@
 				</VBox>
 			</children>
 		</HBox>
-		<HBox id="mainVboxVertical" fx:id="addConferenceHbox"
-			alignment="CENTER" layoutX="8.0" maxHeight="-Infinity"
-			maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			prefHeight="560.0" prefWidth="870.0">
+		<HBox id="mainVboxVertical" fx:id="addConferenceHbox" alignment="CENTER" layoutX="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="870.0">
 			<children>
-				<VBox fillWidth="false" maxHeight="-Infinity"
-					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-					prefHeight="560.0" prefWidth="435.0" spacing="3.0">
+				<VBox fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="435.0" spacing="3.0">
 					<children>
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="Conference title:">
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Conference title:">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<TextField id="textField"
-							fx:id="conferenceTitleTextField" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="27.0" prefWidth="250.0">
+						<TextField id="textField" fx:id="conferenceTitleTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0">
 							<VBox.margin>
 								<Insets bottom="5.0" />
 							</VBox.margin>
 						</TextField>
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="Field:">
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Field:">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<ComboBox id="comboBoxText"
-							fx:id="conferenceFieldComboBox" editable="true"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0"
-							promptText="Please select">
+						<ComboBox id="comboBoxText" fx:id="conferenceFieldComboBox" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" promptText="Please select">
 							<VBox.margin>
 								<Insets bottom="10.0" />
 							</VBox.margin>
 						</ComboBox>
-						<HBox alignment="CENTER" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="25.0" prefWidth="250.0">
+						<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="250.0">
 							<children>
-								<Label id="label" maxHeight="-Infinity"
-									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									prefHeight="27.0" prefWidth="180.0" text="Select fees:" />
-								<JFXButton id="miniButtonTransparent"
-									fx:id="insertFeesButton" buttonType="RAISED"
-									maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity"
-									onAction="#insertFees" prefHeight="27.0" prefWidth="70.0"
-									text="Insert" />
+								<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="180.0" text="Select fees:" />
+								<JFXButton id="miniButtonTransparent" fx:id="insertFeesButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#insertFees" prefHeight="27.0" prefWidth="70.0" text="Insert" />
 							</children>
 							<VBox.margin>
 								<Insets top="30.0" />
 							</VBox.margin>
 						</HBox>
-						<TableView id="tableViewMini" fx:id="feesTableView"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0">
+						<TableView id="tableViewMini" fx:id="feesTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0">
 							<columns>
-								<TableColumn fx:id="presetCol" editable="false"
-									prefWidth="106.40002822875977" text="Preset" />
-								<TableColumn fx:id="currencyCol" editable="false"
-									prefWidth="64.79998779296875" text="Currency" />
-								<TableColumn fx:id="amountCol" editable="false"
-									prefWidth="71.19999694824219" text="Amount" />
+								<TableColumn fx:id="presetCol" editable="false" prefWidth="106.40002822875977" text="Preset" />
+								<TableColumn fx:id="currencyCol" editable="false" prefWidth="64.79998779296875" text="Currency" />
+								<TableColumn fx:id="amountCol" editable="false" prefWidth="71.19999694824219" text="Amount" />
 							</columns>
 							<VBox.margin>
 								<Insets top="10.0" />
@@ -167,38 +113,24 @@
 						<Insets left="60.0" top="70.0" />
 					</padding>
 				</VBox>
-				<VBox maxHeight="-Infinity" maxWidth="-Infinity"
-					minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0"
-					prefWidth="435.0" spacing="3.0">
+				<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="435.0" spacing="3.0">
 					<children>
-						<HBox alignment="TOP_RIGHT" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="45.0" prefWidth="435.0">
+						<HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="45.0" prefWidth="435.0">
 							<children>
 								<VBox spacing="7.0">
 									<children>
-										<Button id="miniButtonTrBottom" fx:id="closeButton"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity"
-											mnemonicParsing="false" onAction="#closePopup"
-											prefHeight="25.0" prefWidth="25.0">
+										<Button id="miniButtonTrBottom" fx:id="closeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#closePopup" prefHeight="25.0" prefWidth="25.0">
 											<graphic>
-												<ImageView fitHeight="25.0" fitWidth="25.0"
-													pickOnBounds="true" preserveRatio="true">
+												<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
 													<image>
 														<Image url="@../images/close_popup_icon.png" />
 													</image>
 												</ImageView>
 											</graphic>
 										</Button>
-										<Button id="miniButtonTransparent" fx:id="clearButton"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity"
-											mnemonicParsing="false" onAction="#clearPopup"
-											prefHeight="25.0" prefWidth="25.0">
+										<Button id="miniButtonTransparent" fx:id="clearButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clearPopup" prefHeight="25.0" prefWidth="25.0">
 											<graphic>
-												<ImageView fitHeight="20.0" fitWidth="20.0"
-													pickOnBounds="true" preserveRatio="true">
+												<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
 													<image>
 														<Image url="@../images/clear_popup_icon.png" />
 													</image>
@@ -212,79 +144,49 @@
 								</VBox>
 							</children>
 						</HBox>
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="Email:">
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Email:">
 							<VBox.margin>
 								<Insets top="25.0" />
 							</VBox.margin>
 						</Label>
-						<TextField id="textField" fx:id="confEmail"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="Password:" />
-						<TextField id="textField" fx:id="confPassword"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="bcc:" />
-						<TextField id="textField" fx:id="confBcc"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="First call date:">
+						<TextField id="textField" fx:id="confEmail" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Password:" />
+						<TextField id="textField" fx:id="confPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="bcc:" />
+						<TextField id="textField" fx:id="confBcc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="First call date:">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<DatePicker id="textField" fx:id="firstCallDatePicker"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="175.0">
+						<DatePicker id="textField" fx:id="firstCallDatePicker" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="175.0">
 							<VBox.margin>
 								<Insets bottom="5.0" />
 							</VBox.margin>
 						</DatePicker>
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="Second call date:">
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Second call date:">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<DatePicker id="textField" fx:id="secondCallDatePicker"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="175.0">
+						<DatePicker id="textField" fx:id="secondCallDatePicker" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="175.0">
 							<VBox.margin>
 								<Insets bottom="5.0" />
 							</VBox.margin>
 						</DatePicker>
-						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-							prefWidth="150.0" text="Third call date:">
+						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Third call date:">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<DatePicker id="textField" fx:id="thirdCallDatePicker"
-							maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-							minWidth="-Infinity" prefHeight="27.0" prefWidth="175.0">
+						<DatePicker id="textField" fx:id="thirdCallDatePicker" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="175.0">
 							<VBox.margin>
 								<Insets bottom="5.0" />
 							</VBox.margin>
 						</DatePicker>
-						<HBox alignment="CENTER_RIGHT" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="40.0" prefWidth="435.0">
+						<HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="435.0">
 							<children>
-								<JFXButton id="button" fx:id="saveConfButton"
-									maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity"
-									onAction="#saveConference" prefHeight="40.0" prefWidth="100.0"
-									text="Save">
+								<JFXButton id="button" fx:id="saveConfButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#saveConference" prefHeight="40.0" prefWidth="100.0" text="Save">
 									<HBox.margin>
 										<Insets right="20.0" />
 									</HBox.margin>
@@ -301,49 +203,30 @@
 				</VBox>
 			</children>
 		</HBox>
-		<HBox id="mainVboxVertical" fx:id="activeConferenceHbox"
-			alignment="TOP_CENTER" layoutX="8.0" maxHeight="-Infinity"
-			maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-			prefHeight="560.0" prefWidth="870.0" visible="false">
+		<HBox id="mainVboxVertical" fx:id="activeConferenceHbox" alignment="TOP_CENTER" layoutX="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="870.0" visible="false">
 			<children>
 				<VBox>
 					<children>
-						<HBox alignment="CENTER" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="100.0" prefWidth="870.0">
+						<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="870.0">
 							<children>
-								<VBox alignment="TOP_CENTER" maxHeight="-Infinity"
-									maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-									prefHeight="100.0" prefWidth="870.0">
+								<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="870.0">
 									<children>
-										<HBox alignment="TOP_RIGHT" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" prefHeight="25.0" prefWidth="870.0">
+										<HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="870.0">
 											<children>
 												<VBox spacing="7.0">
 													<children>
-														<Button id="miniButtonTrBottom"
-															fx:id="closeButton1" maxHeight="-Infinity"
-															maxWidth="-Infinity" minHeight="-Infinity"
-															minWidth="-Infinity" mnemonicParsing="false"
-															onAction="#closePopup" prefHeight="25.0" prefWidth="25.0">
+														<Button id="miniButtonTrBottom" fx:id="closeButton1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#closePopup" prefHeight="25.0" prefWidth="25.0">
 															<graphic>
-																<ImageView fitHeight="25.0" fitWidth="25.0"
-																	pickOnBounds="true" preserveRatio="true">
+																<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
 																	<image>
 																		<Image url="@../images/close_popup_icon.png" />
 																	</image>
 																</ImageView>
 															</graphic>
 														</Button>
-														<Button id="miniButtonTransparent"
-															fx:id="clearButton1" maxHeight="-Infinity"
-															maxWidth="-Infinity" minHeight="-Infinity"
-															minWidth="-Infinity" mnemonicParsing="false"
-															onAction="#clearPopup" prefHeight="25.0" prefWidth="25.0">
+														<Button id="miniButtonTransparent" fx:id="clearButton1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clearPopup" prefHeight="25.0" prefWidth="25.0">
 															<graphic>
-																<ImageView fitHeight="20.0" fitWidth="20.0"
-																	pickOnBounds="true" preserveRatio="true">
+																<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
 																	<image>
 																		<Image url="@../images/clear_popup_icon.png" />
 																	</image>
@@ -357,50 +240,27 @@
 												</VBox>
 											</children>
 										</HBox>
-										<Label id="labelPositiveBg" fx:id="activeConfLabel"
-											alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="45.0"
-											prefWidth="435.0" text="Active conference" />
+										<Label id="labelPositiveBg" fx:id="activeConfLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="45.0" prefWidth="435.0" text="Active conference" />
 									</children>
 								</VBox>
 							</children>
 						</HBox>
-						<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-							minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0"
-							prefWidth="870.0">
+						<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="870.0">
 							<children>
-								<VBox maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0"
-									prefWidth="330.0" spacing="5.0">
+								<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="330.0" spacing="5.0">
 									<children>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefWidth="300.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="300.0">
 											<children>
-												<Label id="label" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" prefHeight="27.0" prefWidth="50.0"
-													text="Field:" />
-												<Label id="label" fx:id="confFieldLabel"
-													maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="27.0" prefWidth="250.0" text="n/a" />
+												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="50.0" text="Field:" />
+												<Label id="label" fx:id="confFieldLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" text="n/a" />
 											</children>
 										</HBox>
-										<Label id="label" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" prefHeight="27.0" prefWidth="50.0"
-											text="Fees:" />
-										<TableView id="tableViewMini" fx:id="feesTableView"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0"
-											prefWidth="250.0">
+										<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="50.0" text="Fees:" />
+										<TableView id="tableViewMini" fx:id="feesTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0">
 											<columns>
-												<TableColumn fx:id="feePresetColumn"
-													prefWidth="106.40002822875977" text="Preset" />
-												<TableColumn fx:id="feeCurrencyColumn"
-													prefWidth="64.79998779296875" text="Currency" />
-												<TableColumn fx:id="feeAmountColumn"
-													prefWidth="71.19999694824219" text="Amount" />
+												<TableColumn fx:id="feePresetColumn" prefWidth="106.40002822875977" text="Preset" />
+												<TableColumn fx:id="feeCurrencyColumn" prefWidth="64.79998779296875" text="Currency" />
+												<TableColumn fx:id="feeAmountColumn" prefWidth="71.19999694824219" text="Amount" />
 											</columns>
 										</TableView>
 									</children>
@@ -411,88 +271,46 @@
 										<Insets left="35.0" />
 									</padding>
 								</VBox>
-								<VBox maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0"
-									prefWidth="270.0" spacing="5.0">
+								<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="270.0" spacing="5.0">
 									<children>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-											prefWidth="250.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0">
 											<children>
-												<Label id="label" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0"
-													text="Start date:" />
-												<Label id="label" fx:id="confStartDate"
-													maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="27.0" prefWidth="130.0" text="n/a" />
+												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="Start date:" />
+												<Label id="label" fx:id="confStartDate" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="n/a" />
 											</children>
 										</HBox>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-											prefWidth="250.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0">
 											<children>
-												<Label id="label" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0"
-													text="End date:" />
-												<Label id="label" fx:id="confEndDate"
-													maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="27.0" prefWidth="130.0" text="n/a" />
+												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="End date:" />
+												<Label id="label" fx:id="confEndDate" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="n/a" />
 											</children>
 										</HBox>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-											prefWidth="250.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0">
 											<children>
-												<Label id="label" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0"
-													text="1st invitation:">
+												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="1st invitation:">
 													<HBox.margin>
 														<Insets />
 													</HBox.margin>
 												</Label>
-												<Label id="label" fx:id="firstCallLabel"
-													maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="27.0" prefWidth="130.0" text="n/a" />
+												<Label id="label" fx:id="firstCallLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="n/a" />
 											</children>
 											<VBox.margin>
 												<Insets top="15.0" />
 											</VBox.margin>
 										</HBox>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-											prefWidth="250.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0">
 											<children>
-												<Label id="label" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0"
-													text="2nd invitation:" />
-												<Label id="label" fx:id="secondCallLabel"
-													maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="27.0" prefWidth="130.0" text="n/a" />
+												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="2nd invitation:" />
+												<Label id="label" fx:id="secondCallLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="n/a" />
 											</children>
 											<VBox.margin>
 												<Insets bottom="10.0" top="10.0" />
 											</VBox.margin>
 										</HBox>
-										<HBox maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-											prefWidth="250.0">
+										<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0">
 											<children>
-												<Label id="label" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0"
-													text="3rd invitation:" />
-												<Label id="label" fx:id="thirdCallLabel"
-													maxHeight="-Infinity" maxWidth="-Infinity"
-													minHeight="-Infinity" minWidth="-Infinity"
-													prefHeight="27.0" prefWidth="130.0" text="n/a" />
+												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="3rd invitation:" />
+												<Label id="label" fx:id="thirdCallLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="130.0" text="n/a" />
 											</children>
 										</HBox>
 									</children>
@@ -500,38 +318,18 @@
 										<Insets />
 									</HBox.margin>
 								</VBox>
-								<VBox id="popupVboxRoundLight" alignment="TOP_CENTER"
-									maxHeight="-Infinity" maxWidth="-Infinity"
-									minHeight="-Infinity" minWidth="-Infinity" prefHeight="460.0"
-									prefWidth="275.0" spacing="5.0">
+								<VBox id="popupVboxRoundLight" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="460.0" prefWidth="275.0" spacing="5.0">
 									<children>
-										<Label id="label" alignment="CENTER"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
-											prefWidth="230.0" text="Notes:" />
-										<TextArea fx:id="confNotesTextArea"
-											maxHeight="-Infinity" maxWidth="-Infinity"
-											minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0"
-											prefWidth="230.0" />
-										<HBox alignment="CENTER_LEFT" maxHeight="-Infinity"
-											maxWidth="-Infinity" minHeight="-Infinity"
-											minWidth="-Infinity" prefHeight="40.0" prefWidth="230.0"
-											spacing="30.0">
+										<Label id="label" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="230.0" text="Notes:" />
+										<TextArea fx:id="confNotesTextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="230.0" />
+										<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="230.0" spacing="30.0">
 											<children>
-												<JFXButton id="button" fx:id="editConfButton"
-													buttonType="RAISED" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" onAction="#editConf" prefHeight="40.0"
-													prefWidth="100.0" text="Edit">
+												<JFXButton id="button" fx:id="editConfButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editConf" prefHeight="40.0" prefWidth="100.0" text="Edit">
 													<HBox.margin>
 														<Insets bottom="15.0" />
 													</HBox.margin>
 												</JFXButton>
-												<JFXButton id="button" fx:id="closeConfButton"
-													buttonType="RAISED" maxHeight="-Infinity"
-													maxWidth="-Infinity" minHeight="-Infinity"
-													minWidth="-Infinity" onAction="#closeConf"
-													prefHeight="40.0" prefWidth="100.0" text="Close">
+												<JFXButton id="button" fx:id="closeConfButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#closeConf" prefHeight="40.0" prefWidth="100.0" text="Close">
 													<HBox.margin>
 														<Insets bottom="15.0" right="15.0" />
 													</HBox.margin>
@@ -548,12 +346,9 @@
 								</VBox>
 							</children>
 						</HBox>
-						<BorderPane id="popupVboxRound" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="210.0" prefWidth="565.0">
+						<BorderPane id="popupVboxRound" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="565.0">
 							<top>
-								<Label id="labelInverse" text="Stats"
-									BorderPane.alignment="CENTER" />
+								<Label id="labelInverse" text="Stats" BorderPane.alignment="CENTER" />
 							</top>
 							<VBox.margin>
 								<Insets bottom="20.0" left="20.0" />

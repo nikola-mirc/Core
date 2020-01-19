@@ -25,7 +25,7 @@ public class RegistrationFee {
 	private final ObjectProperty<Currency> currency;
 
 	public RegistrationFee() {
-		this(0, 0, null, 0, null);
+		this(0, 0, null, 0, Currency.RSD.name());
 	}
 
 	public RegistrationFee(int registrationFeeID, int conferenceID, String registrationName, double registrationPrice,
@@ -111,6 +111,11 @@ public class RegistrationFee {
 
 	public void setRegistrationPrice(double price) {
 		this.registrationPrice.set(BigDecimal.valueOf(price));
+	}
+
+	@Override
+	public String toString() {
+		return getRegistrationNameProperty().get();
 	}
 
 }

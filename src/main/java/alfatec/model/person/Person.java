@@ -1,5 +1,7 @@
 package alfatec.model.person;
 
+import java.util.Objects;
+
 import alfatec.dao.country.CountryDAO;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
@@ -42,9 +44,13 @@ abstract class Person {
 	public int getCountryID() {
 		return countryID.get();
 	}
-	
+
 	public StringProperty countryProperty() {
-		return CountryDAO.getInstance().getCountry(getCountryID()).getCountryNameProperty();
+		try {
+			return CountryDAO.getInstance().getCountry(getCountryID()).getCountryNameProperty();
+		} catch (NullPointerException e) {
+			return new SimpleStringProperty();
+		}
 	}
 
 	public IntegerProperty getCountryIDProperty() {
@@ -125,5 +131,25 @@ abstract class Person {
 
 	protected void setPersonID(long id) {
 		this.personID.set(id);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+		if (!(object instanceof Person))
+			return false;
+		Person person = (Person) object;
+		return person.getPersonIDProperty().isEqualTo(getPersonIDProperty()).get();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getPersonID());
+	}
+
+	@Override
+	public String toString() {
+		return getFirstName().concat(" ").concat(getLastName());
 	}
 }

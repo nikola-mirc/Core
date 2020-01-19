@@ -72,7 +72,11 @@ public class SpecialIssueDAO {
 	 * @param collectionID - foreign key of collection, point to particular research
 	 */
 	public SpecialIssue getByCollectionID(long collectionID) {
-		return table.findBy(collectionID, 1, getSpecial).get(0);
+		try {
+			return table.findBy(collectionID, 1, getSpecial).get(0);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	/**

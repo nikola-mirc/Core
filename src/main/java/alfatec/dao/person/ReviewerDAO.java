@@ -91,7 +91,11 @@ public class ReviewerDAO {
 	 * Search for reviewer by primary key - id
 	 */
 	public Reviewer getReviewer(int reviewerID) {
-		return table.findBy(reviewerID, getReviewer);
+		try {
+			return table.findBy(reviewerID, getReviewer);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	/**

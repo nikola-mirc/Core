@@ -3,11 +3,14 @@ package alfatec.dao.relationship;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javafx.collections.ObservableList;
+import alfatec.dao.person.AuthorDAO;
+import alfatec.dao.research.ResearchDAO;
+import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.relationship.AuthorResearch;
-import database.Getter;
 import database.DatabaseTable;
+import database.Getter;
+import javafx.collections.ObservableList;
 
 /**
  * DAO for table "author_research".
@@ -45,6 +48,10 @@ public class AuthorResearchDAO {
 
 	public void deleteEntry(AuthorResearch ar) {
 		table.delete(ar.getAuthorResearchID());
+		Logging.getInstance().change("Delete",
+				"Removed " + AuthorDAO.getInstance().findAuthorByID(ar.getAuthorID()).getAuthorEmail()
+						+ " as author of "
+						+ ResearchDAO.getInstance().getResearch(ar.getResearchID()).getResearchTitle());
 	}
 
 	/**
@@ -77,7 +84,18 @@ public class AuthorResearchDAO {
 		return table.findBy(id, getAR);
 	}
 
-	public AuthorResearchDAO getInstance() {
+	public AuthorResearch getEntry(long researchID, long authorID) {
+		try {
+			return table
+					.findWhere(new String[] { table.getTable().getColumnName(1), table.getTable().getColumnName(2) },
+							new long[] { researchID, authorID }, getAR)
+					.get(0);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
+	public static AuthorResearchDAO getInstance() {
 		if (instance == null)
 			synchronized (AuthorResearchDAO.class) {
 				if (instance == null)

@@ -69,8 +69,14 @@ public class ResearchDAO {
 	}
 
 	public Research createResearch(String title, String filePath, String note) {
-		Research research = table.create(filePath, 2, new String[] { title, note }, new int[] {}, new long[] {},
-				getResearch);
+		Research research = table.create(filePath, 2, new String[] { title, filePath, note }, new int[] {},
+				new long[] {}, getResearch);
+		Logging.getInstance().change("Create", "Add research " + title);
+		return research;
+	}
+
+	public Research createResearch(String title, String note) {
+		Research research = table.create(new String[] { title, null, note }, new int[] {}, new long[] {}, getResearch);
 		Logging.getInstance().change("Create", "Add research " + title);
 		return research;
 	}

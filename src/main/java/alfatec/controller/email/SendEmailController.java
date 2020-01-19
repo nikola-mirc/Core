@@ -44,4 +44,8 @@ public class SendEmailController extends EmailGUI {
 		}
 		close();
 	}
+
+	public void setReciever(JFXTextField recieverEmail) {
+		this.recieverid = recieverEmail;
+	}
 }

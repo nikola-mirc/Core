@@ -30,26 +30,27 @@ public class Paperwork {
 	private final IntegerProperty sentToReview;
 	private final IntegerProperty conferenceID;
 	private final IntegerProperty registrationFeeID;
+	private final IntegerProperty feePaid;
 	private final IntegerProperty forCollection;
 	private final ObjectProperty<LocalDateTime> presentationDate;
 
 	public Paperwork() {
-		this(0, 0, null, false, false, 0, 0, false, null);
+		this(0, 0, null, false, false, 0, 0, false, false, "");
 	}
 
 	public Paperwork(int paperworkID, int researchID, String presentationType, boolean submittetWork,
-			boolean sentToReview, int conferenceID, int registrationFeeID, boolean forCollection,
+			boolean sentToReview, int conferenceID, int registrationFeeID, boolean feePaid, boolean forCollection,
 			String presentationTime) {
 		this.paperworkID = new SimpleLongProperty(paperworkID);
 		this.researchID = new SimpleLongProperty(researchID);
-		this.presentation = new SimpleObjectProperty<Presentation>(
-				Presentation.valueOf(presentationType.toUpperCase()));
+		this.presentation = new SimpleObjectProperty<Presentation>(Presentation.lookUpByName(presentationType));
 		this.submittetWork = new SimpleIntegerProperty(BooleanUtil.parse(submittetWork));
 		this.sentToReview = new SimpleIntegerProperty(BooleanUtil.parse(sentToReview));
 		this.conferenceID = new SimpleIntegerProperty(conferenceID);
 		this.registrationFeeID = new SimpleIntegerProperty(registrationFeeID);
+		this.feePaid = new SimpleIntegerProperty(BooleanUtil.parse(feePaid));
 		this.forCollection = new SimpleIntegerProperty(BooleanUtil.parse(forCollection));
-		this.presentationDate = new SimpleObjectProperty<LocalDateTime>(DateUtil.parse(presentationTime));
+		this.presentationDate = new SimpleObjectProperty<LocalDateTime>(LocalDateTime.now());
 	}
 
 	public int getConferenceID() {
@@ -108,6 +109,14 @@ public class Paperwork {
 		return registrationFeeID;
 	}
 
+	public int getFeePaid() {
+		return feePaid.get();
+	}
+
+	public IntegerProperty getFeePaidProperty() {
+		return feePaid;
+	}
+
 	public long getResearchID() {
 		return researchID.get();
 	}
@@ -144,6 +153,10 @@ public class Paperwork {
 		return BooleanUtil.checkNumber(submittetWork.get());
 	}
 
+	public boolean isFeePaid() {
+		return BooleanUtil.checkNumber(feePaid.get());
+	}
+
 	public void setConferenceID(int id) {
 		this.conferenceID.set(id);
 	}
@@ -173,7 +186,7 @@ public class Paperwork {
 	}
 
 	public void setPresentation(String type) {
-		this.presentation.set(Presentation.valueOf(type.toUpperCase()));
+		this.presentation.set(Presentation.lookUpByName(type));
 	}
 
 	/**
@@ -191,6 +204,14 @@ public class Paperwork {
 
 	public void setRegistrationFeeID(int id) {
 		this.registrationFeeID.set(id);
+	}
+
+	public void setFeePaid(int isPaid) {
+		this.feePaid.set(isPaid);
+	}
+
+	public void setIsFeePaid(boolean isPaid) {
+		this.feePaid.set(BooleanUtil.parse(isPaid));
 	}
 
 	public void setResearchID(long id) {

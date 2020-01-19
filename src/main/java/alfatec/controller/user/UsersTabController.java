@@ -25,7 +25,6 @@ import alfatec.model.user.UserAudit;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.UserLoginConnection;
-import javafx.animation.Interpolator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -140,8 +139,9 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				UserDAO.getInstance().getAllUsers().remove(userData.getUser());
 				users.remove(userData);
 				usersTableView.getItems().remove(userData);
-				refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex() - 1, popupVbox, popup);
-				closeDetails(mainVbox);
+				refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex() - 1, popupVbox, 520,
+						popup);
+				closeDetails(mainVbox, 1200);
 			}
 		}
 	}
@@ -152,9 +152,9 @@ public class UsersTabController extends GUIUtils implements Initializable {
 			setAddAction(false);
 			if (isValidInput() && !isEmailAlreadyInDB()) {
 				users.add(getNewUser());
-				refresh(usersTableView, users.size() - 1, popupVbox, popup);
-				closeDetails(mainVbox);
-				transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+				refresh(usersTableView, users.size() - 1, popupVbox, 520, popup);
+				closeDetails(mainVbox, 1200);
+				openDetails(mainVbox, 1200);
 				showUser(userData);
 			} else if (isEmailAlreadyInDB())
 				emailErrorLabel.setText("E-mail already exists in database.");
@@ -167,7 +167,8 @@ public class UsersTabController extends GUIUtils implements Initializable {
 						handleEditUserWithoutPWchange();
 					else
 						handleEditUser();
-					refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex(), popupVbox, popup);
+					refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex(), popupVbox, 520,
+							popup);
 					showUser(userData);
 				} else
 					emailErrorLabel.setText("Already exists.");
@@ -176,7 +177,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 					handleEditUserWithoutPWchange();
 				else
 					handleEditUser();
-				refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex(), popupVbox, popup);
+				refresh(usersTableView, usersTableView.getSelectionModel().getSelectedIndex(), popupVbox, 520, popup);
 				showUser(userData);
 			}
 		}
@@ -203,7 +204,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				if (usersTableView.getSelectionModel().getSelectedItem() != null) {
 					if (isPopupOpen())
 						closePopup(popupVbox, 340, popup);
-					transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+					openDetails(mainVbox, 1200);
 					showUser(usersTableView.getSelectionModel().getSelectedItem());
 				}
 		});
@@ -234,7 +235,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		sortedData.comparatorProperty().bind(usersTableView.comparatorProperty());
 		usersTableView.setItems(sortedData);
 	}
-	
+
 	private void setUser(UserLoginConnection userData) {
 		this.userData = userData;
 		firstNameTextField.setText(userData.getUser().getUserFirstName());
@@ -246,12 +247,12 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		roleComboBox.setItems(FXCollections.observableArrayList(RoleEnum.values()));
 		roleComboBox.getSelectionModel().select(userData.getLoginData().getRoleID() - 1);
 	}
-	
+
 	private void showUser(UserLoginConnection userData) {
 		email = userData.getLoginData().getUserEmail();
 		password = userData.getLoginData().getPasswordHash();
 		role = userData.getLoginData().getRoleName();
-		transitionPopupX(mainVbox, 1200, 0, Interpolator.EASE_IN, 500);
+		openDetails(mainVbox, 1200);
 		mainVbox.setVisible(true);
 		usernameLabel.setText(userData.getUser().getUserFirstName() + " " + userData.getUser().getUserLastName());
 		roleLabel.setText(role);
@@ -261,7 +262,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
 		createChart();
 	}
-	
+
 	private UserLoginConnection getNewUser() {
 		if (isValidInput()) {
 			User user = UserDAO.getInstance().createUser(firstNameTextField.getText(), lastNameTextField.getText(),

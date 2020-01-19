@@ -18,13 +18,13 @@ public class Reviewer extends Person {
 
 	public Reviewer() {
 		super();
-		this.contactTelephone = null;
+		this.contactTelephone = new SimpleStringProperty(null);
 	}
 
 	public Reviewer(int reviewerID, int countryID, String firstName, String lastName, String email,
-			String contectTelephone, String institutionName, String note) {
+			String contactTelephone, String institutionName, String note) {
 		super(reviewerID, countryID, firstName, lastName, email, institutionName, note);
-		this.contactTelephone = new SimpleStringProperty(contectTelephone);
+		this.contactTelephone = new SimpleStringProperty(contactTelephone);
 	}
 
 	public String getContactTelephone() {

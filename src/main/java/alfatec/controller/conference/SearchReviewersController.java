@@ -1,36 +1,32 @@
 package alfatec.controller.conference;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.jfoenix.controls.JFXButton;
 
+import alfatec.dao.person.ReviewerDAO;
+import alfatec.model.person.Reviewer;
+import alfatec.view.utils.GUIUtils;
+import alfatec.view.utils.Utility;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class SearchReviewersController {
+public class SearchReviewersController extends GUIUtils {
 
 	@FXML
-	private TableView<?> reviewerTableView;
+	private TableView<Reviewer> reviewerTableView;
 
 	@FXML
-	private TableColumn<?, ?> reviewerNameColumn;
-
-	@FXML
-	private TableColumn<?, ?> reviewerLastNameColumn;
-
-	@FXML
-	private TableColumn<?, ?> institutionNameColumn;
-
-	@FXML
-	private TableColumn<?, ?> emailColumn;
-
-	@FXML
-	private TableColumn<?, ?> countryColumn;
+	private TableColumn<Reviewer, String> reviewerNameColumn, reviewerLastNameColumn, institutionNameColumn,
+			emailColumn, countryColumn;
 
 	@FXML
 	private TextField searchReviewerTextField;
@@ -42,38 +38,61 @@ public class SearchReviewersController {
 	private Button closeButton;
 
 	private Stage display;
-	private double x = 0;
-	private double y = 0;
-	private Node node;
+	private ObservableList<Reviewer> reviewers;
+	private Reviewer reviewer;
 
 	@FXML
-	void pressed(MouseEvent event) {
-		x = event.getSceneX();
-		y = event.getSceneY();
-	}
-
-	@FXML
-	void dragged(MouseEvent event) {
-		node = (Node) event.getSource();
-		display = (Stage) node.getScene().getWindow();
-		display.setX(event.getScreenX() - x);
-		display.setY(event.getScreenY() - y);
+	void initialize() {
+		reviewers = ReviewerDAO.getInstance().getAllReviewers();
+		reviewer = null;
+		populateTable();
+		handleSearch();
 	}
 
 	@FXML
 	void close(ActionEvent event) {
-		Node node = (Node) event.getSource();
-		Stage stage = (Stage) node.getScene().getWindow();
-		stage.close();
+		display.close();
 	}
 
 	@FXML
 	void selectReviewer(ActionEvent event) {
-
+		reviewer = reviewerTableView.getSelectionModel().getSelectedItem();
+		display.close();
 	}
 
 	public void setDisplayStage(Stage stage) {
 		this.display = stage;
 	}
 
+	private void populateTable() {
+		reviewerTableView.setPlaceholder(new Label("Database table \"reviewer\" is empty"));
+		Utility.setUpStringCell(reviewerTableView);
+		reviewerNameColumn.setCellValueFactory(cellData -> cellData.getValue().getReviewerFirstNameProperty());
+		reviewerLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().getReviewerLastNameProperty());
+		emailColumn.setCellValueFactory(cellData -> cellData.getValue().getReviewerEmailProperty());
+		institutionNameColumn.setCellValueFactory(cellData -> cellData.getValue().getInstitutionNameProperty());
+		countryColumn.setCellValueFactory(cellData -> cellData.getValue().countryProperty());
+		reviewerTableView.setItems(reviewers);
+//		reviewerTableView.getSelectionModel().selectedItemProperty()
+//				.addListener((observable, oldValue, newValue) -> reviewer = newValue);
+	}
+
+	private void handleSearch() {
+		searchReviewerTextField.setOnKeyTyped(event -> {
+			String search = searchReviewerTextField.getText();
+			Pattern pattern = Pattern.compile("[@()]");
+			Matcher matcher = pattern.matcher(search);
+			if (search.length() > 0 && !matcher.find()) {
+				ObservableList<Reviewer> searched = ReviewerDAO.getInstance().getReviewers(search);
+				reviewerTableView.getItems().setAll(searched);
+			} else {
+				reviewers = ReviewerDAO.getInstance().getAllReviewers();
+				reviewerTableView.getItems().setAll(reviewers);
+			}
+		});
+	}
+
+	public Reviewer getSelectedReviewer() {
+		return reviewer;
+	}
 }
