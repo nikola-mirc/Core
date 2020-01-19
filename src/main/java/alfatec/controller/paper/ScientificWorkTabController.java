@@ -14,6 +14,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXRadioButton;
 
+import alfatec.Main;
 import alfatec.controller.author.SearchAuthorsController;
 import alfatec.controller.conference.SearchReviewersController;
 import alfatec.controller.email.GroupCallController;
@@ -47,6 +48,7 @@ import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.PaperworkResearch;
 import alfatec.view.wrappers.ScientificWork;
+import javafx.application.HostServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -84,7 +86,7 @@ public class ScientificWorkTabController extends GUIUtils {
 	@FXML
 	private JFXButton addApplicationButton, updateApplicationButton, insertAuthorButton, importPaperButton,
 			selectReviewerButton, sendForReviewButton, sendEmailButton, remove, saveButton, rwAcceptedButton,
-			rwSmallButton, rwBigButton, rwRejectedButton;
+			rwSmallButton, rwBigButton, rwRejectedButton, openPaperButton;
 
 	@FXML
 	private TableView<Author> miniAuthorTableView;
@@ -180,11 +182,19 @@ public class ScientificWorkTabController extends GUIUtils {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File file = fileChooser.showOpenDialog(((Stage) (((Button) event.getSource()).getScene().getWindow())));
-		try {
+		if (file.exists())
 			filePath = file.getAbsolutePath();
-		} catch (NullPointerException e) {
+		else
 			filePath = null;
-		}
+	}
+
+	@FXML
+	private void openPaper() {
+		File file = united.getResearchProperty().get().getResearch().getPaperFile();
+		HostServices hostServices = Main.getInstance().getHostServices();
+		hostServices.showDocument(file.getAbsolutePath());
+		if (!file.exists())
+			alert("No research", "Research was not imported to the database.", AlertType.INFORMATION);
 	}
 
 	@FXML
