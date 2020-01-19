@@ -190,11 +190,15 @@ public class ScientificWorkTabController extends GUIUtils {
 
 	@FXML
 	private void openPaper() {
-		File file = united.getResearchProperty().get().getResearch().getPaperFile();
-		HostServices hostServices = Main.getInstance().getHostServices();
-		hostServices.showDocument(file.getAbsolutePath());
-		if (!file.exists())
-			alert("No research", "Research was not imported to the database.", AlertType.INFORMATION);
+		try {
+			File file = united.getResearchProperty().get().getResearch().getPaperFile();
+			HostServices hostServices = Main.getInstance().getHostServices();
+			hostServices.showDocument(file.getAbsolutePath());
+			if (!file.exists())
+				alert("No research", "Research was not imported to the database.", AlertType.INFORMATION);
+		} catch (NullPointerException e) {
+			alert("No research", "Research must be first created.", AlertType.INFORMATION);
+		}
 	}
 
 	@FXML

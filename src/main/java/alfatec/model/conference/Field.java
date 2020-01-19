@@ -52,4 +52,9 @@ public class Field {
 		this.fieldName.set(name);
 	}
 
+	@Override
+	public String toString() {
+		return getFieldNameProperty().get();
+	}
+
 }

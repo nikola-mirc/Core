@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import org.apache.commons.io.FileUtils;
 
 import javafx.collections.ObservableList;
+import util.Folder;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.research.Research;
@@ -51,9 +52,11 @@ public class ResearchDAO {
 			try {
 				research.setResearchID(rs.getLong(table.getTable().getPrimaryKey()));
 				research.setResearchTitle(rs.getString(table.getTable().getColumnName(1)));
-				Path path = Paths.get("src/resources/file/" + research.getResearchTitle());
+				Path path = Paths.get(
+						Folder.getResearchDirectory().getAbsolutePath() + File.separator + research.getResearchTitle());
 				if (Files.notExists(path)) {
-					File file = new File("src/resources/file/" + research.getResearchTitle());
+					File file = new File(Folder.getResearchDirectory().getAbsolutePath() + File.separator
+							+ research.getResearchTitle());
 					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
 					if (blob != null)
 						FileUtils.copyInputStreamToFile(blob, file);

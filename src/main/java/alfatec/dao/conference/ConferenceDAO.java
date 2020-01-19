@@ -18,6 +18,7 @@ import database.DatabaseTable;
 import database.Getter;
 import javafx.collections.ObservableList;
 import util.BooleanUtil;
+import util.Folder;
 
 /**
  * DAO for table "conference".
@@ -56,9 +57,11 @@ public class ConferenceDAO {
 				conference.readPasswordFromDB(rs.getString(table.getTable().getColumnName(3)));
 				conference.setConferenceBcc(rs.getString(table.getTable().getColumnName(4)));
 				conference.setNote(rs.getString(table.getTable().getColumnName(5)));
-				Path path = Paths.get("src/resources/file/" + conference.getConferenceTitle());
+				Path path = Paths.get(Folder.getConferenceDirectory().getAbsolutePath() + File.separator
+						+ conference.getConferenceTitle());
 				if (Files.notExists(path)) {
-					File file = new File("src/resources/file/" + conference.getConferenceTitle());
+					File file = new File(Folder.getConferenceDirectory().getAbsolutePath() + File.separator
+							+ conference.getConferenceTitle());
 					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(6));
 					if (blob != null)
 						FileUtils.copyInputStreamToFile(blob, file);
