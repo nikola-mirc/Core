@@ -6,6 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,6 +27,9 @@ import alfatec.model.user.UserAudit;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.UserLoginConnection;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -69,10 +74,12 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	private JFXButton addUserButton, editUserButton, deleteButton, saveUserButton;
 
 	@FXML
-	private Label usernameLabel, roleLabel, emailLabel, contactLabel, dateCreatedLabel, totalAddedLabel;
+	private Label usernameLabel, roleLabel, emailLabel, contactLabel, dateCreatedLabel, totalAddedLabel,
+			totalUpdatedLabel, totalDeletedLabel;
 
 	@FXML
-	private TextField searchUserTextField, firstNameTextField, lastNameTextField, emailTextField, contactTextField;
+	private TextField searchUserTextField, firstNameTextField, lastNameTextField, emailTextField, contactTextField,
+			searchAudit;
 
 	@FXML
 	private Label firstNameErrorLabel, lastNameErrorLabel, emailErrorLabel, contactErrorLabel, roleErrorLabel,
@@ -83,6 +90,12 @@ public class UsersTabController extends GUIUtils implements Initializable {
 
 	@FXML
 	private PasswordField passwordField, confirmPasswordField;
+
+	@FXML
+	private TableView<UserAudit> auditTableView;
+
+	@FXML
+	private TableColumn<UserAudit, String> userAudit, eventAudit, descriptionAudit, timestamp;
 
 	private UserLoginConnection userData;
 	private ObservableList<UserLoginConnection> users;
@@ -98,11 +111,17 @@ public class UsersTabController extends GUIUtils implements Initializable {
 			clearFields(Arrays.asList(passwordField, confirmPasswordField),
 					Arrays.asList(passwordErrorLabel, confirmPasswordErrorLabel));
 			roleComboBox.setValue(RoleEnum.USER);
+			totalAddedLabel.setText("");
+			totalDeletedLabel.setText("");
+			totalUpdatedLabel.setText("");
 		};
 		users = UserLoginDAO.getInstance().getAllData();
+		audit = UserAuditDAO.getInstance().getAll();
 		populateUsersTable();
 		handleSearch();
 		setUpFields();
+		populateAuditTable();
+		handleAuditSearch();
 	}
 
 	@FXML
@@ -190,7 +209,10 @@ public class UsersTabController extends GUIUtils implements Initializable {
 
 	@FXML
 	private void closePopup(ActionEvent event) {
-		closePopup(popupVbox, 340, popup);
+		if (event.getSource() == closeButton)
+			closePopup(popupVbox, 340, popup);
+		else
+			closeDetails(mainVbox, 1200);
 	}
 
 	private void populateUsersTable() {
@@ -208,6 +230,41 @@ public class UsersTabController extends GUIUtils implements Initializable {
 					showUser(usersTableView.getSelectionModel().getSelectedItem());
 				}
 		});
+	}
+
+	private void populateAuditTable() {
+		auditTableView.setPlaceholder(new Label("No activity in last 90 days"));
+		Utility.setUpStringCell(auditTableView);
+		userAudit.setCellValueFactory(cellData -> UserDAO.getInstance().getUser(cellData.getValue().getLoginID())
+				.getUserFirstNameProperty().concat(" ")
+				.concat(UserDAO.getInstance().getUser(cellData.getValue().getLoginID()).getUserLastNameProperty()));
+		eventAudit.setCellValueFactory(cellData -> cellData.getValue().getEventTypeProperty());
+		descriptionAudit.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
+		timestamp.setCellValueFactory(cellData -> new ObservableValue<String>() {
+
+			@Override
+			public void addListener(InvalidationListener listener) {
+			}
+
+			@Override
+			public void removeListener(InvalidationListener listener) {
+			}
+
+			@Override
+			public void addListener(ChangeListener<? super String> listener) {
+			}
+
+			@Override
+			public void removeListener(ChangeListener<? super String> listener) {
+			}
+
+			@Override
+			public String getValue() {
+				return DateUtil.format(cellData.getValue().getTimeProperty().get());
+			}
+		});
+		auditTableView.setItems(audit);
+
 	}
 
 	private void handleSearch() {
@@ -236,6 +293,25 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		usersTableView.setItems(sortedData);
 	}
 
+	private void handleAuditSearch() {
+		searchAudit.setOnKeyTyped(event -> {
+			String search = searchAudit.getText();
+			Pattern pattern = Pattern.compile("[@()\\\\<>+~%\\*\\-\\'\"]");
+			Matcher matcher = pattern.matcher(search);
+			if (search.length() > 0 && !matcher.find()) {
+				ObservableList<User> users = UserDAO.getInstance().findUsers(search);
+				ObservableList<LoginData> emails = FXCollections.observableArrayList();
+				users.forEach(user -> emails.add(LoginDataDAO.getInstance().getDataForUser(user.getUserID())));
+				ObservableList<UserAudit> searched = FXCollections.observableArrayList();
+				emails.forEach(user -> searched.addAll(UserAuditDAO.getInstance().getAllFor(user.getLoginID())));
+				auditTableView.getItems().setAll(searched);
+			} else {
+				audit = UserAuditDAO.getInstance().getAll();
+				auditTableView.getItems().setAll(audit);
+			}
+		});
+	}
+
 	private void setUser(UserLoginConnection userData) {
 		this.userData = userData;
 		firstNameTextField.setText(userData.getUser().getUserFirstName());
@@ -261,6 +337,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		dateCreatedLabel.setText(DateUtil.format(userData.getUser().getCreatedTimeProperty().get()));
 		audit = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
 		createChart();
+		setTotal(userData);
 	}
 
 	private UserLoginConnection getNewUser() {
@@ -384,4 +461,21 @@ public class UsersTabController extends GUIUtils implements Initializable {
 		mainVbox.setVisible(false);
 		popupVbox.setVisible(false);
 	}
+
+	private void setTotal(UserLoginConnection userData) {
+		ObservableList<UserAudit> data = UserAuditDAO.getInstance().getAllFor(userData.getLoginData().getLoginID());
+		int added = 0, updated = 0, deleted = 0;
+		for (UserAudit user : data) {
+			if (user.getEventType().equalsIgnoreCase("create"))
+				added++;
+			else if (user.getEventType().equalsIgnoreCase("update") || user.getEventType().equalsIgnoreCase("add"))
+				updated++;
+			else
+				deleted++;
+		}
+		totalAddedLabel.setText("Added: " + added);
+		totalUpdatedLabel.setText("Updated: " + updated);
+		totalDeletedLabel.setText("Deleted: " + deleted);
+	}
+
 }
