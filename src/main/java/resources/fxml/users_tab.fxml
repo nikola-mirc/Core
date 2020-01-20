@@ -75,7 +75,7 @@
 								<Insets right="5.0" />
 							</padding>
 						</HBox>
-						<TextField id="searchTextField" fx:id="searchAudit" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="830.0" promptText="Search table by user's name..." />
+						<TextField id="searchTextField" fx:id="searchAudit" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="830.0" promptText="Search table by user's name... info: Backspace will undo selection" />
 					</items>
 					<opaqueInsets>
 						<Insets />

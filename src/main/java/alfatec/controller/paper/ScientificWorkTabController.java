@@ -585,7 +585,8 @@ public class ScientificWorkTabController extends GUIUtils {
 		data = ResearchFactory.getInstance().getAllData();
 		addedAuthors = FXCollections.observableArrayList();
 		deletedAuthors = FXCollections.observableArrayList();
-		feeComboBox.getItems().setAll(RegistrationFeeDAO.getInstance().getCurrentFees());
+		if (RegistrationFeeDAO.getInstance().getCurrentFees() != null)
+			feeComboBox.getItems().setAll(RegistrationFeeDAO.getInstance().getCurrentFees());
 		setUpGroup();
 		setUpFields(new TextArea[] { swNote }, new int[] { getNoteLength() });
 		setUpFields(new TextField[] { swTitle }, new int[] { getResearchTitleLength() });

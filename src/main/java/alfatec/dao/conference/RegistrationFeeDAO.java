@@ -89,7 +89,11 @@ public class RegistrationFeeDAO {
 	 * @return all fees for current conference
 	 */
 	public ObservableList<RegistrationFee> getCurrentFees() {
-		return getAllForConference(ConferenceDAO.getInstance().getCurrentConference().getConferenceID());
+		try {
+			return getAllForConference(ConferenceDAO.getInstance().getCurrentConference().getConferenceID());
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	public void updateCurrency(RegistrationFee fee, String currency) {

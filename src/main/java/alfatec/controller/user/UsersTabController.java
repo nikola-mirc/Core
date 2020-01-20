@@ -27,14 +27,16 @@ import alfatec.model.user.UserAudit;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.UserLoginConnection;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
@@ -51,6 +53,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import util.DateUtil;
 
 public class UsersTabController extends GUIUtils implements Initializable {
@@ -240,30 +243,16 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				.concat(UserDAO.getInstance().getUser(cellData.getValue().getLoginID()).getUserLastNameProperty()));
 		eventAudit.setCellValueFactory(cellData -> cellData.getValue().getEventTypeProperty());
 		descriptionAudit.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
-		timestamp.setCellValueFactory(cellData -> new ObservableValue<String>() {
-
-			@Override
-			public void addListener(InvalidationListener listener) {
+		timestamp.setCellValueFactory(
+				cellData -> new ReadOnlyStringWrapper(DateUtil.format(cellData.getValue().getTimeProperty().get())));
+		Timeline animation = new Timeline();
+		animation.getKeyFrames().add(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				auditTableView.setItems(audit);
 			}
-
-			@Override
-			public void removeListener(InvalidationListener listener) {
-			}
-
-			@Override
-			public void addListener(ChangeListener<? super String> listener) {
-			}
-
-			@Override
-			public void removeListener(ChangeListener<? super String> listener) {
-			}
-
-			@Override
-			public String getValue() {
-				return DateUtil.format(cellData.getValue().getTimeProperty().get());
-			}
-		});
-		auditTableView.setItems(audit);
+		}));
+		animation.setCycleCount(Animation.INDEFINITE);
+		animation.play();
 	}
 
 	private void handleSearch() {
@@ -308,7 +297,6 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				audit = UserAuditDAO.getInstance().getAll();
 				auditTableView.getItems().setAll(audit);
 			}
-			auditTableView.refresh();
 		});
 	}
 
