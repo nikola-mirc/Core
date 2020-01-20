@@ -264,7 +264,6 @@ public class UsersTabController extends GUIUtils implements Initializable {
 			}
 		});
 		auditTableView.setItems(audit);
-
 	}
 
 	private void handleSearch() {
@@ -309,6 +308,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				audit = UserAuditDAO.getInstance().getAll();
 				auditTableView.getItems().setAll(audit);
 			}
+			auditTableView.refresh();
 		});
 	}
 

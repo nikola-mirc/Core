@@ -30,7 +30,6 @@ public class DatabaseUtility {
 	private static Properties properties = null;
 	private static DatabaseUtility instance;
 
-//	private BasicDataSource dataSource;
 	/**
 	 * @return instance of the DatabaseUtility class
 	 */
@@ -46,20 +45,6 @@ public class DatabaseUtility {
 	private Connection connection;
 
 	private DatabaseUtility() {
-//		properties = new Properties();
-//		try {
-//			properties.load(new FileInputStream("src/main/java/database/database.properties"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		dataSource = new BasicDataSource();
-//		dataSource.setDriverClassName(properties.getProperty(DB_DRIVER_CLASS));
-//		dataSource.setUrl(properties.getProperty(DB_URL));
-//		dataSource.setUsername(properties.getProperty(DB_USERNAME));
-//		dataSource.setPassword(properties.getProperty(DB_PASSWORD));
-//		dataSource.setMinIdle(100);
-//		dataSource.setMaxIdle(1000);
-//		dataSource.setMaxOpenPreparedStatements(180);
 		try {
 			properties = new Properties();
 			properties.load(new FileInputStream("src/main/java/database/database.properties"));
@@ -88,7 +73,6 @@ public class DatabaseUtility {
 	 * @return
 	 */
 	public ResultSet executeQuery(String query) {
-
 		Statement statement = null;
 		ResultSet resultSet = null;
 		CachedRowSet crs = null;
@@ -131,7 +115,6 @@ public class DatabaseUtility {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public Connection getConnection() {

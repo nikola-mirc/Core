@@ -178,28 +178,6 @@ public class CRUD {
 		return value.substring(0, value.lastIndexOf(','));
 	}
 
-	/**
-	 * Update specific row of the table - insert file via FileInputStream
-	 * 
-	 * @param tableName  - name of the table
-	 * @param columnName - name of the column that holds blob
-	 * @param filePath   - path to the file
-	 * @param idLabel    - name of the primary key (id) column
-	 * @param id         - value of the primary key (where blob should be inserted)
-	 * @throws FileNotFoundException
-	 * @throws SQLException
-	 */
-	public static void insertBlob(String tableName, String columnName, String filePath, String idLabel, long id)
-			throws FileNotFoundException, SQLException {
-		File file = new File(filePath);
-		FileInputStream inputStream = new FileInputStream(file);
-		String query = String.format("INSERT INTO %s (%s) VALUES (?) WHERE %s = %d", tableName, columnName, idLabel,
-				id);
-		PreparedStatement statement = DatabaseUtility.getInstance().getConnection().prepareStatement(query);
-		statement.setBlob(1, inputStream);
-		statement.executeUpdate();
-	}
-
 	private static long[] join(int[] ints, long[] longs) {
 		long[] result = new long[ints.length + longs.length];
 		for (int i = 0; i < ints.length; i++)

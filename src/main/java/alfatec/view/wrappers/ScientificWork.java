@@ -8,6 +8,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -59,9 +60,10 @@ public class ScientificWork {
 	}
 
 	private void setAuthorsString(ObservableList<Author> authors) {
-		this.collectAuthors.set(authors.stream().collect(Collectors.toList()).stream()
-				.map(author -> author.getAuthorFirstName().concat(" ").concat(author.getAuthorLastName()))
-				.collect(Collectors.joining(",\n")));
+		if (authors != null)
+			this.collectAuthors.set(authors.stream().collect(Collectors.toList()).stream()
+					.map(author -> author.getAuthorFirstName().concat(" ").concat(author.getAuthorLastName()))
+					.collect(Collectors.joining(",\n")));
 	}
 
 	public StringProperty getAuthorsStringProperty() {
@@ -69,7 +71,12 @@ public class ScientificWork {
 	}
 
 	public void addAuthor(Author author) {
-		this.authors.get().add(author);
+		if (authors != null && authors.get() != null && authors.get().size() > 0)
+			this.authors.get().add(author);
+		else {
+			authors = new SimpleObjectProperty<ObservableList<Author>>(FXCollections.observableArrayList());
+			authors.get().add(author);
+		}
 		setAuthorsString(getAuthors());
 	}
 

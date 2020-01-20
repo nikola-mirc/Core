@@ -182,7 +182,7 @@ public class ScientificWorkTabController extends GUIUtils {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File file = fileChooser.showOpenDialog(((Stage) (((Button) event.getSource()).getScene().getWindow())));
-		if (file.exists())
+		if (file != null)
 			filePath = file.getAbsolutePath();
 		else
 			filePath = null;
@@ -261,24 +261,31 @@ public class ScientificWorkTabController extends GUIUtils {
 			handleEdit(united);
 			refresh(applicationsTableView, applicationsTableView.getSelectionModel().getSelectedIndex(), details, POPUP,
 					clearDetails);
+			united = applicationsTableView.getSelectionModel().getSelectedItem();
+			populateMiniTable(united.getAuthors());
+			closePopUps();
+			openPopup(details, POPUP);
+			showData(united);
 		} else if (isAddAction() && isValidName(swTitle)) {
 			setAddAction(false);
-			united = new ScientificWork(miniAuthorTableView.getItems(), create());
+			PaperworkResearch pr = create();
+			united = new ScientificWork(miniAuthorTableView.getItems(), pr);
 			connect();
 			if (reviewer != null)
 				assignReviewer(united);
 			data.add(united);
 			changeDisable(!isAddAction());
 			refresh(applicationsTableView, data.size() - 1, details, POPUP, clearDetails);
+			united = applicationsTableView.getSelectionModel().getSelectedItem();
+			populateMiniTable(united.getAuthors());
+			closePopUps();
+			openPopup(details, POPUP);
+			showData(united);
 		}
-		closePopUps();
-		united = applicationsTableView.getSelectionModel().getSelectedItem();
-		openPopup(details, POPUP);
-		populateMiniTable(united.getAuthors());
-		showData(united);
 		addedAuthors.removeAll(addedAuthors);
 		deletedAuthors.removeAll(deletedAuthors);
 		applicationsTableView.refresh();
+		filePath = null;
 	}
 
 	@FXML
@@ -399,11 +406,12 @@ public class ScientificWorkTabController extends GUIUtils {
 	}
 
 	private void connect() {
-		for (Author author : united.getAuthors())
-			if (AuthorResearchDAO.getInstance().getEntry(united.getPaperworkResearch().getResearch().getResearchID(),
-					author.getAuthorID()) == null)
-				AuthorResearchDAO.getInstance().createEntry(author.getAuthorID(),
-						united.getPaperworkResearch().getResearch().getResearchID());
+		if (united.getAuthors() != null)
+			for (Author author : united.getAuthors())
+				if (AuthorResearchDAO.getInstance().getEntry(
+						united.getPaperworkResearch().getResearch().getResearchID(), author.getAuthorID()) == null)
+					AuthorResearchDAO.getInstance().createEntry(author.getAuthorID(),
+							united.getPaperworkResearch().getResearch().getResearchID());
 	}
 
 	private void showAuthor(Author author) {
@@ -673,7 +681,6 @@ public class ScientificWorkTabController extends GUIUtils {
 	private void disableButton(JFXButton button) {
 		button.setDisable(true);
 		selectReviewerButton.setDisable(true);
-		sendForReviewButton.setDisable(true);
 		sentCheckBox.setDisable(true);
 	}
 

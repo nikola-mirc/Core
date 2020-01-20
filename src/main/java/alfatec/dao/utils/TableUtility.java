@@ -49,12 +49,12 @@ public class TableUtility {
 	public <T> T create(String blobPath, int blobIndex, String[] strings, int[] ints, long[] longs, Getter<T> get) {
 		try {
 			long id = CRUD.create(table.getTableName(), table.getColumnNames(), strings, ints, longs);
-			CRUD.insertBlob(table.getTableName(), table.getColumnName(blobIndex), blobPath, table.getPrimaryKey(), id);
+			CRUD.updateBlob(table.getTableName(), table.getColumnName(blobIndex), blobPath, table.getPrimaryKey(), id);
 			return findBy(id, get);
 		} catch (SQLException | FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("EXCEPTION " + e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	public Author create(String[] strings, int[] ints, Institution institution, Getter<Author> get) {
