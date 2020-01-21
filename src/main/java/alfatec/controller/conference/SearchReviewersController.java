@@ -73,14 +73,12 @@ public class SearchReviewersController extends GUIUtils {
 		institutionNameColumn.setCellValueFactory(cellData -> cellData.getValue().getInstitutionNameProperty());
 		countryColumn.setCellValueFactory(cellData -> cellData.getValue().countryProperty());
 		reviewerTableView.setItems(reviewers);
-//		reviewerTableView.getSelectionModel().selectedItemProperty()
-//				.addListener((observable, oldValue, newValue) -> reviewer = newValue);
 	}
 
 	private void handleSearch() {
 		searchReviewerTextField.setOnKeyTyped(event -> {
 			String search = searchReviewerTextField.getText();
-			Pattern pattern = Pattern.compile("[@()]");
+			Pattern pattern = Pattern.compile("[@()\\\\<>+~%\\*\\-\\'\"]");
 			Matcher matcher = pattern.matcher(search);
 			if (search.length() > 0 && !matcher.find()) {
 				ObservableList<Reviewer> searched = ReviewerDAO.getInstance().getReviewers(search);

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import javafx.collections.ObservableList;
 import alfatec.dao.conference.ConferenceDAO;
+import alfatec.dao.person.AuthorDAO;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.relationship.ConferenceCall;
@@ -133,8 +134,8 @@ public class ConferenceCallDAO {
 	public void updateFirstCall(long authorID, boolean answer) {
 		int call = getCurrentAnswer(authorID).getFirstCallAnswer();
 		updateFirstCall(getCurrentAnswer(authorID), answer);
-		Logging.getInstance().change("Update",
-				"Update first call answer from " + BooleanUtil.checkNumber(call) + " to " + answer);
+		Logging.getInstance().change("update", "Update first call answer from " + BooleanUtil.checkNumber(call) + " to "
+				+ answer + " for " + AuthorDAO.getInstance().findAuthorByID(authorID));
 	}
 
 	public void updateSecondCall(ConferenceCall call, boolean answer) {
@@ -151,8 +152,8 @@ public class ConferenceCallDAO {
 	public void updateSecondCall(long authorID, boolean answer) {
 		int call = getCurrentAnswer(authorID).getSecondCallAnswer();
 		updateSecondCall(getCurrentAnswer(authorID), answer);
-		Logging.getInstance().change("Update",
-				"Update second call answer from " + BooleanUtil.checkNumber(call) + " to " + answer);
+		Logging.getInstance().change("update", "Update second call answer from " + BooleanUtil.checkNumber(call)
+				+ " to " + answer + " for " + AuthorDAO.getInstance().findAuthorByID(authorID));
 	}
 
 	public void updateThirdCall(ConferenceCall call, boolean answer) {
@@ -169,8 +170,8 @@ public class ConferenceCallDAO {
 	public void updateThirdCall(long authorID, boolean answer) {
 		int call = getCurrentAnswer(authorID).getThirdCallAnswer();
 		updateThirdCall(getCurrentAnswer(authorID), answer);
-		Logging.getInstance().change("Update",
-				"Update third call answer from " + BooleanUtil.checkNumber(call) + " to " + answer);
+		Logging.getInstance().change("Update", "Update third call answer from " + BooleanUtil.checkNumber(call) + " to "
+				+ answer + " for " + AuthorDAO.getInstance().findAuthorByID(authorID));
 	}
 
 	public void updateInterested(ConferenceCall call, boolean isInterested) {
@@ -187,8 +188,9 @@ public class ConferenceCallDAO {
 	public void updateInterested(long authorID, boolean isInterested) {
 		int call = getCurrentAnswer(authorID).getInterested();
 		updateInterested(getCurrentAnswer(authorID), isInterested);
-		Logging.getInstance().change("Update", "Update is author interested in conference from "
-				+ BooleanUtil.checkNumber(call) + " to " + isInterested);
+		Logging.getInstance().change("Update",
+				"Update is author interested in conference from " + BooleanUtil.checkNumber(call) + " to "
+						+ isInterested + " for " + AuthorDAO.getInstance().findAuthorByID(authorID));
 	}
 
 }

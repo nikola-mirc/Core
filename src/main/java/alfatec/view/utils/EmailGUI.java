@@ -43,7 +43,7 @@ public abstract class EmailGUI extends GUIUtils {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
-		selectedFiles = fileChooser.showOpenMultipleDialog(display);
+		selectedFiles.addAll(fileChooser.showOpenMultipleDialog(display));
 		if (selectedFiles != null && selectedFiles.size() > 0) {
 			selected.setVisible(true);
 			for (File file : selectedFiles) {
@@ -68,6 +68,11 @@ public abstract class EmailGUI extends GUIUtils {
 
 	public String[] getSelectedFiles() {
 		return attachFiles.toArray(new String[attachFiles.size()]);
+	}
+
+	public void attachFile(File file) {
+		selectedFiles.add(file);
+		attachFiles.add(file.getAbsolutePath());
 	}
 
 	public LoopiaEmail getLoopia() {
@@ -102,6 +107,7 @@ public abstract class EmailGUI extends GUIUtils {
 		selected.setEditable(false);
 		selected.setVisible(false);
 		attachFiles = new ArrayList<String>();
+		selectedFiles = new ArrayList<File>();
 		loopia = new LoopiaEmail();
 		emailid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail());
 		password.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword());

@@ -64,16 +64,19 @@ public class AuthorDAO {
 	 */
 	public Author createAuthor(String firstName, String lastName, String email, String country, String institutionType,
 			String institutionName, String note) {
-		int[] ints = { Commons.findCountryByName(country).getCountryID() };
-		String[] strings = { institutionType, firstName, lastName, email, institutionName, note };
-		return table.create(strings, ints, new long[] {}, getAuthor);
+		if (country != null) {
+			int[] ints = { Commons.findCountryByName(country).getCountryID() };
+			String[] strings = { institutionType, firstName, lastName, email, institutionName, note };
+			return table.create(strings, ints, new long[] {}, getAuthor);
+		} else {
+			String[] strings = { institutionType, firstName, lastName, email, institutionName, note, country };
+			return table.create(strings, new int[] {}, new long[] {}, getAuthor);
+		}
 	}
 
 	public void deleteAuthor(Author author) {
-		String authorDetails = author.getAuthorEmail() + ", " + author.getAuthorFirstName() + " "
-				+ author.getAuthorLastName();
 		table.delete(author.getAuthorID());
-		Logging.getInstance().change("Delete", "DELETE AUTHOR " + authorDetails);
+		Logging.getInstance().change("delete", "Delete author\n\t" + author.getAuthorEmail());
 	}
 
 	public Author createAuthor(String firstName, String lastName, String email, String country,
@@ -125,11 +128,12 @@ public class AuthorDAO {
 	}
 
 	public void updateAuthorCountry(Author author, String country) {
-		String past = CountryDAO.getInstance().getCountry(author.getCountryID()).getCountryName();
+		String past = CountryDAO.getInstance().getCountry(author.getCountryID()) == null ? null
+				: CountryDAO.getInstance().getCountry(author.getCountryID()).getCountryName();
 		table.updateCountry(author.getAuthorID(), 7, country);
 		author.setCountryID(Commons.findCountryByName(country).getCountryID());
-		Logging.getInstance().change("Update",
-				"UPDATE AUTHOR " + author.getAuthorEmail() + " COUNTRY FROM: " + past + " TO: " + country);
+		Logging.getInstance().change("update",
+				"Update author\n\t" + author.getAuthorEmail() + "\ncountry from\n\t" + past + "\nto\n\t" + country);
 	}
 
 	/**
@@ -139,24 +143,24 @@ public class AuthorDAO {
 		String past = author.getAuthorEmail();
 		table.update(author.getAuthorID(), 4, email);
 		author.setAuthorEmail(email);
-		Logging.getInstance().change("Update",
-				"UPDATE AUTHOR " + author.getAuthorEmail() + " EMAIL FROM: " + past + " TO: " + email);
+		Logging.getInstance().change("update",
+				"Update author\n\t" + author.getAuthorEmail() + "\ne-mail from\n\t" + past + "\nto\n\t" + email);
 	}
 
 	public void updateAuthorFirstName(Author author, String firstName) {
 		String past = author.getAuthorFirstName();
 		table.update(author.getAuthorID(), 2, firstName);
 		author.setAuthorFirstName(firstName);
-		Logging.getInstance().change("Update",
-				"UPDATE AUTHOR " + author.getAuthorEmail() + " FIRST NAME FROM: " + past + " TO: " + firstName);
+		Logging.getInstance().change("update", "Update author\n\t" + author.getAuthorEmail() + "\nfirst name from\n\t"
+				+ past + "\nto\n\t" + firstName);
 	}
 
 	public void updateAuthorInstitution(Author author, String institutionType) {
-		String past = author.getInstitution().name();
+		String past = author.getInstitution() == null ? null : author.getInstitution().name();
 		table.update(author.getAuthorID(), 1, institutionType);
 		author.setInstitutionType(institutionType);
-		Logging.getInstance().change("Update", "UPDATE AUTHOR " + author.getAuthorEmail() + " INSTITUTION TYPE FROM: "
-				+ past + " TO: " + institutionType);
+		Logging.getInstance().change("update", "Update author\n\t" + author.getAuthorEmail()
+				+ "\ninstitution type from\n\t" + past + "\nto\n\t" + institutionType);
 	}
 
 	public void updateAuthorInstitutionName(Author author, String institutionName) {
@@ -164,16 +168,16 @@ public class AuthorDAO {
 		String pastName = past == null || past.isBlank() || past.isEmpty() ? "->no institution name<-" : past;
 		table.update(author.getAuthorID(), 5, institutionName);
 		author.setInstitutionName(institutionName);
-		Logging.getInstance().change("Update", "UPDATE AUTHOR " + author.getAuthorEmail() + " INSTITUTION NAME FROM: "
-				+ pastName + " TO: " + institutionName);
+		Logging.getInstance().change("update", "Update author\n\t" + author.getAuthorEmail()
+				+ "\ninstitution name from\n\t" + pastName + "\nto\n\t" + institutionName);
 	}
 
 	public void updateAuthorLastName(Author author, String lastName) {
 		String past = author.getAuthorLastName();
 		table.update(author.getAuthorID(), 3, lastName);
 		author.setAuthorLastName(lastName);
-		Logging.getInstance().change("Update",
-				"UPDATE AUTHOR " + author.getAuthorEmail() + " LAST NAME FROM: " + past + " TO: " + lastName);
+		Logging.getInstance().change("update",
+				"Update author\n\t" + author.getAuthorEmail() + "\nlast name from\n\t" + past + "\nto\n\t" + lastName);
 	}
 
 	public void updateAuthorNote(Author author, String note) {
@@ -181,8 +185,8 @@ public class AuthorDAO {
 		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(author.getAuthorID(), 6, note);
 		author.setNote(note);
-		Logging.getInstance().change("Update",
-				"UPDATE AUTHOR " + author.getAuthorEmail() + " NOTE FROM: " + pastNote + " TO: " + note);
+		Logging.getInstance().change("update",
+				"Update author\n\t" + author.getAuthorEmail() + "\nnote from\n\t" + pastNote + "\nto\n\t" + note);
 	}
 
 	public Author findAuthorByExactEmail(String email) {

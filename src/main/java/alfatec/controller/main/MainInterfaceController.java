@@ -64,8 +64,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	private Label welcomeLabel, firstNameLabel, lastNameLabel, emailLabel, institutionLabel, institutionNameLabel,
-			countryLabel, firstNameErrorLabel, lastNameErrorLabel, emailErrorLabel, institutionErrorLabel,
-			institutionNameErrorLabel, countryErrorLabel;
+			countryLabel, emailErrorLabel;
 
 	@FXML
 	private Hyperlink changePasswordHyperlink, logoutHyperlink;
@@ -125,7 +124,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		popup = () -> {
 			clearFields(Arrays.asList(firstNameTextField, lastNameTextField, emailTextField, institutionNameTextField),
-					Arrays.asList(firstNameLabel, lastNameErrorLabel, emailErrorLabel));
+					Arrays.asList(emailErrorLabel));
 			noteTextArea.clear();
 			setUpBoxes();
 		};
@@ -347,20 +346,25 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		authorDetailsHbox.setVisible(true);
 		firstNameLabel.setText(author.getAuthorFirstName() + " " + author.getAuthorLastName());
 		emailLabel.setText(email);
-		institutionLabel.setText(author.getInstitution().name());
+		institutionLabel.setText(author.getInstitution() == null ? "" : author.getInstitution().name());
 		institutionNameLabel.setText(author.getInstitutionName());
-		countryLabel.setText(author.countryProperty().get());
+		countryLabel.setText(author.countryProperty() == null ? "" : author.countryProperty().get());
 		noteTextAreaPreview.setText(author.getNoteProperty().get());
 		showDetails();
 	}
 
 	private Author getNewAuthor() {
 		if (isValidInput()) {
+			String country = countryComboBox.getSelectionModel().getSelectedItem() != null
+					? countryComboBox.getSelectionModel().getSelectedItem().getCountryName()
+					: null;
+			String institution = institutionComboBox.getSelectionModel().getSelectedItem() != null
+					? institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase()
+					: null;
 			author = AuthorDAO.getInstance().createAuthor(firstNameTextField.getText(), lastNameTextField.getText(),
-					emailTextField.getText(), countryComboBox.getSelectionModel().getSelectedItem().getCountryName(),
-					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase(),
-					institutionNameTextField.getText(), noteTextArea.getText());
-			Logging.getInstance().change("Create", "Create author: " + author.getAuthorEmail());
+					emailTextField.getText(), country, institution, institutionNameTextField.getText(),
+					noteTextArea.getText());
+			Logging.getInstance().change("create", "Create author:\n\t" + author.getAuthorEmail());
 		}
 		return author;
 	}
@@ -377,10 +381,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	}
 
 	private boolean isValidInput() {
-		firstNameErrorLabel.setText(isValidName(firstNameTextField) ? "" : "Empty first name field.");
-		lastNameErrorLabel.setText(isValidName(lastNameTextField) ? "" : "Empty last name field.");
 		emailErrorLabel.setText(isValidEmail(emailTextField) ? "" : "Empty or invalid email field.");
-		return isValidEmail(emailTextField) && isValidName(firstNameTextField) && isValidName(lastNameTextField);
+		return isValidEmail(emailTextField);
 	}
 
 	private boolean isEmailAlreadyInDB() {
@@ -403,8 +405,10 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	}
 
 	private void setInstitutionType() {
-		if (!institutionComboBox.getSelectionModel().getSelectedItem().name()
-				.equalsIgnoreCase(author.getInstitution().name()))
+		if ((institutionComboBox.getSelectionModel().getSelectedItem() != null && author.getInstitution() == null)
+				|| (institutionComboBox.getSelectionModel().getSelectedItem() != null && author.getInstitution() != null
+						&& !institutionComboBox.getSelectionModel().getSelectedItem().name()
+								.equalsIgnoreCase(author.getInstitution().name())))
 			AuthorDAO.getInstance().updateAuthorInstitution(author,
 					institutionComboBox.getSelectionModel().getSelectedItem().name().toLowerCase());
 	}
@@ -417,7 +421,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	}
 
 	private void setCountry() {
-		if (countryComboBox.getSelectionModel().getSelectedItem().getCountryID() != author.getCountryID())
+		if (countryComboBox.getSelectionModel().getSelectedItem() != null
+				&& countryComboBox.getSelectionModel().getSelectedItem().getCountryID() != author.getCountryID())
 			AuthorDAO.getInstance().updateAuthorCountry(author,
 					countryComboBox.getSelectionModel().getSelectedItem().getCountryName());
 	}
@@ -431,10 +436,10 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private void setUpBoxes() {
 		institutionComboBox.getItems().setAll(FXCollections.observableArrayList(Institution.values()));
-		institutionComboBox.setValue(Institution.UNIVERSITY);
 		countryComboBox.getItems()
 				.setAll(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
-		countryComboBox.setValue(CountryDAO.getInstance().getCountry(195));
+		institutionComboBox.setPromptText("Please select");
+		countryComboBox.setPromptText("Please select");
 	}
 
 	private void setUpFields() {

@@ -59,16 +59,16 @@ public class CollectionDAO {
 		Collection collection = table.create(new String[] {},
 				new int[] { conferenceID, BooleanUtil.parse(forSpecialIssue) }, new long[] { researchID },
 				getCollection);
-		Logging.getInstance().change("Add",
-				"Marked " + ResearchDAO.getInstance().getResearch(researchID).getResearchTitle() + " for collection.");
+		Logging.getInstance().change("add", "Marked\n\t"
+				+ ResearchDAO.getInstance().getResearch(researchID).getResearchTitle() + "\nfor collection.");
 		return collection;
 	}
 
 	public void deleteEntry(Collection collection) {
 		table.delete(collection.getCollectionID());
-		Logging.getInstance().change("Remove",
-				"Remove " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
-						+ " from collection.");
+		Logging.getInstance().change("remove",
+				"Remove\n\t" + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
+						+ "\nfrom collection.");
 	}
 
 	/**
@@ -117,12 +117,12 @@ public class CollectionDAO {
 
 	public void updateForSpecialIssue(Collection collection, boolean bool) {
 		int special = collection.getForSpecialIssue();
-		String type = special == 0 ? "Add" : "Remove";
+		String type = special == 0 ? "add" : "remove";
 		String description = special == 0
-				? "Mark " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
-						+ " for "
-				: "Remove " + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
-						+ " from ";
+				? "Mark\n\t" + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
+						+ "\nfor "
+				: "Remove\n\t" + ResearchDAO.getInstance().getResearch(collection.getResearchID()).getResearchTitle()
+						+ "\nfrom ";
 		table.update(collection.getCollectionID(), 2, BooleanUtil.parse(bool));
 		collection.setIsForSpecialIssue(bool);
 		Logging.getInstance().change(type, description + "special issue.");

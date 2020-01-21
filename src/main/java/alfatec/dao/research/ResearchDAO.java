@@ -11,13 +11,14 @@ import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 
-import javafx.collections.ObservableList;
-import util.Folder;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.research.Research;
-import database.Getter;
 import database.DatabaseTable;
+import database.DatabaseUtility;
+import database.Getter;
+import javafx.collections.ObservableList;
+import util.Folder;
 
 /**
  * DAO for table "research".
@@ -52,19 +53,20 @@ public class ResearchDAO {
 			try {
 				research.setResearchID(rs.getLong(table.getTable().getPrimaryKey()));
 				research.setResearchTitle(rs.getString(table.getTable().getColumnName(1)));
-				Path path = Paths.get(Folder.getResearchDirectory().getAbsolutePath() + File.separator
-						+ research.getResearchID() + research.getResearchTitle());
-				if (Files.notExists(path)) {
-					File file = new File(Folder.getResearchDirectory().getAbsolutePath() + File.separator
-							+ research.getResearchID() + research.getResearchTitle());
-					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
-					if (blob != null)
-						FileUtils.copyInputStreamToFile(blob, file);
-					research.setPaperFile(file);
-					file.deleteOnExit();
-				}
+//				Path path = Paths.get(Folder.getResearchDirectory().getAbsolutePath() + File.separator
+//						+ research.getResearchID() + research.getResearchTitle());
+//				if (Files.notExists(path)) {
+//					File file = new File(Folder.getResearchDirectory().getAbsolutePath() + File.separator
+//							+ research.getResearchID() + research.getResearchTitle());
+//					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
+//					if (blob != null)
+//						FileUtils.copyInputStreamToFile(blob, file);
+//					research.setPaperFile(file);
+//					file.deleteOnExit();
+//				}
+				research.setPaperFile(null);
 				research.setNote(rs.getString(table.getTable().getColumnName(3)));
-			} catch (SQLException | IOException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			return research;
@@ -74,19 +76,19 @@ public class ResearchDAO {
 	public Research createResearch(String title, String filePath, String note) {
 		Research research = table.create(filePath, 2, new String[] { title, filePath, note }, new int[] {},
 				new long[] {}, getResearch);
-		Logging.getInstance().change("Create", "Add research " + title);
+		Logging.getInstance().change("create", "Add research\n\t" + title);
 		return research;
 	}
 
 	public Research createResearch(String title, String note) {
 		Research research = table.create(new String[] { title, null, note }, new int[] {}, new long[] {}, getResearch);
-		Logging.getInstance().change("Create", "Add research " + title);
+		Logging.getInstance().change("create", "Add research\n\t" + title);
 		return research;
 	}
 
 	public void deleteResearch(Research research) {
 		table.delete(research.getResearchID());
-		Logging.getInstance().change("Delete", "Delete research " + research.getResearchTitle());
+		Logging.getInstance().change("delete", "Delete research\n\t" + research.getResearchTitle());
 	}
 
 	/**
@@ -121,20 +123,43 @@ public class ResearchDAO {
 		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(research.getResearchID(), 3, note);
 		research.setNote(note);
-		Logging.getInstance().change("Update",
-				"Update " + research.getResearchTitle() + " note from " + pastNote + " to " + note);
+		Logging.getInstance().change("update",
+				"Update\n\t" + research.getResearchTitle() + "\nnote from\n\t" + pastNote + "\nto\n\t" + note);
 	}
 
 	public void updatePaper(Research research, String filePath) {
 		table.updateBlob(research.getResearchID(), 2, filePath);
 		research.setPaperPath(filePath);
-		Logging.getInstance().change("Update", "Updated research file for " + research.getResearchTitle());
+		Logging.getInstance().change("update", "Insert research file for\n\t" + research.getResearchTitle());
 	}
 
 	public void updateTitle(Research research, String title) {
 		String past = research.getResearchTitle();
 		table.update(research.getResearchID(), 1, title);
 		research.setResearchTitle(title);
-		Logging.getInstance().change("Update", "Update research title from " + past + " to " + title);
+		Logging.getInstance().change("update", "Update research title from\n\t" + past + "\nto\n\t" + title);
+	}
+
+	public File getBlob(Research research) {
+		String query = String.format("SELECT * FROM research WHERE research_id = %d", research.getResearchID());
+		ResultSet rs = DatabaseUtility.getInstance().executeQuery(query);
+		Path path;
+		try {
+			path = Paths.get(Folder.getResearchDirectory().getAbsolutePath() + File.separator + research.getResearchID()
+					+ research.getResearchTitle());
+			if (Files.notExists(path)) {
+				File file = new File(Folder.getResearchDirectory().getAbsolutePath() + File.separator
+						+ research.getResearchID() + research.getResearchTitle());
+				rs.next();
+				InputStream blob = rs.getBinaryStream("paper");
+				if (blob != null)
+					FileUtils.copyInputStreamToFile(blob, file);
+				research.setPaperFile(file);
+				file.deleteOnExit();
+			}
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+		}
+		return research.getPaperFile();
 	}
 }

@@ -59,8 +59,8 @@ public class ReviewDAO {
 	public Review createReview(long researchID, int reviewerID, String opinion) {
 		Review review = table.create(new String[] { opinion }, new int[] { reviewerID, 0 }, new long[] { researchID },
 				getReview);
-		Logging.getInstance().change("Create", "Add reviewer " + ReviewerDAO.getInstance().getReviewer(reviewerID)
-				+ " to " + ResearchDAO.getInstance().getResearch(researchID).getResearchTitle());
+		Logging.getInstance().change("create", "Add reviewer " + ReviewerDAO.getInstance().getReviewer(reviewerID)
+				+ " to\n\t" + ResearchDAO.getInstance().getResearch(researchID).getResearchTitle());
 		return review;
 	}
 
@@ -124,21 +124,21 @@ public class ReviewDAO {
 	public void updateOpinion(Review review, String opinion) {
 		table.update(review.getReviewID(), 1, opinion);
 		review.setOpinion(opinion);
-		Logging.getInstance().change("Update",
-				"Update opinion for " + ResearchDAO.getInstance().getResearch(review.getResearchID()));
+		Logging.getInstance().change("update", "Update opinion for "
+				+ ResearchDAO.getInstance().getResearch(review.getResearchID()).getResearchTitle());
 	}
 
 	public void updateReviewer(Review review, int reviewerID) {
 		table.update(review.getReviewID(), 2, reviewerID);
 		review.setReviewerID(reviewerID);
-		Logging.getInstance().change("Update", "Update reviewer for "
+		Logging.getInstance().change("update", "Update reviewer for "
 				+ ResearchDAO.getInstance().getResearch(review.getResearchID()).getResearchTitle());
 	}
 
 	public void updateIsAuthorInformed(Review review, boolean isInformed) {
 		table.update(review.getReviewID(), 3, BooleanUtil.parse(isInformed));
 		review.setIsAuthorInformed(isInformed);
-		Logging.getInstance().change("Update", "Update author(s) informed for "
+		Logging.getInstance().change("update", "Update author(s) informed for "
 				+ ResearchDAO.getInstance().getResearch(review.getResearchID()).getResearchTitle());
 	}
 }

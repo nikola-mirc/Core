@@ -49,12 +49,14 @@ import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.PaperworkResearch;
 import alfatec.view.wrappers.ScientificWork;
 import javafx.application.HostServices;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -182,23 +184,27 @@ public class ScientificWorkTabController extends GUIUtils {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File file = fileChooser.showOpenDialog(((Stage) (((Button) event.getSource()).getScene().getWindow())));
-		if (file != null)
+		if (file != null && file.length() < 16777216) {
 			filePath = file.getAbsolutePath();
-		else
-			filePath = null;
+			return;
+		} else if (file != null && file.length() > 16777216)
+			alert("Selected file is too big",
+					"Maximum size allowed in the database is 16MB.\nImport was not successful.", AlertType.INFORMATION);
+		filePath = null;
 	}
 
 	@FXML
 	private void openPaper() {
-		try {
-			File file = united.getResearchProperty().get().getResearch().getPaperFile();
-			HostServices hostServices = Main.getInstance().getHostServices();
-			hostServices.showDocument(file.getAbsolutePath());
+		if (united != null && united.getResearchProperty() != null) {
+			File file = ResearchDAO.getInstance().getBlob(united.getResearchProperty().get().getResearch());
 			if (!file.exists())
 				alert("No research", "Research was not imported to the database.", AlertType.INFORMATION);
-		} catch (NullPointerException e) {
+			else {
+				HostServices hostServices = Main.getInstance().getHostServices();
+				hostServices.showDocument(file.getAbsolutePath());
+			}
+		} else
 			alert("No research", "Research must be first created.", AlertType.INFORMATION);
-		}
 	}
 
 	@FXML
@@ -235,9 +241,19 @@ public class ScientificWorkTabController extends GUIUtils {
 
 	@FXML
 	void sendForReview(ActionEvent event) {
-		if (united != null && reviewer != null)
-			controllerEmail = MainView.getInstance().loadEmailWindow(controllerEmail, reviewer.getReviewerEmail());
-		else
+		if (united != null && reviewer != null) {
+			File file = ResearchDAO.getInstance().getBlob(united.getPaperworkResearch().getResearch());
+			ButtonType button = null;
+			if (file != null && file.length() > 0)
+				button = confirmationAlert("Research",
+						"Research is imported to the database.\nDo you  want to attach it to the email?",
+						AlertType.CONFIRMATION);
+			if (button != null && button == ButtonType.OK)
+				controllerEmail = MainView.getInstance().loadEmailWindow(controllerEmail, reviewer.getReviewerEmail(),
+						file);
+			else
+				controllerEmail = MainView.getInstance().loadEmailWindow(controllerEmail, reviewer.getReviewerEmail());
+		} else
 			alert("No selection", "Please select to whom you want to send E-mail", AlertType.INFORMATION);
 	}
 
@@ -418,10 +434,10 @@ public class ScientificWorkTabController extends GUIUtils {
 		firstName.setText(author == null ? "" : author.getAuthorFirstName());
 		lastName.setText(author == null ? "" : author.getAuthorLastName());
 		email.setText(author == null ? "" : author.getAuthorEmail());
-		institution.setText(author == null ? "" : author.getInstitution().name());
+		institution.setText(author == null || author.getInstitution() == null ? "" : author.getInstitution().name());
 		institutionName.setText(author == null ? "" : author.getInstitutionName());
-		country.setText(
-				author == null ? "" : CountryDAO.getInstance().getCountry(author.getCountryID()).getCountryName());
+		country.setText(author == null || CountryDAO.getInstance().getCountry(author.getCountryID()) == null ? ""
+				: CountryDAO.getInstance().getCountry(author.getCountryID()).getCountryName());
 		noteTextArea.setText(author == null ? "" : author.getNote());
 		remove.setDisable(isAddAction() || isEditAction() ? false : true);
 	}
@@ -452,8 +468,8 @@ public class ScientificWorkTabController extends GUIUtils {
 					work.addAuthor(author);
 					AuthorResearchDAO.getInstance().createEntry(author.getAuthorID(),
 							work.getPaperworkResearch().getResearch().getResearchID());
-					Logging.getInstance().change("Update", "Added author " + author.getAuthorEmail() + " to research "
-							+ work.getPaperworkResearch().getResearch().getResearchTitle());
+					Logging.getInstance().change("update", "Added author\n\t" + author.getAuthorEmail()
+							+ "\nto research\n\t" + work.getPaperworkResearch().getResearch().getResearchTitle());
 				}
 		}
 	}
@@ -602,8 +618,13 @@ public class ScientificWorkTabController extends GUIUtils {
 
 	private void setUpMiniTable() {
 		Utility.setUpStringCell(miniAuthorTableView);
-		miniAuthorColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorFirstNameProperty().concat(" ")
-				.concat(cellData.getValue().getAuthorLastNameProperty()));
+		miniAuthorColumn.setCellValueFactory(cellData -> {
+			var firstName = cellData.getValue().getAuthorFirstNameProperty();
+			var lastName = cellData.getValue().getAuthorLastNameProperty();
+			var email = cellData.getValue().getAuthorEmailProperty();
+			return Bindings.when(firstName.isEmpty().and(lastName.isEmpty())).then(email)
+					.otherwise(firstName.concat(" ").concat(lastName));
+		});
 		miniAuthorTableView.setOnMousePressed(event -> {
 			if (isOtherPopupOpen())
 				closeOtherPopup(authorDetails, OTHER_POPUP);

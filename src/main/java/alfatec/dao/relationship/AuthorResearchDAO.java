@@ -48,9 +48,9 @@ public class AuthorResearchDAO {
 
 	public void deleteEntry(AuthorResearch ar) {
 		table.delete(ar.getAuthorResearchID());
-		Logging.getInstance().change("Delete",
-				"Removed " + AuthorDAO.getInstance().findAuthorByID(ar.getAuthorID()).getAuthorEmail()
-						+ " as author of "
+		Logging.getInstance().change("delete",
+				"Removed\n\t" + AuthorDAO.getInstance().findAuthorByID(ar.getAuthorID()).getAuthorEmail()
+						+ "\nas author of\n\t"
 						+ ResearchDAO.getInstance().getResearch(ar.getResearchID()).getResearchTitle());
 	}
 

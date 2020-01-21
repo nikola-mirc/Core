@@ -107,7 +107,7 @@ public class DatesDAO {
 	public void updateFirstCall(String date) {
 		table.update(getCurrent().getDatesID(), 2, date);
 		getCurrent().setFirstCallDate(date);
-		Logging.getInstance().change("Date", "Update first call date.");
+		Logging.getInstance().change("update", "Update first call date to " + date);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class DatesDAO {
 	public void updateSecondCall(String date) {
 		table.update(getCurrent().getDatesID(), 3, date);
 		getCurrent().setSecondCallDate(date);
-		Logging.getInstance().change("Date", "Update second call date.");
+		Logging.getInstance().change("update", "Update second call date to " + date);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class DatesDAO {
 	public void updateThirdCall(String date) {
 		table.update(getCurrent().getDatesID(), 4, date);
 		getCurrent().setThirdCallDate(date);
-		Logging.getInstance().change("Date", "Update third call date.");
+		Logging.getInstance().change("update", "Update third call date to " + date);
 	}
 
 }

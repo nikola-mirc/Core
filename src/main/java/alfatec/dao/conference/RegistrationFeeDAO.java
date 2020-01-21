@@ -57,13 +57,13 @@ public class RegistrationFeeDAO {
 		String[] strings = { registrationName, currency };
 		int[] ints = { ConferenceDAO.getInstance().getCurrentConference().getConferenceID() };
 		RegistrationFee fee = table.create(strings, ints, new double[] { registrationPrice }, getRegistration);
-		Logging.getInstance().change("Create", "Add new registration fee " + registrationName);
+		Logging.getInstance().change("create", "Add new registration fee " + registrationName);
 		return fee;
 	}
 
 	public void deleteRegistration(RegistrationFee fee) {
 		table.delete(fee.getRegistrationFeeID());
-		Logging.getInstance().change("Delete", "Delete registration fee " + fee.getRegistrationName());
+		Logging.getInstance().change("delete", "Delete registration fee " + fee.getRegistrationName());
 	}
 
 	public RegistrationFee getRegistration(int registrationID) {
@@ -100,21 +100,21 @@ public class RegistrationFeeDAO {
 		String past = fee.getCurrencyString();
 		table.update(fee.getRegistrationFeeID(), 2, currency);
 		fee.setCurrency(currency);
-		Logging.getInstance().change("Update", "Update currency from " + past + " to " + currency);
+		Logging.getInstance().change("update", "Update currency from " + past + " to " + currency);
 	}
 
 	public void updatePrice(RegistrationFee fee, double price) {
 		String past = fee.getRegistrationPrice().toString();
 		table.update(fee.getRegistrationFeeID(), 4, price);
 		fee.setRegistrationPrice(price);
-		Logging.getInstance().change("Update", "Update price from " + past + " to " + price);
+		Logging.getInstance().change("update", "Update price from " + past + " to " + price);
 	}
 
 	public void updateRegistrationName(RegistrationFee fee, String name) {
 		String past = fee.getRegistrationName();
 		table.update(fee.getRegistrationFeeID(), 1, name);
 		fee.setRegistrationName(name);
-		Logging.getInstance().change("Update", "Update registration name from " + past + " to " + name);
+		Logging.getInstance().change("update", "Update registration name from " + past + " to " + name);
 	}
 
 }

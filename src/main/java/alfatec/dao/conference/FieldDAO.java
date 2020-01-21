@@ -54,13 +54,13 @@ public class FieldDAO {
 	 */
 	public Field createField(String field) {
 		Field newField = table.create(new String[] { field }, new int[] {}, new long[] {}, getField);
-		Logging.getInstance().change("Create", "Add new field " + field);
+		Logging.getInstance().change("create", "Add new field " + field);
 		return newField;
 	}
 
 	public void deleteField(Field field) {
 		table.delete(field.getFieldID());
-		Logging.getInstance().change("Delete", "Delete field " + field.getFieldName());
+		Logging.getInstance().change("delete", "Delete field " + field.getFieldName());
 	}
 
 	/**
@@ -98,6 +98,6 @@ public class FieldDAO {
 		String past = field.getFieldName();
 		table.update(field.getFieldID(), 1, fieldName);
 		field.setFieldName(fieldName);
-		Logging.getInstance().change("Update", "Rename field from " + past + " to " + fieldName);
+		Logging.getInstance().change("update", "Rename field from " + past + " to " + fieldName);
 	}
 }

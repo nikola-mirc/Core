@@ -80,12 +80,12 @@ public class ConferenceDAO {
 	public void deleteConference(Conference conference) {
 		String past = conference.getConferenceTitle();
 		table.delete(conference.getConferenceID());
-		Logging.getInstance().change("Delete", "Delete conference " + past);
+		Logging.getInstance().change("delete", "Delete conference\n\t" + past);
 	}
 
 	public void endConference() {
 		Logging.getInstance().change("end",
-				"Marked conference " + getCurrentConference().getConferenceTitle() + " as realized.");
+				"Marked conference\n\t" + getCurrentConference().getConferenceTitle() + "\nas realized.");
 		table.update(getCurrentConference().getConferenceID(), 8, 1);
 		getCurrentConference().setRealized(1);
 	}
@@ -156,7 +156,7 @@ public class ConferenceDAO {
 			String note, String reportPath) {
 		Conference conference = table.create(reportPath, 7, new String[] { title, email, password, bcc, note },
 				new int[] { FieldDAO.getInstance().getField(field).getFieldID(), 0 }, new long[] {}, getConference);
-		Logging.getInstance().change("Create", "Start conference " + conference.getConferenceTitle());
+		Logging.getInstance().change("create", "Start conference\n\t" + conference.getConferenceTitle());
 		return conference;
 	}
 
@@ -164,15 +164,15 @@ public class ConferenceDAO {
 		String past = getCurrentConference().getConferenceEmail();
 		table.update(getCurrentConference().getConferenceID(), 2, email);
 		getCurrentConference().setConferenceEmail(email);
-		Logging.getInstance().change("Update", "Update conference email from " + past + " to " + email);
+		Logging.getInstance().change("update", "Update conference email from\n\t" + past + "\nto\n\t" + email);
 	}
 
 	public void updateConferenceField(int fieldID) {
 		String past = FieldDAO.getInstance().getField(getCurrentConference().getFieldID()).getFieldName();
 		table.update(getCurrentConference().getConferenceID(), 7, fieldID);
 		getCurrentConference().setFieldID(fieldID);
-		Logging.getInstance().change("Update",
-				"Update conference field from " + past + " to " + FieldDAO.getInstance().getField(fieldID));
+		Logging.getInstance().change("update", "Update conference field from\n\t" + past + "\nto\n\t"
+				+ FieldDAO.getInstance().getField(fieldID).getFieldName());
 	}
 
 	public void updateConferenceField(String field) {
@@ -184,26 +184,26 @@ public class ConferenceDAO {
 		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(getCurrentConference().getConferenceID(), 5, note);
 		getCurrentConference().setNote(note);
-		Logging.getInstance().change("Update", "Update conference note from " + pastNote + " to " + note);
+		Logging.getInstance().change("update", "Update conference note from\n\t" + pastNote + "\nto\n\t" + note);
 	}
 
 	public void updateConferencePassword(String password) {
 		table.update(getCurrentConference().getConferenceID(), 3, password);
 		getCurrentConference().setConferenceEmailPassword(password);
-		Logging.getInstance().change("Update", "Updated password for conference email.");
+		Logging.getInstance().change("update", "Updated password for conference email.");
 	}
 
 	public void updateConferenceReport(String filePath) {
 		table.updateBlob(getCurrentConference().getConferenceID(), 6, filePath);
 		getCurrentConference().setReportFile(filePath);
-		Logging.getInstance().change("Update", "Updated conference file report.");
+		Logging.getInstance().change("update", "Updated conference file report.");
 	}
 
 	public void updateConferenceTitle(String title) {
 		String past = getCurrentConference().getConferenceTitle();
 		table.update(getCurrentConference().getConferenceID(), 1, title);
 		getCurrentConference().setConferenceTitle(title);
-		Logging.getInstance().change("Update", "Update conference title from " + past + " to " + title);
+		Logging.getInstance().change("update", "Update conference title from\n\t" + past + "\nto\n\t" + title);
 	}
 
 	public void updateConferenceBcc(String conferenceBcc) {
@@ -211,7 +211,7 @@ public class ConferenceDAO {
 		String bcc = past == null || past.isBlank() || past.isEmpty() ? "->no bcc<-" : past;
 		table.update(getCurrentConference().getConferenceID(), 4, conferenceBcc);
 		getCurrentConference().setConferenceBcc(conferenceBcc);
-		Logging.getInstance().change("Update", "Update conference bcc from " + bcc + " to " + conferenceBcc);
+		Logging.getInstance().change("update", "Update conference bcc from\n\t" + bcc + "\nto\n\t" + conferenceBcc);
 	}
 
 }

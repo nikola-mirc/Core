@@ -61,9 +61,13 @@ public class ScientificWork {
 
 	private void setAuthorsString(ObservableList<Author> authors) {
 		if (authors != null)
-			this.collectAuthors.set(authors.stream().collect(Collectors.toList()).stream()
-					.map(author -> author.getAuthorFirstName().concat(" ").concat(author.getAuthorLastName()))
-					.collect(Collectors.joining(",\n")));
+			this.collectAuthors.set(authors.stream().collect(Collectors.toList()).stream().map(author -> {
+				if (author.getAuthorFirstNameProperty().isEmpty().and(author.getAuthorLastNameProperty().isEmpty())
+						.get())
+					return author.getAuthorEmail();
+				else
+					return author.getAuthorFirstName().concat(" ").concat(author.getAuthorLastName());
+			}).collect(Collectors.joining(",\n")));
 	}
 
 	public StringProperty getAuthorsStringProperty() {

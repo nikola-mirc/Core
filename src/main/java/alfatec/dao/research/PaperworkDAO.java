@@ -126,7 +126,7 @@ public class PaperworkDAO {
 	public void setPresentationDateTime(Paperwork work, LocalDateTime datetime) {
 		table.update(work.getPaperworkID(), 2, datetime);
 		work.setPresentationTimestamp(datetime);
-		Logging.getInstance().change("Update", "Set presentation date for "
+		Logging.getInstance().change("update", "Set presentation date for "
 				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle());
 	}
 
@@ -136,14 +136,14 @@ public class PaperworkDAO {
 	public void setPresentationDateTime(Paperwork work, String datetime) {
 		table.update(work.getPaperworkID(), 2, datetime);
 		work.setPresentationTime(datetime);
-		Logging.getInstance().change("Update", "Set presentation date for "
+		Logging.getInstance().change("update", "Set presentation date for "
 				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle());
 	}
 
 	public void setRegistrationFee(Paperwork work, int registrationFeeID) {
 		table.update(work.getPaperworkID(), 3, registrationFeeID);
 		work.setRegistrationFeeID(registrationFeeID);
-		Logging.getInstance().change("Update", "Set registration fee for "
+		Logging.getInstance().change("update", "Set registration fee for "
 				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle());
 	}
 
@@ -151,33 +151,37 @@ public class PaperworkDAO {
 		int regID = Commons.findRegistration(registrationName, work.getConferenceID()).getRegistrationFeeID();
 		table.update(work.getPaperworkID(), 3, regID);
 		work.setRegistrationFeeID(regID);
-		Logging.getInstance().change("Update", "Set registration fee for "
+		Logging.getInstance().change("update", "Set registration fee for "
 				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle());
 	}
 
 	public void updateIsSentToReview(Paperwork work, boolean bool) {
 		table.update(work.getPaperworkID(), 6, BooleanUtil.parse(bool));
 		work.setIsSentToReview(bool);
+		Logging.getInstance().change("update", "Sent "
+				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle() + " to review.");
 	}
 
 	public void updateIsSubmittetWork(Paperwork work, boolean bool) {
 		table.update(work.getPaperworkID(), 5, BooleanUtil.parse(bool));
 		work.setIsSubmittetWork(bool);
-		Logging.getInstance().change("Update", "Sent "
-				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle() + " to review.");
+		Logging.getInstance().change("update", "Marked research\n\t"
+				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle() + "\nas submittet.");
 	}
 
 	public void updateIsFeePaid(Paperwork work, boolean bool) {
 		table.update(work.getPaperworkID(), 7, BooleanUtil.parse(bool));
 		work.setIsFeePaid(bool);
-		Logging.getInstance().change("Update", "Registration fee for "
-				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle() + " is paid: " + bool);
+		Logging.getInstance().change("update",
+				"Registration fee for\n\t"
+						+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle() + "\nis paid: "
+						+ bool);
 	}
 
 	public void updatePaperworkPresentationType(Paperwork work, String presentationType) {
 		table.update(work.getPaperworkID(), 1, presentationType);
 		work.setPresentation(presentationType);
-		Logging.getInstance().change("Update", "Set presentation type for "
+		Logging.getInstance().change("update", "Set presentation type for\n\t"
 				+ ResearchDAO.getInstance().getResearch(work.getResearchID()).getResearchTitle());
 	}
 

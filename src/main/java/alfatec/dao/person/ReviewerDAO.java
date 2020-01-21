@@ -64,14 +64,14 @@ public class ReviewerDAO {
 		String[] strings = { firstName, lastName, email, contactTelephone, institution, note };
 		int[] ints = { Commons.findCountryByName(country).getCountryID() };
 		Reviewer reviewer = table.create(strings, ints, new long[] {}, getReviewer);
-		Logging.getInstance().change("Create", "Add reviewer " + reviewer.getReviewerEmail() + ", "
+		Logging.getInstance().change("create", "Add reviewer " + reviewer.getReviewerEmail() + ", "
 				+ reviewer.getReviewerFirstName() + " " + reviewer.getReviewerLastName());
 		return reviewer;
 	}
 
 	public void deleteReviewer(Reviewer reviewer) {
 		table.delete(reviewer.getReviewerID());
-		Logging.getInstance().change("Delete", "Delete reviewer " + reviewer.getReviewerEmail() + ", "
+		Logging.getInstance().change("delete", "Delete reviewer " + reviewer.getReviewerEmail() + ", "
 				+ reviewer.getReviewerFirstName() + " " + reviewer.getReviewerLastName());
 	}
 
@@ -127,7 +127,7 @@ public class ReviewerDAO {
 				: CountryDAO.getInstance().getCountry(reviewer.getCountryID()).getCountryName();
 		table.updateCountry(reviewer.getReviewerID(), 7, country);
 		reviewer.setCountryID(Commons.findCountryByName(country).getCountryID());
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update reviewer " + reviewer.getReviewerEmail() + " country from " + past + " to " + country);
 	}
 
@@ -136,7 +136,7 @@ public class ReviewerDAO {
 		String pastNote = past == null || past.isBlank() || past.isEmpty() ? "->no note<-" : past;
 		table.update(reviewer.getReviewerID(), 6, note);
 		reviewer.setNote(note);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update reviewer " + reviewer.getReviewerEmail() + " note from " + pastNote + " to " + note);
 	}
 
@@ -144,14 +144,14 @@ public class ReviewerDAO {
 		String past = reviewer.getReviewerEmail();
 		table.update(reviewer.getReviewerID(), 3, email);
 		reviewer.setReviewerEmail(email);
-		Logging.getInstance().change("Update", "Update reviewer " + reviewer.getReviewerEmail() + " from " + past);
+		Logging.getInstance().change("update", "Update reviewer " + reviewer.getReviewerEmail() + " from " + past);
 	}
 
 	public void updateReviewerFirstName(Reviewer reviewer, String firstName) {
 		String past = reviewer.getReviewerFirstName();
 		table.update(reviewer.getReviewerID(), 1, firstName);
 		reviewer.setReviewerFirstName(firstName);
-		Logging.getInstance().change("Update", "Update reviewer first name from " + past + " to " + firstName);
+		Logging.getInstance().change("update", "Update reviewer first name from " + past + " to " + firstName);
 	}
 
 	public void updateReviewerInstitution(Reviewer reviewer, String institution) {
@@ -159,7 +159,7 @@ public class ReviewerDAO {
 		String pastName = past == null || past.isBlank() || past.isEmpty() ? "->no institution name<-" : past;
 		table.update(reviewer.getReviewerID(), 5, institution);
 		reviewer.setInstitutionName(institution);
-		Logging.getInstance().change("Update", "Update reviewer " + reviewer.getReviewerEmail() + " institution from "
+		Logging.getInstance().change("update", "Update reviewer " + reviewer.getReviewerEmail() + " institution from "
 				+ pastName + " to " + institution);
 	}
 
@@ -167,7 +167,7 @@ public class ReviewerDAO {
 		String past = reviewer.getReviewerLastName();
 		table.update(reviewer.getReviewerID(), 2, lastName);
 		reviewer.setReviewerLastName(lastName);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update reviewer " + reviewer.getReviewerEmail() + " last name from " + past + " to " + lastName);
 	}
 
@@ -176,7 +176,7 @@ public class ReviewerDAO {
 		String number = past == null || past.isBlank() || past.isEmpty() ? "->no telephone<-" : past;
 		table.update(reviewer.getReviewerID(), 4, telephone);
 		reviewer.setContactTelephone(telephone);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update reviewer " + reviewer.getReviewerEmail() + " telephone from " + number + " to " + telephone);
 	}
 

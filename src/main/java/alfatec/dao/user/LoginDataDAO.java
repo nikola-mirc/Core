@@ -111,7 +111,7 @@ public class LoginDataDAO {
 		String past = data.getUserEmail();
 		table.update(data.getLoginID(), 1, email);
 		data.setUserEmail(email);
-		Logging.getInstance().change("Update", "Update user email from " + past + " to " + email);
+		Logging.getInstance().change("update", "Update user email from " + past + " to " + email);
 	}
 
 	/**
@@ -123,14 +123,14 @@ public class LoginDataDAO {
 	public void updatePassword(LoginData data, String password) {
 		table.update(data.getLoginID(), 2, Password.hashPassword(password));
 		data.setPassword(password);
-		Logging.getInstance().change("Update", "Updated user password: " + data.getUserEmail());
+		Logging.getInstance().change("update", "Updated user password: " + data.getUserEmail());
 	}
 
 	public void updateRole(LoginData data, String role) {
 		String past = data.getRoleName();
 		table.update(data.getLoginID(), 4, RoleEnum.valueOf(role).getRoleID());
 		data.setRole(role);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update role for " + data.getUserEmail() + " from " + past + " to " + role);
 	}
 

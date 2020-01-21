@@ -1,5 +1,6 @@
 package alfatec.view.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -148,6 +149,30 @@ public class MainView {
 			stage.showAndWait();
 		} catch (Exception e) {
 			System.out.println("Error sending group email.");
+			e.printStackTrace();
+		}
+		return controller;
+	}
+
+	public SendEmailController loadEmailWindow(SendEmailController controller, String email, File file) {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(
+					getClass().getClassLoader().getResource("resources/fxml/sendEmailToAuthor.fxml"));
+			Parent root = (Parent) fxmlLoader.load();
+			Stage stage = new Stage();
+			stage.initStyle(StageStyle.UNDECORATED);
+			stage.setScene(new Scene(root));
+			JFXTextField recieverid = (JFXTextField) root.lookup("#recieverid");
+			recieverid.textProperty().set(email);
+			JFXTextField selected = (JFXTextField) root.lookup("#selected");
+			selected.textProperty().set(file.getName());
+			selected.setVisible(true);
+			controller = fxmlLoader.getController();
+			controller.attachFile(file);
+			controller.setDisplayStage(stage);
+			stage.showAndWait();
+		} catch (Exception e) {
+			System.out.println("Error sending email.");
 			e.printStackTrace();
 		}
 		return controller;

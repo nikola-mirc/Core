@@ -23,6 +23,6 @@ public enum Institution {
 	}
 
 	public static Institution lookUpByName(String name) {
-		return indexMap.get(name.toUpperCase(Locale.ENGLISH));
+		return name == null ? null : indexMap.get(name.toUpperCase(Locale.ENGLISH));
 	}
 }

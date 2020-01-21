@@ -156,7 +156,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 							.getUserFirstName().concat(" ").concat(userData.getUser().getUserLastName()) + "?",
 					AlertType.CONFIRMATION);
 			if (button == ButtonType.OK) {
-				Logging.getInstance().change("Delete", "Delete user: " + userData.toString());
+				Logging.getInstance().change("delete", "Delete user:\n\t" + userData.toString());
 				UserDAO.getInstance().deleteUser(userData.getUser());
 				UserDAO.getInstance().getAllUsers().remove(userData.getUser());
 				users.remove(userData);
@@ -335,7 +335,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 			LoginData ld = LoginDataDAO.getInstance().createLoginData(emailTextField.getText(), passwordField.getText(),
 					user.getUserID(), roleComboBox.getSelectionModel().getSelectedItem().getRoleID());
 			userData = new UserLoginConnection(user, ld);
-			Logging.getInstance().change("Create", "Add user: " + userData.toString());
+			Logging.getInstance().change("create", "Add user:\n\t" + userData.toString());
 		}
 		return userData;
 	}

@@ -52,7 +52,6 @@ public class TableUtility {
 			CRUD.updateBlob(table.getTableName(), table.getColumnName(blobIndex), blobPath, table.getPrimaryKey(), id);
 			return findBy(id, get);
 		} catch (SQLException | FileNotFoundException e) {
-			System.out.println("EXCEPTION " + e.getMessage());
 			return null;
 		}
 	}

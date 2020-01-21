@@ -34,7 +34,7 @@ public class SendEmailController extends EmailGUI {
 			getLoopia().sendEmail(getEmailid().getText(), getPassword().getText(), recieverid.getText(),
 					getSubject().getText(), getMessage().getText(), false, getSelectedFiles());
 			alert("Message sent", "Message was sent to " + recieverid.getText() + ".", AlertType.INFORMATION);
-			Logging.getInstance().change("email", "SEND EMAIL TO " + recieverid.getText());
+			Logging.getInstance().change("email", "Send e-mail to\n\t" + recieverid.getText());
 			setSent(true);
 		} catch (MessagingException | IOException e) {
 			alert("Empty or invalid fields",

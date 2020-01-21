@@ -10,6 +10,7 @@ import alfatec.dao.person.AuthorDAO;
 import alfatec.model.person.Author;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -94,7 +95,10 @@ public class SearchAuthorsController extends GUIUtils {
 		authorNameColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorFirstNameProperty());
 		authorLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorLastNameProperty());
 		emailColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorEmailProperty());
-		institutionColumn.setCellValueFactory(cellData -> cellData.getValue().getInstitutionProperty().asString());
+		institutionColumn.setCellValueFactory(cellData -> {
+			var name = cellData.getValue().getInstitutionProperty();
+			return Bindings.when(name.isNull()).then("").otherwise(name.asString());
+		});
 		countryColumn.setCellValueFactory(cellData -> cellData.getValue().countryProperty());
 		authorsTableView.setItems(authors);
 	}

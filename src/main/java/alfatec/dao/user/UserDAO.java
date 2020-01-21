@@ -103,14 +103,14 @@ public class UserDAO {
 
 	public void updateUserFirstName(User user, String firstName) {
 		table.update(user.getUserID(), 1, firstName);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update first name for " + user.getUserFirstName() + " " + user.getUserLastName());
 		user.setUserFirstName(firstName);
 	}
 
 	public void updateUserLastName(User user, String lastName) {
 		table.update(user.getUserID(), 2, lastName);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update last name for " + user.getUserFirstName() + " " + user.getUserLastName());
 		user.setUserLastName(lastName);
 	}
@@ -118,7 +118,7 @@ public class UserDAO {
 	public void updateUserTelephone(User user, String contact) {
 		table.update(user.getUserID(), 3, contact);
 		user.setContactTelephone(contact);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update telephone for " + user.getUserFirstName() + " " + user.getUserLastName());
 	}
 

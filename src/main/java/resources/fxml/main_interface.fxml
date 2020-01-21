@@ -304,10 +304,10 @@
 													<children>
 														<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="First name:" />
 														<TextField id="text" fx:id="firstNameTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="225.0" />
-														<Label id="errorText" fx:id="firstNameErrorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
+														<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
 														<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Last name:" />
 														<TextField id="text" fx:id="lastNameTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="225.0" />
-														<Label id="errorText" fx:id="lastNameErrorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
+														<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
 														<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="E-mail:" />
 														<TextField id="text" fx:id="emailTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="225.0" />
 														<Label id="errorText" fx:id="emailErrorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
@@ -323,17 +323,17 @@
 													<children>
 														<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Institution:" />
 														<ComboBox id="comboBoxText" fx:id="institutionComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="225.0" promptText="Please select..." />
-														<Label id="errorText" fx:id="institutionErrorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0">
+														<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0">
 															<VBox.margin>
 																<Insets />
 															</VBox.margin>
 														</Label>
 														<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Institution name:" />
 														<TextField id="text" fx:id="institutionNameTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="225.0" />
-														<Label id="errorText" fx:id="institutionNameErrorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
+														<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
 														<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Country:" />
 														<PrefixSelectionComboBox id="comboBoxText" fx:id="countryComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="225.0" promptText="Please select..." />
-														<Label id="errorText" fx:id="countryErrorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
+														<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
 													</children>
 													<HBox.margin>
 														<Insets left="10.0" top="20.0" />
