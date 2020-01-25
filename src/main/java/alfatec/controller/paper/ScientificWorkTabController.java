@@ -181,7 +181,7 @@ public class ScientificWorkTabController extends GUIUtils {
 			swTitle.clear();
 			swNote.clear();
 			selected.setText("Review:");
-			feeComboBox.getSelectionModel().select(null);
+			setUpBox();
 			clearBoxes(Arrays.asList(paperReceivedCheckBox, sentCheckBox, feePaidCheckBox),
 					Arrays.asList(liveRadio, videoRadio, pptRadio, collectionRadio, specialIssueRadio));
 			conferenceTitle.setText("Conference Title");
@@ -226,10 +226,10 @@ public class ScientificWorkTabController extends GUIUtils {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File file = fileChooser.showOpenDialog(((Stage) (((Button) event.getSource()).getScene().getWindow())));
-		if (file != null && file.length() < 16777216) {
+		if (file != null && file.length() < getBlobLength()) {
 			filePath = file.getAbsolutePath();
 			return;
-		} else if (file != null && file.length() > 16777216)
+		} else if (file != null && file.length() > getBlobLength())
 			alert("Selected file is too big",
 					"Maximum size allowed in the database is 16MB.\nImport was not successful.", AlertType.INFORMATION);
 		filePath = null;
@@ -366,9 +366,9 @@ public class ScientificWorkTabController extends GUIUtils {
 			miniAuthorTableView.getSelectionModel().clearSelection();
 			closePopUps();
 			united = applicationsTableView.getSelectionModel().getSelectedItem();
-			openDetails(details, POPUP);
 			populateMiniTable(united.getAuthorsProperty().get());
 			showData(united);
+			openPopup(details, POPUP);
 		});
 	}
 
@@ -643,8 +643,7 @@ public class ScientificWorkTabController extends GUIUtils {
 		data = ResearchFactory.getInstance().getAllData();
 		addedAuthors = FXCollections.observableArrayList();
 		deletedAuthors = FXCollections.observableArrayList();
-		if (RegistrationFeeDAO.getInstance().getCurrentFees() != null)
-			feeComboBox.getItems().setAll(RegistrationFeeDAO.getInstance().getCurrentFees());
+		setUpBox();
 		setUpGroup();
 		setUpFields(new TextArea[] { swNote }, new int[] { getNoteLength() });
 		setUpFields(new TextField[] { swTitle }, new int[] { getResearchTitleLength() });
@@ -774,5 +773,11 @@ public class ScientificWorkTabController extends GUIUtils {
 			reviewer = null;
 			selectReviewerTextField.setText(null);
 		}
+	}
+
+	private void setUpBox() {
+		if (RegistrationFeeDAO.getInstance().getCurrentFees() != null)
+			feeComboBox.getItems().setAll(RegistrationFeeDAO.getInstance().getCurrentFees());
+		feeComboBox.setPromptText("Please select");
 	}
 }

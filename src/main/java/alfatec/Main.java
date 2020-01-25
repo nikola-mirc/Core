@@ -1,5 +1,9 @@
 package alfatec;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
+import database.BackUpAndRestore;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -19,7 +23,18 @@ public class Main extends Application {
 
 	public static void main(String[] args) {
 		System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-		launch(args);
+		Runnable load = () -> launch(args);
+		Runnable backup = () -> {
+			try {
+				BackUpAndRestore.getInstance().backUp();
+			} catch (IOException | InterruptedException | SQLException e) {
+				e.printStackTrace();
+			}
+		};
+		Thread threadLoad = new Thread(load);
+		Thread threadBackUp = new Thread(backup);
+		threadBackUp.start();
+		threadLoad.start();
 	}
 
 	@Override

@@ -24,9 +24,15 @@ public class Folder {
 		return path.toFile();
 	}
 
+	private static File getDirectory(final String name) throws IOException {
+		String directory = System.getProperty("user.home").concat(File.separator + name);
+		File file = createOrRetrieve(directory);
+		file.deleteOnExit();
+		return file;
+	}
+
 	public static File getResearchDirectory() throws IOException {
-		String directory = System.getProperty("user.home").concat(File.separator + RESEARCH_DIRECTORY);
-		return createOrRetrieve(directory);
+		return getDirectory(RESEARCH_DIRECTORY);
 	}
 
 	public static File getBackupDirectory() throws IOException {
@@ -35,7 +41,6 @@ public class Folder {
 	}
 
 	public static File getConferenceDirectory() throws IOException {
-		String directory = System.getProperty("user.home").concat(File.separator + RAPORT_DIRECTORY);
-		return createOrRetrieve(directory);
+		return getDirectory(RAPORT_DIRECTORY);
 	}
 }

@@ -10,6 +10,7 @@ public class DatabaseLimits {
 	private static final int PASSWORD_LENGTH = 64;
 	private static final int CONTACT_TELEPHONE_LENGTH = 20;
 	private static final int RESEARCH_TITLE_LENGTH = 255;
+	private static final long BLOB_LENGTH = 16777216;
 
 	public static int getFirstNameLength() {
 		return FIRST_NAME_LENGTH;
@@ -41,5 +42,9 @@ public class DatabaseLimits {
 
 	public static int getResearchTitleLength() {
 		return RESEARCH_TITLE_LENGTH;
+	}
+
+	public static long getBlobLength() {
+		return BLOB_LENGTH;
 	}
 }

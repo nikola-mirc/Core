@@ -109,50 +109,49 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	private ToggleGroup group;
-	
+
 	/**
 	 * Filters
 	 */
-	
-    @FXML
-    private ComboBox<?> filterInstitution;
 
-    @FXML
-    private TextField filterInstitutionName;
+	@FXML
+	private ComboBox<?> filterInstitution;
 
-    @FXML
-    private PrefixSelectionComboBox<?> filterCountry;
+	@FXML
+	private TextField filterInstitutionName;
 
-    @FXML
-    private ComboBox<?> filterConference;
+	@FXML
+	private PrefixSelectionComboBox<?> filterCountry;
 
-    @FXML
-    private ComboBox<?> filterField;
+	@FXML
+	private ComboBox<?> filterConference;
 
-    @FXML
-    private JFXCheckBox filterCollSpec;
+	@FXML
+	private ComboBox<?> filterField;
 
-    @FXML
-    private JFXCheckBox filterSentForReview;
+	@FXML
+	private JFXCheckBox filterCollSpec;
 
-    @FXML
-    private ComboBox<?> filterReviewStatus;
+	@FXML
+	private JFXCheckBox filterSentForReview;
 
-    @FXML
-    private JFXCheckBox filterSubmittedWork;
+	@FXML
+	private ComboBox<?> filterReviewStatus;
 
-    @FXML
-    private JFXCheckBox filterFirstInv;
+	@FXML
+	private JFXCheckBox filterSubmittedWork;
 
-    @FXML
-    private JFXCheckBox filterSecondInv;
+	@FXML
+	private JFXCheckBox filterFirstInv;
 
-    @FXML
-    private JFXCheckBox filterThirdInv;
+	@FXML
+	private JFXCheckBox filterSecondInv;
 
-    @FXML
-    private JFXCheckBox filterInterested;
-	
+	@FXML
+	private JFXCheckBox filterThirdInv;
+
+	@FXML
+	private JFXCheckBox filterInterested;
 
 	private ChangePasswordController changePasswordController;
 	private SendEmailController send;
@@ -541,9 +540,9 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		showRadioButton(thirdRadio);
 		showCheckBox();
 	}
-	
+
 	@FXML
 	private void closeDetails(ActionEvent event) {
-		//todo
+		closeDetails(authorDetailsHbox, 1200);
 	}
 }
