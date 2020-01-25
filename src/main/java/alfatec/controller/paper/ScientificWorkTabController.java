@@ -57,6 +57,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -113,6 +115,46 @@ public class ScientificWorkTabController extends GUIUtils {
 
 	@FXML
 	private Label conferenceTitle, firstName, lastName, email, institution, institutionName, country, selected, opinion;
+
+	/**
+	 * Filters
+	 */
+
+	@FXML
+	private ComboBox<?> filterInstitution;
+
+	@FXML
+	private TextField filterInstitutionName;
+
+	@FXML
+	private PrefixSelectionComboBox<?> filterCountry;
+
+	@FXML
+	private ComboBox<?> filterConference;
+
+	@FXML
+	private ComboBox<?> filterField;
+
+	@FXML
+	private JFXCheckBox filterCollSpec;
+
+	@FXML
+	private JFXCheckBox filterSentForReview;
+
+	@FXML
+	private TextField filterReviewer;
+
+	@FXML
+	private ComboBox<?> filterStatus;
+
+	@FXML
+	private JFXCheckBox filterSubmittedWork;
+
+	@FXML
+	private ComboBox<?> filterPresentation;
+
+	@FXML
+	private DatePicker filterDate;
 
 	private static final int OTHER_POPUP = 340;
 	private static final int POPUP = 720;

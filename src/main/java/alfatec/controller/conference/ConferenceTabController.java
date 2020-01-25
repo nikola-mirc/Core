@@ -27,6 +27,18 @@ public class ConferenceTabController {
     private TableColumn<?, ?> confTitleColumn;
 
     @FXML
+    private TableColumn<?, ?> titleColumn;
+
+    @FXML
+    private TableColumn<?, ?> confColumn;
+
+    @FXML
+    private TableView<?> specialTableView;
+
+    @FXML
+    private TableColumn<?, ?> collectionCol;
+
+    @FXML
     private HBox noConferenceHbox;
 
     @FXML
@@ -126,6 +138,9 @@ public class ConferenceTabController {
     private Label thirdCallLabel;
 
     @FXML
+    private Label emailLabel;
+
+    @FXML
     private TextArea confNotesTextArea;
 
     @FXML
@@ -133,6 +148,21 @@ public class ConferenceTabController {
 
     @FXML
     private JFXButton closeConfButton;
+
+    @FXML
+    private TableView<?> thisConfCollectionTableView;
+
+    @FXML
+    private TableColumn<?, ?> thisConfTitleCol;
+
+    @FXML
+    private TableColumn<?, ?> thisConfColumn;
+
+    @FXML
+    private TableView<?> thisConfSpecialTableView;
+
+    @FXML
+    private TableColumn<?, ?> thisConfCollection;
     
     
 	BooleanProperty conferenceActive = new SimpleBooleanProperty(false);

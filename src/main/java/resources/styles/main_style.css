@@ -78,9 +78,31 @@
     -fx-text-fill: #a299e0;
 }
 
-
 #tabPane .tab-selected-line {
     -fx-pref-width: 125.0;
+}
+
+#tabPaneMini .tab-header-background {
+	-fx-background-color: #d9d8de;
+}
+
+#tabPaneMini .tab {
+	-fx-border: solid;
+	-fx-border-color:#272343;
+	-fx-border-width: 2;
+}
+
+#tabPaneMini .tab .tab-label {
+	-fx-text-fill: #272343;
+	
+}
+
+#tabPaneMini .tab-header-area .headers-region .tab :hover{
+    -fx-text-fill: #272343;
+}
+
+#tabPaneMini .tab-selected-line {
+    -fx-background-color: #272343;
 }
 
 #searchToolbar {
