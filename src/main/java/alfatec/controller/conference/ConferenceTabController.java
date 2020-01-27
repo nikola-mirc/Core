@@ -19,7 +19,6 @@ import alfatec.model.conference.Dates;
 import alfatec.model.conference.Field;
 import alfatec.model.conference.RegistrationFee;
 import alfatec.model.conference.SpecialIssue;
-import alfatec.model.enums.Currency;
 import alfatec.model.user.LoginData;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
@@ -27,7 +26,6 @@ import alfatec.view.wrappers.ConferenceDateSettings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,7 +41,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import util.DateUtil;
 
 public class ConferenceTabController extends GUIUtils {
@@ -58,7 +55,7 @@ public class ConferenceTabController extends GUIUtils {
 	private TableView<Collection> collectionTableView, thisConfCollectionTableView;
 
 	@FXML
-	private TableColumn<Collection, String> titleColumn, confColumn, thisConfTitleCol, thisConfColumn;
+	private TableColumn<Collection, String> titleColumn, confColumn, thisConfTitleCol;
 
 	@FXML
 	private TableView<SpecialIssue> specialTableView, thisConfSpecialTableView;
@@ -70,34 +67,26 @@ public class ConferenceTabController extends GUIUtils {
 	private HBox noConferenceHbox, addConferenceHbox, activeConferenceHbox;
 
 	@FXML
-	private VBox feePopup;
-
-	@FXML
 	private Label confLabel, activeConfLabel, confFieldLabel, confStartDate, confEndDate, firstCallLabel,
 			secondCallLabel, thirdCallLabel, emailLabel;
 
 	@FXML
-	private JFXButton newConferenceButton, insertFeesButton, saveConfButton, editConfButton, closeConfButton,
-			saveFeeButton;
+	private JFXButton newConferenceButton, saveConfButton, editConfButton, closeConfButton;
 
 	@FXML
-	private TextField conferenceTitleTextField, confEmail, confBcc, feePresetTextField, feeAmountTextField;
+	private TextField conferenceTitleTextField, confEmail, confBcc;
 
 	@FXML
 	private ComboBox<Field> conferenceFieldComboBox;
 
 	@FXML
-	private ComboBox<Currency> feeCurrency;
+	private TableView<RegistrationFee> registrationTableView;
 
 	@FXML
-	private TableView<RegistrationFee> feesTableView, registrationTableView;
+	private TableColumn<RegistrationFee, String> feePresetColumn, feeCurrencyColumn, feeAmountColumn;
 
 	@FXML
-	private TableColumn<RegistrationFee, String> presetCol, currencyCol, amountCol, feePresetColumn, feeCurrencyColumn,
-			feeAmountColumn;
-
-	@FXML
-	private Button closeButton, clearButton, closeButton1, clearButton1, closeFeePopupButton, clearFeePopupButton;
+	private Button closeButton, clearButton, closeButton1, clearButton1;
 
 	@FXML
 	private PasswordField confPassword;
@@ -106,7 +95,7 @@ public class ConferenceTabController extends GUIUtils {
 	private DatePicker firstCallDatePicker, secondCallDatePicker, thirdCallDatePicker;
 
 	@FXML
-	private TextArea confNotesTextArea;
+	private TextArea confNotesTextArea, addNote;
 
 	private BooleanProperty conferenceActive = new SimpleBooleanProperty(false);
 	private BooleanProperty noActiveConference = new SimpleBooleanProperty(true);
@@ -116,7 +105,6 @@ public class ConferenceTabController extends GUIUtils {
 	private ObservableList<ConferenceDateSettings> conferenceData;
 	private ObservableList<Collection> collections;
 	private ObservableList<SpecialIssue> specials;
-	private ObservableList<RegistrationFee> fees;
 
 	@FXML
 	private void initialize() {
@@ -129,13 +117,11 @@ public class ConferenceTabController extends GUIUtils {
 			firstCallDatePicker.setValue(null);
 			secondCallDatePicker.setValue(null);
 			thirdCallDatePicker.setValue(null);
-			fees = FXCollections.observableArrayList();
-			populateFeeTable();
+			addNote.clear();
 		};
 		conferenceData = CDSettingsDAO.getInstance().getAllData();
 		collections = CollectionDAO.getInstance().getAll();
 		specials = SpecialIssueDAO.getInstance().getAll();
-		fees = FXCollections.observableArrayList();
 		generalSetUp();
 		populateHistoryTable();
 		populateCollectionTable();
@@ -149,6 +135,7 @@ public class ConferenceTabController extends GUIUtils {
 
 	@FXML
 	void closeConf(ActionEvent event) {
+		conference = confTableView.getSelectionModel().getSelectedItem();
 		if (conference.getConference().isRealized()) {
 			closeYPopup(activeConferenceHbox, -570);
 			return;
@@ -182,14 +169,11 @@ public class ConferenceTabController extends GUIUtils {
 
 	@FXML
 	void editConf(ActionEvent event) {
+		closeYPopup(activeConferenceHbox, -570);
+		addingConferenceActive.set(true);
 		setEditAction(true);
+		configureEditBox();
 		openYPopup(addConferenceHbox, -570);
-	}
-
-	@FXML
-	void insertFees(ActionEvent event) {
-		feePopup.setVisible(true);
-		openYPopup(feePopup, -350);
 	}
 
 	@FXML
@@ -197,36 +181,9 @@ public class ConferenceTabController extends GUIUtils {
 		if (isAddAction()) {
 			handleAddAction(event);
 			cleaner.clear();
-		} else if (isEditAction()) {
-			// to do...
-		}
-	}
-
-	@FXML
-	private void closeFeePopup(ActionEvent event) {
-		closeYPopup(feePopup, -350);
-		clearFeePopup(event);
-	}
-
-	@FXML
-	private void clearFeePopup(ActionEvent event) {
-		feeCurrency.getSelectionModel().select(Currency.RSD);
-		feePresetTextField.setText(null);
-		feeAmountTextField.setText(null);
-	}
-
-	@FXML
-	private void saveFee(ActionEvent event) {
-		if (isValidName(feePresetTextField) && isValidName(feeAmountTextField)) {
-			RegistrationFee fee = RegistrationFeeDAO.getInstance().create(feePresetTextField.getText(),
-					Double.parseDouble(feeAmountTextField.getText()),
-					feeCurrency.getSelectionModel().getSelectedItem().name(), null);
-			closeFeePopup(event);
-			fees.add(fee);
-			feesTableView.refresh();
-		} else {
-			alert("Empty fields", "Registration fee name and/or amount fields must not be empty.", AlertType.WARNING);
-			return;
+		} else if (isEditAction() && handleEditAction()) {
+			addingConferenceActive.set(false);
+			cleaner.clear();
 		}
 	}
 
@@ -239,21 +196,17 @@ public class ConferenceTabController extends GUIUtils {
 	}
 
 	private void generalSetUp() {
-		feeCurrency.getItems().setAll(FXCollections.observableArrayList(Currency.values()));
-		feeCurrency.getSelectionModel().select(Currency.RSD);
 		conferenceFieldComboBox.getItems().setAll(FieldDAO.getInstance().getAllFields());
-		setUpFields(new TextField[] { conferenceTitleTextField, confEmail, confBcc, feePresetTextField }, new int[] {
-				getConferenceTitleLength(), getEmailLength(), getEmailLength(), getRegistrationFeeNameLength() });
+		setUpFields(new TextField[] { conferenceTitleTextField, confEmail, confBcc },
+				new int[] { getConferenceTitleLength(), getEmailLength(), getEmailLength() });
 		setUpFields(new PasswordField[] { confPassword }, new int[] { getPasswordLength() });
-		setUpFields(new TextArea[] { confNotesTextArea }, new int[] { getNoteLength() });
-		setUpDecimal(feeAmountTextField);
+		setUpFields(new TextArea[] { confNotesTextArea, addNote }, new int[] { getNoteLength(), getNoteLength() });
 		Utility.setUpStringCell(thisConfCollectionTableView);
 		Utility.setUpStringCell(thisConfSpecialTableView);
-		Utility.setUpStringCell(feesTableView);
 		Utility.setUpStringCell(registrationTableView);
-		populateFeeTable();
 		confNotesTextArea.setEditable(false);
 		confNotesTextArea.setWrapText(true);
+		addNote.setWrapText(true);
 	}
 
 	private void bindBoxes() {
@@ -270,9 +223,7 @@ public class ConferenceTabController extends GUIUtils {
 		String field = conferenceFieldComboBox.getSelectionModel().getSelectedItem() == null ? null
 				: conferenceFieldComboBox.getSelectionModel().getSelectedItem().getFieldName();
 		Conference start = ConferenceDAO.getInstance().startConference(conferenceTitleTextField.getText(), field,
-				confEmail.getText(), confPassword.getText(), confBcc.getText(), confNotesTextArea.getText(), null);
-		populateFeeTable();
-		setRegistrationFee(start);
+				confEmail.getText(), confPassword.getText(), confBcc.getText(), addNote.getText(), null);
 		Dates dates = DatesDAO.getInstance().create(DateUtil.format(firstCallDatePicker.getValue()),
 				DateUtil.format(secondCallDatePicker.getValue()), DateUtil.format(thirdCallDatePicker.getValue()));
 		conference = new ConferenceDateSettings(start, dates);
@@ -292,9 +243,9 @@ public class ConferenceTabController extends GUIUtils {
 			noActiveConference.set(false);
 			conferenceActive.set(true);
 			refreshY(confTableView, conferenceData.size() - 1);
-			openYPopup(activeConferenceHbox, -570);
 			conference = confTableView.getSelectionModel().getSelectedItem();
 			showConference(conference);
+			openYPopup(activeConferenceHbox, -570);
 		} else {
 			alert("Empty or invalid fields",
 					"Conference title and/or email fields can not be empty.\nAlso, an email addresss must contains \"@\" and \".\".",
@@ -303,10 +254,38 @@ public class ConferenceTabController extends GUIUtils {
 		}
 	}
 
-	private void handleEditConference(ConferenceDateSettings cds) {
-		populateFeeTable();
-		setRegistrationFee(cds.getConference());
-		// to do...
+	private void handleEditConference() {
+		setConferenceTitle();
+		setEmail();
+		setBCC();
+		setPassword();
+		setField();
+		setFirstCall();
+		setSecondCall();
+		setThirdCall();
+		setNote();
+	}
+
+	private boolean handleEditAction() {
+		if (isValidName(conferenceTitleTextField) && isValidEmail(confEmail)) {
+			if (!confBcc.getText().isEmpty() && !isValidEmail(confBcc)) {
+				alert("Invalid field", "An email addresss (conference BCC) must contains \"@\" and \".\".",
+						AlertType.WARNING);
+				return false;
+			}
+			handleEditConference();
+			setEditAction(false);
+			refreshY(confTableView, conferenceData.size() - 1);
+			conference = confTableView.getSelectionModel().getSelectedItem();
+			showConference(conference);
+			openYPopup(activeConferenceHbox, -570);
+			return true;
+		} else {
+			alert("Empty or invalid fields",
+					"Conference title and/or email fields can not be empty.\nAlso, an email addresss must contains \"@\" and \".\".",
+					AlertType.WARNING);
+			return false;
+		}
 	}
 
 	private void populateHistoryTable() {
@@ -363,16 +342,6 @@ public class ConferenceTabController extends GUIUtils {
 		thisConfSpecialTableView.refresh();
 	}
 
-	private void populateFeeTable() {
-		presetCol.setCellValueFactory(cellData -> cellData.getValue().getRegistrationNameProperty());
-		currencyCol.setCellValueFactory(
-				cellData -> new ReadOnlyStringWrapper(cellData.getValue().getCurrencyProperty().get().name()));
-		amountCol.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-				cellData.getValue().getRegistrationPriceProperty().asString().get()));
-		feesTableView.setItems(fees);
-		feesTableView.refresh();
-	}
-
 	private void populateRegistrationFeeTable(ConferenceDateSettings cds) {
 		feePresetColumn.setCellValueFactory(cellData -> cellData.getValue().getRegistrationNameProperty());
 		feeCurrencyColumn.setCellValueFactory(
@@ -381,12 +350,6 @@ public class ConferenceTabController extends GUIUtils {
 				cellData.getValue().getRegistrationPriceProperty().asString().get()));
 		registrationTableView
 				.setItems(RegistrationFeeDAO.getInstance().getAllForConference(cds.getConference().getConferenceID()));
-	}
-
-	private void setRegistrationFee(Conference conference) {
-		for (RegistrationFee fee : fees)
-			if (fee.getConferenceIDProperty().getValue() == 0)
-				RegistrationFeeDAO.getInstance().updateConferenceID(fee, conference.getConferenceID());
 	}
 
 	private void showConference(ConferenceDateSettings cds) {
@@ -400,6 +363,7 @@ public class ConferenceTabController extends GUIUtils {
 		secondCallLabel.setText(cds.getDates().getSecondCallString());
 		thirdCallLabel.setText(cds.getDates().getThirdCallString());
 		emailLabel.setText(cds.getConference().getConferenceEmail());
+		confNotesTextArea.setText(cds.getConference().getNoteProperty().get());
 		populateThisCollectionTable(
 				CollectionDAO.getInstance().getAllForConference(cds.getConference().getConferenceID()));
 		populateThisSpecialTable(
@@ -425,5 +389,84 @@ public class ConferenceTabController extends GUIUtils {
 			conference = confTableView.getSelectionModel().getSelectedItem();
 			showConference(conference);
 		}
+	}
+
+	private void setConferenceTitle() {
+		if (!conference.getConference().getConferenceTitle().equals(conferenceTitleTextField.getText()))
+			ConferenceDAO.getInstance().updateConferenceTitle(conference.getConference(),
+					conferenceTitleTextField.getText());
+	}
+
+	private void setEmail() {
+		if (!conference.getConference().getConferenceEmail().equals(confEmail.getText()))
+			ConferenceDAO.getInstance().updateConferenceEmail(conference.getConference(), confEmail.getText());
+	}
+
+	private void setBCC() {
+		if (!conference.getConference().getConferenceBcc().equals(confBcc.getText()))
+			ConferenceDAO.getInstance().updateConferenceBcc(conference.getConference(), confBcc.getText());
+	}
+
+	private void setField() {
+		if ((conference.getConference().getFieldIDProperty() == null
+				&& conferenceFieldComboBox.getSelectionModel().getSelectedItem() != null)
+				|| (conferenceFieldComboBox.getSelectionModel().getSelectedItem() != null && conference.getConference()
+						.getFieldID() != conferenceFieldComboBox.getSelectionModel().getSelectedItem().getFieldID()))
+			ConferenceDAO.getInstance().updateConferenceField(conference.getConference(),
+					conferenceFieldComboBox.getSelectionModel().getSelectedItem().getFieldID());
+	}
+
+	private void setPassword() {
+		if ((conference.getConference().getConferenceEmailPassword() == null
+				&& conference.getConference().getConferenceEmailPassword() != confPassword.getText())
+				|| (conference.getConference().getConferenceEmailPassword() != null
+						&& !conference.getConference().getConferenceEmailPassword().equals(confPassword.getText())))
+			ConferenceDAO.getInstance().updateConferencePassword(conference.getConference(), confPassword.getText());
+	}
+
+	private void setFirstCall() {
+		if ((conference.getDates().getFirstCallString() == null
+				&& conference.getDates().getFirstCallString() != DateUtil.format(firstCallDatePicker.getValue()))
+				|| (conference.getDates().getFirstCallString() != null && !conference.getDates().getFirstCallString()
+						.equals(DateUtil.format(firstCallDatePicker.getValue()))))
+			DatesDAO.getInstance().updateFirstCall(conference.getDates(),
+					DateUtil.format(firstCallDatePicker.getValue()));
+	}
+
+	private void setSecondCall() {
+		if ((conference.getDates().getSecondCallString() == null
+				&& conference.getDates().getSecondCallString() != DateUtil.format(secondCallDatePicker.getValue()))
+				|| (conference.getDates().getSecondCallString() != null && !conference.getDates().getSecondCallString()
+						.equals(DateUtil.format(secondCallDatePicker.getValue()))))
+			DatesDAO.getInstance().updateSecondCall(conference.getDates(),
+					DateUtil.format(secondCallDatePicker.getValue()));
+	}
+
+	private void setThirdCall() {
+		if ((conference.getDates().getThirdCallString() == null
+				&& conference.getDates().getThirdCallString() != DateUtil.format(thirdCallDatePicker.getValue()))
+				|| (conference.getDates().getThirdCallString() != null && !conference.getDates().getThirdCallString()
+						.equals(DateUtil.format(thirdCallDatePicker.getValue()))))
+			DatesDAO.getInstance().updateThirdCall(conference.getDates(),
+					DateUtil.format(thirdCallDatePicker.getValue()));
+	}
+
+	private void setNote() {
+		if (!conference.getConference().getNote().equals(addNote.getText()))
+			ConferenceDAO.getInstance().updateConferenceNote(conference.getConference(), addNote.getText());
+	}
+
+	private void configureEditBox() {
+		conference = confTableView.getSelectionModel().getSelectedItem();
+		conferenceTitleTextField.setText(conference.getConference().getConferenceTitle());
+		confEmail.setText(conference.getConference().getConferenceEmail());
+		confBcc.setText(conference.getConference().getConferenceBcc());
+		conferenceFieldComboBox.getSelectionModel()
+				.select(FieldDAO.getInstance().getField(conference.getConference().getFieldID()));
+		confPassword.setText(conference.getConference().getConferenceEmailPassword());
+		firstCallDatePicker.setValue(conference.getDates().getFirstCallDate());
+		secondCallDatePicker.setValue(conference.getDates().getSecondCallDate());
+		thirdCallDatePicker.setValue(conference.getDates().getThirdCallDate());
+		addNote.setText(conference.getConference().getNote());
 	}
 }

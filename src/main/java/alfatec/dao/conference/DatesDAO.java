@@ -107,27 +107,27 @@ public class DatesDAO {
 	/**
 	 * @param date DATE_PATTERN = "yyyy-MM-dd"
 	 */
-	public void updateFirstCall(String date) {
-		table.update(getCurrent().getDatesID(), 2, date);
-		getCurrent().setFirstCallDate(date);
+	public void updateFirstCall(Dates dates, String date) {
+		table.update(dates.getDatesID(), 2, date);
+		dates.setFirstCallDate(date);
 		Logging.getInstance().change("update", "Update first call date to " + date);
 	}
 
 	/**
 	 * @param date DATE_PATTERN = "yyyy-MM-dd"
 	 */
-	public void updateSecondCall(String date) {
-		table.update(getCurrent().getDatesID(), 3, date);
-		getCurrent().setSecondCallDate(date);
+	public void updateSecondCall(Dates dates, String date) {
+		table.update(dates.getDatesID(), 3, date);
+		dates.setSecondCallDate(date);
 		Logging.getInstance().change("update", "Update second call date to " + date);
 	}
 
 	/**
 	 * @param date DATE_PATTERN = "yyyy-MM-dd"
 	 */
-	public void updateThirdCall(String date) {
-		table.update(getCurrent().getDatesID(), 4, date);
-		getCurrent().setThirdCallDate(date);
+	public void updateThirdCall(Dates dates, String date) {
+		table.update(dates.getDatesID(), 4, date);
+		dates.setThirdCallDate(date);
 		Logging.getInstance().change("update", "Update third call date to " + date);
 	}
 
