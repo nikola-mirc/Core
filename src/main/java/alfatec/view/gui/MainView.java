@@ -53,6 +53,13 @@ public class MainView {
 			setUp(emailWebTab, "resources/fxml/emailTab.fxml");
 			ConferenceTabController conferenceController = (ConferenceTabController) getController(conferenceAnchor);
 			conferenceController.disablePartsForAdminAccess(loginData);
+			conferenceTab.setOnSelectionChanged(event -> {
+				if (conferenceTab.isSelected()) {
+					conferenceController.refreshCollectionTab();
+					conferenceController.refreshSpecialTab();
+					conferenceController.refreshSelection();
+				}
+			});
 			if (loginData.getRoleID() == 3)
 				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, confManagementTab, usersTab, emailWebTab);
 			else

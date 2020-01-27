@@ -25,8 +25,11 @@ import alfatec.dao.person.AuthorDAO;
 import alfatec.dao.relationship.ConferenceCallDAO;
 import alfatec.dao.user.UserDAO;
 import alfatec.dao.utils.Logging;
+import alfatec.model.conference.Conference;
+import alfatec.model.conference.Field;
 import alfatec.model.country.Country;
 import alfatec.model.enums.Institution;
+import alfatec.model.enums.Opinion;
 import alfatec.model.person.Author;
 import alfatec.model.relationship.ConferenceCall;
 import alfatec.model.user.LoginData;
@@ -115,19 +118,19 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	 */
 
 	@FXML
-	private ComboBox<?> filterInstitution;
+	private ComboBox<Institution> filterInstitution;
 
 	@FXML
 	private TextField filterInstitutionName;
 
 	@FXML
-	private PrefixSelectionComboBox<?> filterCountry;
+	private PrefixSelectionComboBox<Country> filterCountry;
 
 	@FXML
-	private ComboBox<?> filterConference;
+	private ComboBox<Conference> filterConference;
 
 	@FXML
-	private ComboBox<?> filterField;
+	private ComboBox<Field> filterField;
 
 	@FXML
 	private JFXCheckBox filterCollSpec;
@@ -136,7 +139,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private JFXCheckBox filterSentForReview;
 
 	@FXML
-	private ComboBox<?> filterReviewStatus;
+	private ComboBox<Opinion> filterReviewStatus;
 
 	@FXML
 	private JFXCheckBox filterSubmittedWork;
@@ -179,7 +182,6 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	private void addAuthor(ActionEvent event) {
-		setUpBoxes();
 		if (isPopupOpen())
 			closePopup(popupVbox, 520, popup);
 		setAddAction(true);
@@ -202,8 +204,10 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private void deleteAuthor(ActionEvent event) {
 		author = authorsTableView.getSelectionModel().getSelectedItem();
 		if (author != null) {
-			ButtonType bt = confirmationAlert("Please confirm:", "Are you sure you want to delete data for "
-					+ author.getAuthorFirstName() + " " + author.getAuthorLastName() + "?", AlertType.CONFIRMATION);
+			String name = author.getAuthorFirstName().isEmpty() ? author.getAuthorEmail()
+					: author.getAuthorFirstName() + " " + author.getAuthorLastName();
+			ButtonType bt = confirmationAlert("Please confirm:",
+					"Are you sure you want to delete data for " + name + "?", AlertType.CONFIRMATION);
 			if (bt == ButtonType.OK) {
 				AuthorDAO.getInstance().deleteAuthor(author);
 				AuthorDAO.getInstance().getAllAuthors().remove(author);
@@ -219,27 +223,33 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	@FXML
 	private void saveAuthor(ActionEvent event) {
 		if (isAddAction()) {
-			setAddAction(false);
 			if (isValidInput() && !isEmailAlreadyInDB()) {
 				authorsData.add(getNewAuthor());
 				refresh(authorsTableView, authorsData.size() - 1, popupVbox, 520, popup);
 				closeDetails(authorDetailsHbox, 1200);
 				openDetails(authorDetailsHbox, 1200);
 				showAuthor(author);
-			} else if (isEmailAlreadyInDB())
+			} else if (isEmailAlreadyInDB()) {
 				emailErrorLabel.setText("E-mail already exists in database.");
+				return;
+			} else
+				return;
+			setAddAction(false);
 		} else if (isEditAction()) {
-			setEditAction(false);
 			author = authorsTableView.getSelectionModel().getSelectedItem();
 			if (isValidInput())
-				if (!emailTextField.getText().equals(email) && isEmailAlreadyInDB())
+				if (!emailTextField.getText().equals(email) && isEmailAlreadyInDB()) {
 					emailErrorLabel.setText("Database already has enter with the same e-mail address.");
-				else {
+					return;
+				} else {
 					handleEditAuthor();
 					refresh(authorsTableView, authorsTableView.getSelectionModel().getSelectedIndex(), popupVbox, 520,
 							popup);
 					showAuthor(author);
 				}
+			else
+				return;
+			setEditAction(false);
 		}
 	}
 
@@ -479,8 +489,10 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private void setUpBoxes() {
 		institutionComboBox.getItems().setAll(FXCollections.observableArrayList(Institution.values()));
+		institutionComboBox.getSelectionModel().select(null);
 		countryComboBox.getItems()
 				.setAll(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
+		countryComboBox.getSelectionModel().select(-1);
 		institutionComboBox.setPromptText("Please select");
 		countryComboBox.setPromptText("Please select");
 	}
@@ -514,6 +526,10 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 			} catch (NullPointerException e) {
 				interestedCheckbox.setSelected(false);
 			}
+		});
+		emailTextField.setOnKeyPressed(event -> {
+			if (emailErrorLabel.getText() != null || !emailErrorLabel.getText().equals(""))
+				emailErrorLabel.setText("");
 		});
 	}
 

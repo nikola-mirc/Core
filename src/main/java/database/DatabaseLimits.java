@@ -10,6 +10,8 @@ public class DatabaseLimits {
 	private static final int PASSWORD_LENGTH = 64;
 	private static final int CONTACT_TELEPHONE_LENGTH = 20;
 	private static final int RESEARCH_TITLE_LENGTH = 255;
+	private static final int CONFERENCE_TITLE_LENGTH = 100;
+	private static final int REGISTRATION_FEE_NAME_LENGTH = 50;
 	private static final long BLOB_LENGTH = 16777216;
 
 	public static int getFirstNameLength() {
@@ -42,6 +44,14 @@ public class DatabaseLimits {
 
 	public static int getResearchTitleLength() {
 		return RESEARCH_TITLE_LENGTH;
+	}
+
+	public static int getConferenceTitleLength() {
+		return CONFERENCE_TITLE_LENGTH;
+	}
+
+	public static int getRegistrationFeeNameLength() {
+		return REGISTRATION_FEE_NAME_LENGTH;
 	}
 
 	public static long getBlobLength() {

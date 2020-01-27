@@ -61,6 +61,14 @@ public class RegistrationFeeDAO {
 		return fee;
 	}
 
+	public RegistrationFee create(String registrationName, double registrationPrice, String currency,
+			String conference) {
+		String[] strings = { registrationName, currency, conference };
+		RegistrationFee fee = table.create(strings, new int[] {}, new double[] { registrationPrice }, getRegistration);
+		Logging.getInstance().change("create", "Add new registration fee " + registrationName);
+		return fee;
+	}
+
 	public void deleteRegistration(RegistrationFee fee) {
 		table.delete(fee.getRegistrationFeeID());
 		Logging.getInstance().change("delete", "Delete registration fee " + fee.getRegistrationName());
@@ -117,4 +125,8 @@ public class RegistrationFeeDAO {
 		Logging.getInstance().change("update", "Update registration name from " + past + " to " + name);
 	}
 
+	public void updateConferenceID(RegistrationFee fee, int conferenceID) {
+		table.update(fee.getRegistrationFeeID(), 3, conferenceID);
+		fee.setConferenceID(conferenceID);
+	}
 }

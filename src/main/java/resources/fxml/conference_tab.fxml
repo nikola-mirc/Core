@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.PasswordField?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.conference.ConferenceTabController">
 	<!-- store controller as userData property -->
@@ -52,7 +53,7 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<TableView id="tableView" fx:id="confTableView" layoutX="7.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="290.0">
+										<TableView id="tableView" fx:id="collectionTableView" layoutX="7.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="290.0">
 											<columns>
 												<TableColumn fx:id="titleColumn" editable="false" prefWidth="174.40014934539795" text="Title" />
 												<TableColumn fx:id="confColumn" editable="false" prefWidth="113.59983825683594" text="Conference" />
@@ -68,7 +69,8 @@
 									<children>
 										<TableView id="tableView" fx:id="specialTableView" layoutX="7.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="290.0">
 											<columns>
-												<TableColumn fx:id="collectionCol" editable="false" prefWidth="288.0000733375549" text="Collection" />
+												<TableColumn fx:id="titleSpecial" editable="false" prefWidth="174.40014934539795" text="Title" />
+												<TableColumn fx:id="confSpecial" editable="false" prefWidth="113.59983825683594" text="Conference" />
 											</columns>
 										</TableView>
 									</children>
@@ -119,15 +121,15 @@
 								<Insets />
 							</VBox.margin>
 						</Label>
-						<ComboBox id="comboBoxText" fx:id="conferenceFieldComboBox" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" promptText="Please select">
+						<ComboBox id="comboBoxText" fx:id="conferenceFieldComboBox" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" promptText="Please select">
 							<VBox.margin>
 								<Insets bottom="10.0" />
 							</VBox.margin>
 						</ComboBox>
 						<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="250.0">
 							<children>
-								<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="180.0" text="Select fees:" />
-								<JFXButton id="miniButtonTransparent" fx:id="insertFeesButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#insertFees" prefHeight="27.0" prefWidth="70.0" text="Insert" />
+								<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="180.0" text="Registration fees:" />
+								<JFXButton id="miniButtonTransparent" fx:id="insertFeesButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#insertFees" prefHeight="27.0" prefWidth="70.0" text="Add" />
 							</children>
 							<VBox.margin>
 								<Insets top="30.0" />
@@ -189,7 +191,7 @@
 						</Label>
 						<TextField id="textField" fx:id="confEmail" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
 						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Password:" />
-						<TextField id="textField" fx:id="confPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
+						<PasswordField fx:id="confPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
 						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="bcc:" />
 						<TextField id="textField" fx:id="confBcc" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" />
 						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="First call date:">
@@ -241,6 +243,68 @@
 				</VBox>
 			</children>
 		</HBox>
+		<VBox id="mainVboxVertical" fx:id="feePopup" alignment="TOP_CENTER" layoutX="880.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="300.0" visible="false">
+			<children>
+				<HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="300.0">
+					<children>
+						<VBox spacing="7.0">
+							<children>
+								<Button id="miniButtonTrBottom" fx:id="closeFeePopupButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#closeFeePopup" prefHeight="25.0" prefWidth="25.0">
+									<graphic>
+										<ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+											<image>
+												<Image url="@../images/close_popup_icon.png" />
+											</image>
+										</ImageView>
+									</graphic>
+								</Button>
+								<Button id="miniButtonTransparent" fx:id="clearFeePopupButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clearFeePopup" prefHeight="25.0" prefWidth="25.0">
+									<graphic>
+										<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+											<image>
+												<Image url="@../images/clear_popup_icon.png" />
+											</image>
+										</ImageView>
+									</graphic>
+								</Button>
+							</children>
+							<HBox.margin>
+								<Insets right="7.0" top="7.0" />
+							</HBox.margin>
+						</VBox>
+					</children>
+				</HBox>
+				<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Preset name:">
+					<VBox.margin>
+						<Insets top="25.0" />
+					</VBox.margin>
+				</Label>
+				<TextField id="text" fx:id="feePresetTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="225.0">
+					<VBox.margin>
+						<Insets />
+					</VBox.margin>
+				</TextField>
+				<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
+				<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Currency:" />
+				<ComboBox id="comboBoxText" fx:id="feeCurrency" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="225.0" promptText="Please select">
+					<VBox.margin>
+						<Insets />
+					</VBox.margin>
+				</ComboBox>
+				<Label id="errorText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="225.0" />
+				<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="225.0" text="Amount:" />
+				<TextField id="text" fx:id="feeAmountTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="225.0">
+					<VBox.margin>
+						<Insets />
+					</VBox.margin>
+				</TextField>
+				<JFXButton id="button" fx:id="saveFeeButton" buttonType="RAISED" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#saveFee" prefHeight="40.0" prefWidth="100.0" text="Save">
+					<VBox.margin>
+						<Insets top="40.0" />
+					</VBox.margin>
+				</JFXButton>
+			</children>
+		</VBox>
 		<HBox id="mainVboxVertical" fx:id="activeConferenceHbox" alignment="TOP_CENTER" layoutX="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="870.0" visible="false">
 			<children>
 				<VBox>
@@ -285,7 +349,7 @@
 											</children>
 										</HBox>
 										<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="50.0" text="Fees:" />
-										<TableView id="tableViewMini" fx:id="feesTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0">
+										<TableView id="tableViewMini" fx:id="registrationTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0">
 											<columns>
 												<TableColumn fx:id="feePresetColumn" prefWidth="106.40002822875977" text="Preset" />
 												<TableColumn fx:id="feeCurrencyColumn" prefWidth="64.79998779296875" text="Currency" />

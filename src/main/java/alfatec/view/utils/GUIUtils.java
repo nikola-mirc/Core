@@ -1,5 +1,7 @@
 package alfatec.view.utils;
 
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -121,7 +123,7 @@ public class GUIUtils extends DatabaseLimits {
 		transitionPopupX(box, endingCoordinate, 0, Interpolator.EASE_IN, 500);
 	}
 
-	public void closePopup(VBox box, double startingCoordinate, ClearPopUp popup) {
+	public void closePopup(Node box, double startingCoordinate, ClearPopUp popup) {
 		closeDetails(box, startingCoordinate);
 		setPopupOpen(false);
 		popup.clear();
@@ -190,7 +192,7 @@ public class GUIUtils extends DatabaseLimits {
 		return Utils.equal(password.getText(), repeatedPassword.getText());
 	}
 
-	public <T> void refresh(TableView<T> table, int row, VBox box, double startingCoordinate, ClearPopUp popup) {
+	public <T> void refresh(TableView<T> table, int row, Node box, double startingCoordinate, ClearPopUp popup) {
 		table.refresh();
 		table.requestFocus();
 		table.getSelectionModel().select(row);
@@ -200,6 +202,56 @@ public class GUIUtils extends DatabaseLimits {
 
 	public <T> void clearFields(List<T> fields, List<Label> labels) {
 		fields.forEach(field -> ((TextInputControl) field).clear());
-		labels.forEach(label -> label.setText(""));
+		if (labels != null)
+			labels.forEach(label -> label.setText(""));
+	}
+
+	public void transitionPopupY(Node node, double endingCoordinate, double startingCoordinate,
+			Interpolator interpolator, int durrationInMillis) {
+		node.translateYProperty().set(endingCoordinate);
+		KeyValue kv = new KeyValue(node.translateYProperty(), startingCoordinate, interpolator);
+		KeyFrame kf = new KeyFrame(Duration.millis(durrationInMillis), kv);
+		Timeline tl = new Timeline(kf);
+		tl.play();
+	}
+
+	public void closeYPopup(Node box, double coordinate) {
+		transitionPopupY(box, 0, coordinate, Interpolator.EASE_IN, 500);
+	}
+
+	public void openYPopup(Node box, double coordinate) {
+		transitionPopupY(box, coordinate, 0, Interpolator.EASE_IN, 500);
+	}
+
+	private UnaryOperator<Change> rejectDouble() {
+		DecimalFormat format = new DecimalFormat();
+		UnaryOperator<Change> rejectDouble = filter -> {
+			String newText = filter.getControlNewText();
+			if (newText.isEmpty())
+				return filter;
+			ParsePosition parsePosition = new ParsePosition(0);
+			Number number = format.parse(newText, parsePosition);
+			if (number == null || parsePosition.getIndex() < newText.length()
+					|| (newText.contains(".") && newText.substring(newText.indexOf(".") + 1).length() > 2)) {
+				final ContextMenu menu = new ContextMenu();
+				menu.getItems().add(new MenuItem("This field takes only positive decimal with precision of 2."));
+				menu.show(filter.getControl(), Side.BOTTOM, 0, 0);
+				return null;
+			}
+			return filter;
+
+		};
+		return rejectDouble;
+	}
+
+	public <T> void setUpDecimal(T decimal) {
+		((TextInputControl) decimal).setTextFormatter(new TextFormatter<String>(rejectDouble()));
+	}
+
+	public <T> void refreshY(TableView<T> table, int row) {
+		table.refresh();
+		table.requestFocus();
+		table.getSelectionModel().select(row);
+		table.scrollTo(row);
 	}
 }

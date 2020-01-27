@@ -33,8 +33,13 @@ import alfatec.dao.research.PaperworkDAO;
 import alfatec.dao.research.ResearchDAO;
 import alfatec.dao.utils.Logging;
 import alfatec.model.conference.Collection;
+import alfatec.model.conference.Conference;
+import alfatec.model.conference.Field;
 import alfatec.model.conference.RegistrationFee;
 import alfatec.model.conference.SpecialIssue;
+import alfatec.model.country.Country;
+import alfatec.model.enums.Institution;
+import alfatec.model.enums.Opinion;
 import alfatec.model.enums.Presentation;
 import alfatec.model.person.Author;
 import alfatec.model.person.Reviewer;
@@ -65,6 +70,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -121,19 +127,19 @@ public class ScientificWorkTabController extends GUIUtils {
 	 */
 
 	@FXML
-	private ComboBox<?> filterInstitution;
+	private ComboBox<Institution> filterInstitution;
 
 	@FXML
 	private TextField filterInstitutionName;
 
 	@FXML
-	private PrefixSelectionComboBox<?> filterCountry;
+	private PrefixSelectionComboBox<Country> filterCountry;
 
 	@FXML
-	private ComboBox<?> filterConference;
+	private ComboBox<Conference> filterConference;
 
 	@FXML
-	private ComboBox<?> filterField;
+	private ComboBox<Field> filterField;
 
 	@FXML
 	private JFXCheckBox filterCollSpec;
@@ -145,13 +151,13 @@ public class ScientificWorkTabController extends GUIUtils {
 	private TextField filterReviewer;
 
 	@FXML
-	private ComboBox<?> filterStatus;
+	private ComboBox<Opinion> filterStatus;
 
 	@FXML
 	private JFXCheckBox filterSubmittedWork;
 
 	@FXML
-	private ComboBox<?> filterPresentation;
+	private ComboBox<Presentation> filterPresentation;
 
 	@FXML
 	private DatePicker filterDate;
@@ -198,9 +204,11 @@ public class ScientificWorkTabController extends GUIUtils {
 
 	@FXML
 	void addApplication(ActionEvent event) {
-		setAddAction(true);
 		closePopUpsAndClear();
+		setAddAction(true);
 		changeDisable(!isAddAction());
+		collectionRadio.setDisable(true);
+		specialIssueRadio.setDisable(true);
 		opinionButtonsChange(isAddAction());
 		openPopup(details, POPUP);
 	}
@@ -303,9 +311,12 @@ public class ScientificWorkTabController extends GUIUtils {
 	void updateApplication(ActionEvent event) {
 		united = applicationsTableView.getSelectionModel().getSelectedItem();
 		closePopUps();
-		if (united != null) {
+		if (united != null && ConferenceDAO.getInstance().getCurrentConference() != null
+				&& united.getPaperworkResearch().getPaperwork().getConferenceID() == ConferenceDAO.getInstance()
+						.getCurrentConference().getConferenceID()) {
 			setEditAction(true);
 			changeDisable(!isEditAction());
+			specialIssueRadio.setDisable(!collectionRadio.isSelected());
 			showData(united);
 			openPopup(details, POPUP);
 		}
@@ -339,7 +350,8 @@ public class ScientificWorkTabController extends GUIUtils {
 			closePopUps();
 			openPopup(details, POPUP);
 			showData(united);
-		}
+		} else if (!isValidName(swTitle))
+			return;
 		addedAuthors.removeAll(addedAuthors);
 		deletedAuthors.removeAll(deletedAuthors);
 		applicationsTableView.refresh();
@@ -401,7 +413,6 @@ public class ScientificWorkTabController extends GUIUtils {
 		Collection collection = isAddAction() ? null
 				: CollectionDAO.getInstance().getCollection(united.getResearchProperty().get().getResearch());
 		specialIssueRadio.setSelected(collection == null ? false : collection.isForSpecialIssue());
-		specialIssueRadio.setDisable(collection != null && isEditAction() ? false : true);
 		if (united.getResearchProperty() != null
 				&& united.getResearchProperty().get().getPaperwork().getConferenceID() != 0)
 			conferenceTitle.setText(ConferenceDAO.getInstance()
@@ -655,6 +666,8 @@ public class ScientificWorkTabController extends GUIUtils {
 		selectReviewerTextField.setEditable(false);
 		Arrays.asList(rwAcceptedButton, rwBigButton, rwRejectedButton, rwSmallButton)
 				.forEach(button -> button.setOnMousePressed(event -> selected.setText("Review: " + button.getText())));
+		updateApplicationButton
+				.setTooltip(new Tooltip("Only researches participating in active conference can be updated."));
 	}
 
 	private void setUpMiniTable() {
@@ -710,6 +723,10 @@ public class ScientificWorkTabController extends GUIUtils {
 
 	private void closePopUpsAndClear() {
 		changeDisable(true);
+		if (isAddAction())
+			setAddAction(false);
+		if (isEditAction())
+			setEditAction(false);
 		if (isPopupOpen())
 			closePopup(details, POPUP, clearDetails);
 		if (isOtherPopupOpen())
@@ -778,6 +795,7 @@ public class ScientificWorkTabController extends GUIUtils {
 	private void setUpBox() {
 		if (RegistrationFeeDAO.getInstance().getCurrentFees() != null)
 			feeComboBox.getItems().setAll(RegistrationFeeDAO.getInstance().getCurrentFees());
+		feeComboBox.getSelectionModel().select(null);
 		feeComboBox.setPromptText("Please select");
 	}
 }

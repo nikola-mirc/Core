@@ -60,7 +60,7 @@ public class DateUtil {
 	public static LocalDate parseDate(String date) {
 		try {
 			return DATE_FORMATTER.parse(date, LocalDate::from);
-		} catch (DateTimeParseException e) {
+		} catch (DateTimeParseException | NullPointerException e) {
 			return null;
 		}
 	}

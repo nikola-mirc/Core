@@ -83,11 +83,11 @@ public class ConferenceDAO {
 		Logging.getInstance().change("delete", "Delete conference\n\t" + past);
 	}
 
-	public void endConference() {
+	public void endConference(Conference conference) {
 		Logging.getInstance().change("end",
-				"Marked conference\n\t" + getCurrentConference().getConferenceTitle() + "\nas realized.");
-		table.update(getCurrentConference().getConferenceID(), 8, 1);
-		getCurrentConference().setRealized(1);
+				"Marked conference\n\t" + conference.getConferenceTitle() + "\nas realized.");
+		conference.setRealized(1);
+		table.update(conference.getConferenceID(), 8, 1);
 	}
 
 	/**
@@ -154,9 +154,25 @@ public class ConferenceDAO {
 
 	public Conference startConference(String title, String field, String email, String password, String bcc,
 			String note, String reportPath) {
-		Conference conference = table.create(reportPath, 7, new String[] { title, email, password, bcc, note },
-				new int[] { FieldDAO.getInstance().getField(field).getFieldID(), 0 }, new long[] {}, getConference);
-		Logging.getInstance().change("create", "Start conference\n\t" + conference.getConferenceTitle());
+		Conference conference;
+		if (reportPath != null)
+			if (field != null)
+				conference = table.create(reportPath, 6, new String[] { title, email, password, bcc, note },
+						new int[] { FieldDAO.getInstance().getField(field).getFieldID(), 0 }, new long[] {},
+						getConference);
+			else
+				conference = table.create(reportPath, 6, new String[] { title, email, password, bcc, note, null },
+						new int[] { 0 }, new long[] {}, getConference);
+		else {
+			if (field != null)
+				conference = table.create(new String[] { title, email, password, bcc, note, null },
+						new int[] { FieldDAO.getInstance().getField(field).getFieldID(), 0 }, new long[] {},
+						getConference);
+			else
+				conference = table.create(new String[] { title, email, password, bcc, note, null, null },
+						new int[] { 0 }, new long[] {}, getConference);
+		}
+		Logging.getInstance().change("create", "Start conference\n\t" + title);
 		return conference;
 	}
 
@@ -214,4 +230,7 @@ public class ConferenceDAO {
 		Logging.getInstance().change("update", "Update conference bcc from\n\t" + bcc + "\nto\n\t" + conferenceBcc);
 	}
 
+	public Conference getter(ResultSet rs) {
+		return getConference.get(rs);
+	}
 }

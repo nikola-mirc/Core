@@ -2,6 +2,7 @@ package alfatec.view.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.jfoenix.controls.JFXPasswordField;
@@ -45,8 +46,12 @@ public abstract class EmailGUI extends GUIUtils {
 		fileChooser.getExtensionFilters().add(extFilter);
 		selectedFiles.addAll(fileChooser.showOpenMultipleDialog(display));
 		if (selectedFiles != null && selectedFiles.size() > 0) {
+			HashSet<File> set = new HashSet<File>(selectedFiles);
+			set.addAll(selectedFiles);
+			List<File> list = new ArrayList<File>();
+			list.addAll(set);
 			selected.setVisible(true);
-			for (File file : selectedFiles) {
+			for (File file : list) {
 				selected.setText(selected.getText() + " " + file.getName() + ", ");
 				attachFiles.add(file.getAbsolutePath());
 			}
