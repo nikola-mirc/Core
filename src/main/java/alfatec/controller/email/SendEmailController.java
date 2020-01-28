@@ -22,6 +22,7 @@ public class SendEmailController extends EmailGUI {
 			setUp();
 			setListener(recieverid);
 			setSent(false);
+			instructions();
 		} catch (Exception e) {
 			alert("No active conference", "Send email to selected author via loopia server with your own credentials.",
 					AlertType.ERROR);

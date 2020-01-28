@@ -105,6 +105,7 @@ public class ConferenceTabController extends GUIUtils {
 	private ObservableList<ConferenceDateSettings> conferenceData;
 	private ObservableList<Collection> collections;
 	private ObservableList<SpecialIssue> specials;
+	private int userRole;
 
 	@FXML
 	private void initialize() {
@@ -193,6 +194,7 @@ public class ConferenceTabController extends GUIUtils {
 			editConfButton.setVisible(false);
 			closeConfButton.setVisible(false);
 		}
+		userRole = ld.getRoleID();
 	}
 
 	private void generalSetUp() {
@@ -353,7 +355,7 @@ public class ConferenceTabController extends GUIUtils {
 	}
 
 	private void showConference(ConferenceDateSettings cds) {
-		editConfButton.setVisible(cds.getConference().isRealized() ? false : true);
+		editConfButton.setVisible(cds.getConference().isRealized() || userRole == 2 ? false : true);
 		activeConfLabel.setText(cds.getConference().getConferenceTitle());
 		confFieldLabel.setText(FieldDAO.getInstance().getField(cds.getConference().getFieldID()) == null ? null
 				: FieldDAO.getInstance().getField(cds.getConference().getFieldID()).getFieldName());
