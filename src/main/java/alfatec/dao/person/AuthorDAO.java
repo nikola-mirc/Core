@@ -11,6 +11,7 @@ import alfatec.model.enums.Institution;
 import alfatec.model.person.Author;
 import database.DatabaseTable;
 import database.Getter;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -193,6 +194,17 @@ public class AuthorDAO {
 		ObservableList<Author> search = table.findWhere(new String[] { table.getTable().getColumnName(4) },
 				new String[] { email }, getAuthor);
 		return search.size() > 0 ? search.get(0) : null;
+	}
+
+	public ObservableList<Author> getFilteredAuthors(ResultSet rs) {
+		ObservableList<Author> list = FXCollections.observableArrayList();
+		try {
+			while (rs.next())
+				list.add(getAuthor.get(rs));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 }

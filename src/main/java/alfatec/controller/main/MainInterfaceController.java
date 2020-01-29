@@ -1,12 +1,14 @@
 package alfatec.controller.main;
 
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.controlsfx.control.PrefixSelectionComboBox;
 
@@ -20,13 +22,13 @@ import alfatec.controller.email.SendEmailController;
 import alfatec.controller.user.ChangePasswordController;
 import alfatec.controller.utils.ClearPopUp;
 import alfatec.dao.conference.ConferenceDAO;
+import alfatec.dao.conference.FieldDAO;
 import alfatec.dao.country.CountryDAO;
+import alfatec.dao.filters.FilterAuthorsDAO;
 import alfatec.dao.person.AuthorDAO;
 import alfatec.dao.relationship.ConferenceCallDAO;
 import alfatec.dao.user.UserDAO;
 import alfatec.dao.utils.Logging;
-import alfatec.model.conference.Conference;
-import alfatec.model.conference.Field;
 import alfatec.model.country.Country;
 import alfatec.model.enums.Institution;
 import alfatec.model.enums.Opinion;
@@ -118,19 +120,19 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	 */
 
 	@FXML
-	private ComboBox<Institution> filterInstitution;
+	private ComboBox<String> filterInstitution;
 
 	@FXML
-	private TextField filterInstitutionName;
+	private ComboBox<String> filterInstitutionName;
 
 	@FXML
-	private PrefixSelectionComboBox<Country> filterCountry;
+	private PrefixSelectionComboBox<String> filterCountry;
 
 	@FXML
-	private ComboBox<Conference> filterConference;
+	private ComboBox<String> filterConference;
 
 	@FXML
-	private ComboBox<Field> filterField;
+	private ComboBox<String> filterField;
 
 	@FXML
 	private JFXCheckBox filterCollSpec;
@@ -139,7 +141,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private JFXCheckBox filterSentForReview;
 
 	@FXML
-	private ComboBox<Opinion> filterReviewStatus;
+	private ComboBox<String> filterReviewStatus;
 
 	@FXML
 	private JFXCheckBox filterSubmittedWork;
@@ -379,6 +381,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				authorsData = AuthorDAO.getInstance().getAllAuthors();
 				authorsTableView.getItems().setAll(authorsData);
 			}
+			resetFilters();
+
 		});
 	}
 
@@ -495,6 +499,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		countryComboBox.getSelectionModel().select(-1);
 		institutionComboBox.setPromptText("Please select");
 		countryComboBox.setPromptText("Please select");
+		setUpFilterBoxes();
 	}
 
 	private void setUpFields() {
@@ -561,4 +566,68 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private void closeDetails(ActionEvent event) {
 		closeDetails(authorDetailsHbox, 1200);
 	}
+
+	@FXML
+	private void filter(ActionEvent event) {
+		filterAuthors();
+	}
+
+	@FXML
+	private void resetFilters() {
+		filterInstitution.getSelectionModel().clearSelection();
+		filterInstitutionName.getSelectionModel().clearSelection();
+		filterCountry.getSelectionModel().clearSelection();
+		filterConference.getSelectionModel().clearSelection();
+		filterField.getSelectionModel().clearSelection();
+		filterReviewStatus.getSelectionModel().clearSelection();
+		filterCollSpec.setSelected(false);
+		filterSentForReview.setSelected(false);
+		filterSubmittedWork.setSelected(false);
+		filterFirstInv.setSelected(false);
+		filterSecondInv.setSelected(false);
+		filterThirdInv.setSelected(false);
+		filterInterested.setSelected(false);
+	}
+
+	private void setUpFilterBoxes() {
+		List<String> institutions = new ArrayList<String>();
+		for (Institution institution : Institution.values()) {
+			institutions.add(institution.toString());
+		}
+		filterInstitution.getItems().setAll(FXCollections.observableArrayList(institutions));
+		List<String> institutionNames = new ArrayList<String>();
+		for (Author author : AuthorDAO.getInstance().getAllAuthors()) {
+			if (author.getInstitutionName() != null)
+				institutionNames.add(author.getInstitutionName());
+		}
+		filterInstitutionName.getItems().setAll(
+				FXCollections.observableArrayList(institutionNames.stream().distinct().collect(Collectors.toList())));
+		filterCountry.getItems().setAll(CountryDAO.getInstance().getAllCountryNames());
+		filterConference.getItems().setAll(ConferenceDAO.getInstance().getAllConferenceNames());
+		filterField.getItems().setAll(FXCollections.observableArrayList(FieldDAO.getInstance().getAllFieldNames()));
+		List<String> opinions = new ArrayList<String>();
+		for (Opinion opinion : Opinion.values()) {
+			opinions.add(opinion.getOpinion());
+		}
+		filterReviewStatus.getItems().setAll(FXCollections.observableArrayList(opinions));
+	}
+
+	private void filterAuthors() {
+		ArrayList<ComboBox<String>> comboBoxes = new ArrayList<ComboBox<String>>();
+		comboBoxes.add(filterInstitution);
+		comboBoxes.add(filterInstitutionName);
+		comboBoxes.add(filterCountry);
+		comboBoxes.add(filterConference);
+		comboBoxes.add(filterField);
+		comboBoxes.add(filterReviewStatus);
+		JFXCheckBox[] checkBoxes = { filterCollSpec, filterSentForReview, filterSubmittedWork, filterFirstInv,
+				filterSecondInv, filterThirdInv, filterInterested };
+		authorsData = AuthorDAO.getInstance().getAllAuthors();
+		authorsTableView.getItems().setAll(authorsData);
+		ResultSet filtered = FilterAuthorsDAO.filterAuthors(comboBoxes, checkBoxes);
+		authorsData = AuthorDAO.getInstance().getFilteredAuthors(filtered);
+		List<Author> newList = authorsData.stream().distinct().collect(Collectors.toList());
+		authorsTableView.getItems().setAll(newList);
+	}
+
 }

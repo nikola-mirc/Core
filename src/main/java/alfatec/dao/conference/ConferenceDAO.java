@@ -234,4 +234,8 @@ public class ConferenceDAO {
 	public Conference getter(ResultSet rs) {
 		return getConference.get(rs);
 	}
+
+	public ObservableList<String> getAllConferenceNames() {
+		return table.getColumn(1);
+	}
 }

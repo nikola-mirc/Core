@@ -100,4 +100,8 @@ public class FieldDAO {
 		field.setFieldName(fieldName);
 		Logging.getInstance().change("update", "Rename field from " + past + " to " + fieldName);
 	}
+
+	public ObservableList<String> getAllFieldNames() {
+		return table.getColumn(1);
+	}
 }
