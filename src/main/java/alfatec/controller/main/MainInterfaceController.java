@@ -382,7 +382,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				authorsData = AuthorDAO.getInstance().getAllAuthors();
 				authorsTableView.getItems().setAll(authorsData);
 			}
-			resetFilters();
+			clearFilters();
 
 		});
 	}
@@ -575,6 +575,12 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	private void resetFilters() {
+		clearFilters();
+		searchAuthorTextField.clear();
+		authorsTableView.getItems().setAll(AuthorDAO.getInstance().getAllAuthors());
+	}
+
+	private void clearFilters() {
 		filterInstitution.getSelectionModel().clearSelection();
 		filterInstitutionName.getSelectionModel().clearSelection();
 		filterCountry.getSelectionModel().clearSelection();
@@ -602,7 +608,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				institutionNames.add(author.getInstitutionName());
 		}
 		filterInstitutionName.getItems().setAll(FXCollections.observableArrayList(
-				institutionNames.stream().distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList())));
+				institutionNames.stream().distinct().filter(s -> !s.isEmpty()).sorted().collect(Collectors.toList())));
 		filterCountry.getItems().setAll(CountryDAO.getInstance().getAllCountryNames());
 		filterConference.getItems().setAll(ConferenceDAO.getInstance().getAllConferenceNames());
 		filterField.getItems().setAll(FXCollections.observableArrayList(FieldDAO.getInstance().getAllFieldNames()));
