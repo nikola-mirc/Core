@@ -293,7 +293,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 			boolean sentGroup = groupEmail.getValidSecond() != null ? secondCallGroupHelper() : false;
 			boolean sentInvalid = groupEmail.getInvalidSecond() != null ? secondCallInvalidHelper() : false;
 			if (!sentGroup && !sentInvalid)
-				alert("No more available addresses", "First call for paper is sent to all authors in the database.",
+				alert("No more available addresses", "Second call for paper is sent to all authors in the database.",
 						AlertType.INFORMATION);
 		}
 	}
@@ -308,7 +308,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 			boolean sentGroup = groupEmail.getValidThird() != null ? thirdCallGroupHelper() : false;
 			boolean sentInvalid = groupEmail.getInvalidThird() != null ? thirdCallInvalidHelper() : false;
 			if (!sentGroup && !sentInvalid)
-				alert("No more available addresses", "First call for paper is sent to all authors in the database.",
+				alert("No more available addresses", "Third call for paper is sent to all authors in the database.",
 						AlertType.INFORMATION);
 		}
 	}
