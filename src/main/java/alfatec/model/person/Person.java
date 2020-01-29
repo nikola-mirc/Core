@@ -150,6 +150,9 @@ abstract class Person {
 
 	@Override
 	public String toString() {
-		return getFirstName().concat(" ").concat(getLastName());
+		if (getPersonFirstNameProperty().isEmpty().and(getPersonLastNameProperty().isEmpty()).get())
+			return getEmail();
+		else
+			return getFirstName().concat(" ").concat(getLastName());
 	}
 }

@@ -13,6 +13,8 @@ import database.DatabaseTable;
 import database.Getter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import util.BooleanUtil;
+import util.ValidateEmail;
 
 /**
  * DAO for table "author"
@@ -40,8 +42,9 @@ public class AuthorDAO {
 	private Getter<Author> getAuthor;
 
 	private AuthorDAO() {
-		table = new TableUtility(new DatabaseTable("author", "author_id", new String[] { "institution",
-				"author_first_name", "author_last_name", "author_email", "institution_name", "note", "country_id" }));
+		table = new TableUtility(new DatabaseTable("author", "author_id",
+				new String[] { "institution", "author_first_name", "author_last_name", "author_email",
+						"institution_name", "note", "country_id", "validate_email" }));
 		getAuthor = (ResultSet rs) -> {
 			Author author = new Author();
 			try {
@@ -53,6 +56,7 @@ public class AuthorDAO {
 				author.setInstitutionName(rs.getString(table.getTable().getColumnName(5)));
 				author.setNote(rs.getString(table.getTable().getColumnName(6)));
 				author.setCountryID(rs.getInt(table.getTable().getColumnName(7)));
+				author.setIsValidEmail(rs.getBoolean(table.getTable().getColumnName(8)));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -66,12 +70,14 @@ public class AuthorDAO {
 	public Author createAuthor(String firstName, String lastName, String email, String country, String institutionType,
 			String institutionName, String note) {
 		if (country != null) {
-			int[] ints = { Commons.findCountryByName(country).getCountryID() };
+			int[] ints = { Commons.findCountryByName(country).getCountryID(),
+					BooleanUtil.parse(ValidateEmail.isAddressValid(email)) };
 			String[] strings = { institutionType, firstName, lastName, email, institutionName, note };
 			return table.create(strings, ints, new long[] {}, getAuthor);
 		} else {
 			String[] strings = { institutionType, firstName, lastName, email, institutionName, note, country };
-			return table.create(strings, new int[] {}, new long[] {}, getAuthor);
+			return table.create(strings, new int[] { BooleanUtil.parse(ValidateEmail.isAddressValid(email)) },
+					new long[] {}, getAuthor);
 		}
 	}
 
@@ -82,7 +88,8 @@ public class AuthorDAO {
 
 	public Author createAuthor(String firstName, String lastName, String email, String country,
 			Institution institutionType, String institutionName, String note) {
-		int[] ints = { Commons.findCountryByName(country).getCountryID() };
+		int[] ints = { Commons.findCountryByName(country).getCountryID(),
+				BooleanUtil.parse(ValidateEmail.isAddressValid(email)) };
 		String[] strings = { firstName, lastName, email, institutionName, note };
 		return table.create(strings, ints, institutionType, getAuthor);
 	}
@@ -144,6 +151,7 @@ public class AuthorDAO {
 		String past = author.getAuthorEmail();
 		table.update(author.getAuthorID(), 4, email);
 		author.setAuthorEmail(email);
+		updateValidEmailColumn(author, email);
 		Logging.getInstance().change("update",
 				"Update author\n\t" + author.getAuthorEmail() + "\ne-mail from\n\t" + past + "\nto\n\t" + email);
 	}
@@ -205,6 +213,12 @@ public class AuthorDAO {
 			e.printStackTrace();
 		}
 		return list;
+	}
+
+	private void updateValidEmailColumn(Author author, String email) {
+		int valid = BooleanUtil.parse(ValidateEmail.isAddressValid(email));
+		table.update(author.getAuthorID(), 8, valid);
+		author.setValidateEmail(valid);
 	}
 
 }

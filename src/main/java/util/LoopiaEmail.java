@@ -1,12 +1,8 @@
 package util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
-import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -61,22 +57,13 @@ public class LoopiaEmail {
 		session.setDebug(true);
 		MimeMessage mimeMessage;
 		if (bcc) {
-			Transport transport = session.getTransport("smtp");
-			transport.connect();
-			for (String s : getEmails(receiver)) {
-				InternetAddress[] addresses = InternetAddress.parse(s);
-				mimeMessage = createMessage(session, user, subject, message, filePaths);
-//				mimeMessage.setRecipients(Message.RecipientType.BCC, addresses);
-				for (int i = 0; i < addresses.length; i++)
-					transport.sendMessage(mimeMessage, new Address[] { addresses[i] });
-				saveSentMessage(session, mimeMessage, user, password);
-			}
-			transport.close();
-		} else {
+			InternetAddress[] addresses = InternetAddress.parse(receiver);
+			mimeMessage = createMessage(session, user, subject, message, filePaths);
+			mimeMessage.setRecipients(Message.RecipientType.BCC, addresses);
+		} else
 			mimeMessage = createMessage(session, user, receiver, subject, message, filePaths);
-			Transport.send(mimeMessage);
-			saveSentMessage(session, mimeMessage, user, password);
-		}
+		Transport.send(mimeMessage);
+		saveSentMessage(session, mimeMessage, user, password);
 	}
 
 	private Properties createProperties() {
@@ -162,27 +149,5 @@ public class LoopiaEmail {
 		}
 		message.setContent(multipart);
 		return message;
-	}
-
-	private List<String> getEmails(String emails) {
-		List<String> list = new ArrayList<String>();
-		List<String> recievers = Arrays.asList(emails.split(","));
-		while (recievers.size() > 900) {
-			String reciever = "";
-			List<String> helperList = new ArrayList<String>();
-			for (int i = 0; i < 900; i++) {
-				reciever += recievers.get(i) + ",";
-				helperList.add(recievers.get(i));
-			}
-			recievers.removeAll(helperList);
-			list.add(reciever.substring(0, reciever.length() - 1));
-		}
-		String reciever = "";
-		if (recievers.size() > 0) {
-			for (String s : recievers)
-				reciever += s + ",";
-			list.add(reciever.substring(0, reciever.length() - 1));
-		}
-		return list;
 	}
 }

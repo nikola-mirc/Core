@@ -39,8 +39,9 @@ public class ConferenceCallDAO {
 	private Getter<ConferenceCall> getCall;
 
 	private ConferenceCallDAO() {
-		table = new TableUtility(new DatabaseTable("conference_call", "cc_id", new String[] { "conference_id",
-				"first_call_answer", "second_call_answer", "third_call_answer", "interested", "author_id" }));
+		table = new TableUtility(new DatabaseTable("conference_call", "cc_id",
+				new String[] { "conference_id", "first_call_answer", "second_call_answer", "third_call_answer",
+						"interested", "first_call_sent", "second_call_sent", "third_call_sent", "author_id" }));
 		getCall = (ResultSet rs) -> {
 			ConferenceCall call = new ConferenceCall();
 			try {
@@ -50,7 +51,10 @@ public class ConferenceCallDAO {
 				call.setSecondCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(3))));
 				call.setThirdCallAnswer(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(4))));
 				call.setInterested(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(5))));
-				call.setAuthorID(rs.getLong(table.getTable().getColumnName(6)));
+				call.setFirstCallSent(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(6))));
+				call.setSecondCallSent(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(7))));
+				call.setThirdCallSent(BooleanUtil.parse(rs.getBoolean(table.getTable().getColumnName(8))));
+				call.setAuthorID(rs.getLong(table.getTable().getColumnName(9)));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -59,7 +63,8 @@ public class ConferenceCallDAO {
 	}
 
 	public ConferenceCall createEntry(int conferenceID, long authorID) {
-		return table.create(new String[] {}, new int[] { conferenceID, 0, 0, 0, 1 }, new long[] { authorID }, getCall);
+		return table.create(new String[] {}, new int[] { conferenceID, 0, 0, 0, 1, 0, 0, 0 }, new long[] { authorID },
+				getCall);
 	}
 
 	public void deleteEntry(ConferenceCall call) {
@@ -78,7 +83,7 @@ public class ConferenceCallDAO {
 	 * @return all data tied to specified author
 	 */
 	public ObservableList<ConferenceCall> getAuthorsAnswer(long authorID) {
-		return table.findBy(authorID, 6, getCall);
+		return table.findBy(authorID, 9, getCall);
 	}
 
 	/**
@@ -102,7 +107,7 @@ public class ConferenceCallDAO {
 	public ConferenceCall getCurrentAnswer(long authorID) {
 		try {
 			return table
-					.findWhere(new String[] { table.getTable().getColumnName(6), table.getTable().getColumnName(1) },
+					.findWhere(new String[] { table.getTable().getColumnName(9), table.getTable().getColumnName(1) },
 							new long[] { authorID,
 									ConferenceDAO.getInstance().getCurrentConference().getConferenceID() },
 							getCall)
@@ -170,7 +175,7 @@ public class ConferenceCallDAO {
 	public void updateThirdCall(long authorID, boolean answer) {
 		int call = getCurrentAnswer(authorID).getThirdCallAnswer();
 		updateThirdCall(getCurrentAnswer(authorID), answer);
-		Logging.getInstance().change("Update", "Update third call answer from " + BooleanUtil.checkNumber(call) + " to "
+		Logging.getInstance().change("update", "Update third call answer from " + BooleanUtil.checkNumber(call) + " to "
 				+ answer + " for " + AuthorDAO.getInstance().findAuthorByID(authorID));
 	}
 
@@ -188,9 +193,39 @@ public class ConferenceCallDAO {
 	public void updateInterested(long authorID, boolean isInterested) {
 		int call = getCurrentAnswer(authorID).getInterested();
 		updateInterested(getCurrentAnswer(authorID), isInterested);
-		Logging.getInstance().change("Update",
+		Logging.getInstance().change("update",
 				"Update is author interested in conference from " + BooleanUtil.checkNumber(call) + " to "
 						+ isInterested + " for " + AuthorDAO.getInstance().findAuthorByID(authorID));
 	}
 
+	public void updateFirstCallSent(ConferenceCall call, boolean sent) {
+		table.update(call.getConferenceCallID(), 6, BooleanUtil.parse(sent));
+		call.setIsFirstCallSent(sent);
+	}
+
+	public void updateFirstCallSent(long authorID, boolean sent) {
+		updateFirstCallSent(getCurrentAnswer(authorID), sent);
+		Logging.getInstance().change("email", "Send first call to " + AuthorDAO.getInstance().findAuthorByID(authorID));
+	}
+
+	public void updateSecondCallSent(ConferenceCall call, boolean sent) {
+		table.update(call.getConferenceCallID(), 7, BooleanUtil.parse(sent));
+		call.setIsSecondCallSent(sent);
+	}
+
+	public void updateSecondCallSent(long authorID, boolean sent) {
+		updateSecondCallSent(getCurrentAnswer(authorID), sent);
+		Logging.getInstance().change("email",
+				"Send second call to " + AuthorDAO.getInstance().findAuthorByID(authorID));
+	}
+
+	public void updateThirdCallSent(ConferenceCall call, boolean sent) {
+		table.update(call.getConferenceCallID(), 8, BooleanUtil.parse(sent));
+		call.setIsThirdCallSent(sent);
+	}
+
+	public void updateThirdCallSent(long authorID, boolean sent) {
+		updateThirdCallSent(getCurrentAnswer(authorID), sent);
+		Logging.getInstance().change("email", "Send third call to " + AuthorDAO.getInstance().findAuthorByID(authorID));
+	}
 }

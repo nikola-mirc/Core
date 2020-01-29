@@ -31,7 +31,7 @@ public class Reviewer extends Person {
 		return contactTelephone.get();
 	}
 
-	public StringProperty getContectTelephoneProperty() {
+	public StringProperty getContactTelephoneProperty() {
 		return contactTelephone;
 	}
 

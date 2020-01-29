@@ -11,6 +11,8 @@ import alfatec.dao.conference.DatesDAO;
 import alfatec.dao.conference.FieldDAO;
 import alfatec.dao.conference.RegistrationFeeDAO;
 import alfatec.dao.conference.SpecialIssueDAO;
+import alfatec.dao.person.AuthorDAO;
+import alfatec.dao.relationship.ConferenceCallDAO;
 import alfatec.dao.research.ResearchDAO;
 import alfatec.dao.wrappers.CDSettingsDAO;
 import alfatec.model.conference.Collection;
@@ -19,6 +21,7 @@ import alfatec.model.conference.Dates;
 import alfatec.model.conference.Field;
 import alfatec.model.conference.RegistrationFee;
 import alfatec.model.conference.SpecialIssue;
+import alfatec.model.person.Author;
 import alfatec.model.user.LoginData;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
@@ -230,6 +233,9 @@ public class ConferenceTabController extends GUIUtils {
 				DateUtil.format(secondCallDatePicker.getValue()), DateUtil.format(thirdCallDatePicker.getValue()));
 		conference = new ConferenceDateSettings(start, dates);
 		conferenceData.add(conference);
+		for (Author author : AuthorDAO.getInstance().getAllAuthors())
+			ConferenceCallDAO.getInstance().createEntry(conference.getConference().getConferenceID(),
+					author.getAuthorID());
 	}
 
 	private void handleAddAction(ActionEvent event) {

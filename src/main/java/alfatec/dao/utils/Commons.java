@@ -62,7 +62,7 @@ public class Commons {
 					break;
 				}
 			}
-			return new RegistrationFee(id, conferenceID, name, rs.getFloat("registration_price"),
+			return new RegistrationFee(id, conferenceID, name, rs.getBigDecimal("registration_price").doubleValue(),
 					rs.getString("currency"));
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -22,6 +22,9 @@ import util.Folder;
 public class BackUpAndRestore {
 
 	private static final int DELETE_FILES_OLDER_THAN = 10;
+	private static final int DELETE_ROWS_OLDER_THAN = 90;
+	private static final String AUDIT_TABLE = "user_audit";
+	private static final String COLUMN_NAME = "time";
 	private static final String USERNAME = "db.username";
 	private static final String PASSWORD = "db.password";
 	private static final String DB_URL = "db.url";
@@ -53,43 +56,29 @@ public class BackUpAndRestore {
 		deleteBackupFilesOlderThen(Folder.getBackupDirectory(), DELETE_FILES_OLDER_THAN);
 		String path = Folder.getBackupDirectory().getAbsolutePath()
 				.concat(File.separator + "conference".concat(LocalDateTime.now().toString()).concat(".sql"));
-		if (PlatformUtil.isLinux()) {
-			String executeCommand = "mysqldump -u" + properties.getProperty(USERNAME) + " -p"
-					+ properties.getProperty(PASSWORD) + " --add-drop-database -B " + DATABASE_NAME + " -r " + path;
-			Process runtimeProcess = Runtime.getRuntime().exec(executeCommand);
-			runtimeProcess.waitFor();
-		} else if (PlatformUtil.isWindows()) {
-			Runtime shell = Runtime.getRuntime();
-			Process runtimeProcess;
-			if (!properties.getProperty(PASSWORD).isEmpty())
-				runtimeProcess = shell.exec(new String[] { "cmd.exe", "/c", "mysqldump",
-						"-u".concat(properties.getProperty(USERNAME)), "-p".concat(properties.getProperty(PASSWORD)),
-						"startdb", DATABASE_NAME, ">", new File(Folder.getBackupDirectory(), path).getAbsolutePath() });
-			else
-				runtimeProcess = shell.exec(new String[] { "cmd.exe", "/c", "mysqldump",
-						"-u".concat(properties.getProperty(USERNAME)), "startdb", DATABASE_NAME, ">",
-						new File(Folder.getBackupDirectory(), path).getAbsolutePath() });
-			runtimeProcess.waitFor();
+		if (backup(path) == 0) {
+			String query = "DELETE FROM " + AUDIT_TABLE + " WHERE " + COLUMN_NAME + " < DATE_SUB(NOW(), INTERVAL "
+					+ DELETE_ROWS_OLDER_THAN + " DAY)";
+			DatabaseUtility.getInstance().executeUpdateQuery(query);
 		}
 	}
 
 	public void restore(String mysqlDbAbsolutePath) throws IOException, InterruptedException {
+		Process runtimeProcess;
 		if (PlatformUtil.isLinux()) {
 			String[] executeCommand = new String[] { "mysql", DATABASE_NAME,
 					"--user=".concat(properties.getProperty(USERNAME)),
 					"--password=".concat(properties.getProperty(PASSWORD)), "-e", " source " + mysqlDbAbsolutePath };
-			Process runtimeProcess = Runtime.getRuntime().exec(executeCommand);
+			runtimeProcess = Runtime.getRuntime().exec(executeCommand);
 			runtimeProcess.waitFor();
-			System.out.println(runtimeProcess.exitValue());
 		} else if (PlatformUtil.isWindows()) {
-			Runtime shell = Runtime.getRuntime();
-			Process runtimeProcess;
 			if (!properties.getProperty(PASSWORD).isEmpty())
-				runtimeProcess = shell.exec(new String[] { "cmd.exe", "/c", "mysql",
-						"-u".concat(properties.getProperty(USERNAME)), "-p".concat(properties.getProperty(PASSWORD)),
-						"startdb", DATABASE_NAME, "<", mysqlDbAbsolutePath });
+				runtimeProcess = Runtime.getRuntime()
+						.exec(new String[] { "cmd.exe", "/c", "mysql", "-u".concat(properties.getProperty(USERNAME)),
+								"-p".concat(properties.getProperty(PASSWORD)), "startdb", DATABASE_NAME, "<",
+								mysqlDbAbsolutePath });
 			else
-				runtimeProcess = shell
+				runtimeProcess = Runtime.getRuntime()
 						.exec(new String[] { "cmd.exe", "/c", "mysql", "-u".concat(properties.getProperty(USERNAME)),
 								"startdb", DATABASE_NAME, "<", mysqlDbAbsolutePath });
 			runtimeProcess.waitFor();
@@ -107,5 +96,27 @@ public class BackUpAndRestore {
 			for (File file : filesToDelete)
 				FileUtils.deleteQuietly(file);
 		}
+	}
+
+	private int backup(String path) throws IOException, InterruptedException {
+		Process runtimeProcess = null;
+		if (PlatformUtil.isLinux()) {
+			String executeCommand = "mysqldump -u" + properties.getProperty(USERNAME) + " -p"
+					+ properties.getProperty(PASSWORD) + " --add-drop-database -B " + DATABASE_NAME + " -r " + path;
+			runtimeProcess = Runtime.getRuntime().exec(executeCommand);
+			runtimeProcess.waitFor();
+		} else if (PlatformUtil.isWindows()) {
+			if (!properties.getProperty(PASSWORD).isEmpty())
+				runtimeProcess = Runtime.getRuntime().exec(new String[] { "cmd.exe", "/c", "mysqldump",
+						"-u".concat(properties.getProperty(USERNAME)), "-p".concat(properties.getProperty(PASSWORD)),
+						"startdb", DATABASE_NAME, ">", new File(Folder.getBackupDirectory(), path).getAbsolutePath() });
+			else
+				runtimeProcess = Runtime.getRuntime()
+						.exec(new String[] { "cmd.exe", "/c", "mysqldump",
+								"-u".concat(properties.getProperty(USERNAME)), "startdb", DATABASE_NAME, ">",
+								new File(Folder.getBackupDirectory(), path).getAbsolutePath() });
+			runtimeProcess.waitFor();
+		}
+		return runtimeProcess.exitValue();
 	}
 }

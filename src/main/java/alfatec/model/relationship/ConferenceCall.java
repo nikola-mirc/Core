@@ -23,13 +23,17 @@ public class ConferenceCall {
 	private final IntegerProperty secondCallAnswer;
 	private final IntegerProperty thirdCallAnswer;
 	private final IntegerProperty interested;
+	private final IntegerProperty firstCallSent;
+	private final IntegerProperty secondCallSent;
+	private final IntegerProperty thirdCallSent;
 
 	public ConferenceCall() {
-		this(0, 0, 0, false, false, false, true);
+		this(0, 0, 0, false, false, false, true, false, false, false);
 	}
 
 	public ConferenceCall(long id, long authorID, int conferenceID, boolean firstCallAnswer, boolean secondCallAnswer,
-			boolean thirdCallAnswer, boolean interested) {
+			boolean thirdCallAnswer, boolean interested, boolean firstCallSent, boolean secondCallSent,
+			boolean thirdCallSent) {
 		this.conferenceCallID = new SimpleLongProperty(id);
 		this.authorID = new SimpleLongProperty(authorID);
 		this.conferenceID = new SimpleIntegerProperty(conferenceID);
@@ -37,6 +41,9 @@ public class ConferenceCall {
 		this.secondCallAnswer = new SimpleIntegerProperty(BooleanUtil.parse(secondCallAnswer));
 		this.thirdCallAnswer = new SimpleIntegerProperty(BooleanUtil.parse(thirdCallAnswer));
 		this.interested = new SimpleIntegerProperty(BooleanUtil.parse(interested));
+		this.firstCallSent = new SimpleIntegerProperty(BooleanUtil.parse(firstCallSent));
+		this.secondCallSent = new SimpleIntegerProperty(BooleanUtil.parse(secondCallSent));
+		this.thirdCallSent = new SimpleIntegerProperty(BooleanUtil.parse(thirdCallSent));
 	}
 
 	public long getAuthorID() {
@@ -153,6 +160,70 @@ public class ConferenceCall {
 
 	public boolean isInterested() {
 		return BooleanUtil.checkNumber(getInterested());
+	}
+
+	public IntegerProperty getFirstCallSentProperty() {
+		return firstCallSent;
+	}
+
+	public IntegerProperty getSecondCallSentProperty() {
+		return secondCallSent;
+	}
+
+	public IntegerProperty getThirdCallSentProperty() {
+		return thirdCallSent;
+	}
+
+	public int getFirstCallSent() {
+		return firstCallSent.get();
+	}
+
+	public int getSecondCallSent() {
+		return secondCallSent.get();
+	}
+
+	public int getThirdCallSent() {
+		return thirdCallSent.get();
+	}
+
+	public boolean isFirstCallSent() {
+		return BooleanUtil.checkNumber(firstCallSent.get());
+	}
+
+	public boolean isSecondCallSent() {
+		return BooleanUtil.checkNumber(secondCallSent.get());
+	}
+
+	public boolean isThirdCallSent() {
+		return BooleanUtil.checkNumber(thirdCallSent.get());
+	}
+
+	public void setFirstCallSent(int answer) {
+		this.firstCallSent.set(answer);
+	}
+
+	public void setIsFirstCallSent(boolean answer) {
+		this.firstCallSent.set(BooleanUtil.parse(answer));
+	}
+
+	public void setSecondCallSent(int answer) {
+		this.secondCallSent.set(answer);
+	}
+
+	public void setIsSecondCallSent(boolean answer) {
+		this.secondCallSent.set(BooleanUtil.parse(answer));
+	}
+
+	public void setThirdCallSent(int answer) {
+		this.thirdCallSent.set(answer);
+	}
+
+	public void setIsThirdCallSent(boolean answer) {
+		this.thirdCallSent.set(BooleanUtil.parse(answer));
+	}
+
+	public boolean isNotInterested() {
+		return !isInterested();
 	}
 
 }
