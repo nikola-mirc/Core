@@ -4,6 +4,7 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -600,8 +601,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 			if (author.getInstitutionName() != null)
 				institutionNames.add(author.getInstitutionName());
 		}
-		filterInstitutionName.getItems().setAll(
-				FXCollections.observableArrayList(institutionNames.stream().distinct().collect(Collectors.toList())));
+		filterInstitutionName.getItems().setAll(FXCollections.observableArrayList(
+				institutionNames.stream().distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList())));
 		filterCountry.getItems().setAll(CountryDAO.getInstance().getAllCountryNames());
 		filterConference.getItems().setAll(ConferenceDAO.getInstance().getAllConferenceNames());
 		filterField.getItems().setAll(FXCollections.observableArrayList(FieldDAO.getInstance().getAllFieldNames()));

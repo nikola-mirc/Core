@@ -41,7 +41,6 @@ public class FilterAuthorsDAO {
 			query += "WHERE";
 		query += condition;
 		query = query.replace("WHERE AND ", "WHERE ");
-		System.out.println(query);
 		return DatabaseUtility.getInstance().executeQuery(query);
 
 	}
