@@ -74,7 +74,11 @@ public class EmailDAO {
 	}
 
 	public ObservableList<EmailHelper> getAllRelevant() {
-		return table.findBy(ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), 3, getHelp);
+		try {
+			return table.findBy(ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), 3, getHelp);
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	public EmailHelper getLastRecord() {

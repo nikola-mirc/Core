@@ -3,8 +3,8 @@ package alfatec.controller.main;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -103,10 +103,10 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private HBox authorDetailsHbox, invitesHbox;
 
 	@FXML
-	private VBox popupVbox, detailsVbox;
+	private VBox popupVbox, detailsVbox, callsVbox;
 
 	@FXML
-	private JFXRadioButton firstRadio, secondRadio, thirdRadio;
+	private JFXRadioButton firstRadio, secondRadio, thirdRadio, firstCall, secondCall, thirdCall;
 
 	@FXML
 	private JFXCheckBox interestedCheckbox;
@@ -278,7 +278,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		if (!checkTimeLimit()) {
 			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
 					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
-		} else {
+		} else if (ConferenceDAO.getInstance().getCurrentConference() != null) {
 			ButtonType bt = confirmationAlert("This may take a while",
 					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
 					AlertType.CONFIRMATION);
@@ -286,13 +286,15 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				groupEmail.prepareEmails();
 				boolean sentGroup = firstCallGroupHelper();
 				boolean sentInvalid = firstCallInvalidHelper();
-				if (sentGroup || sentInvalid)
+				if ((sentGroup || sentInvalid) && groupCall.isSent())
 					EmailDAO.getInstance().create(groupEmail.getNumberOfFirstCalls(), groupCall.getMessage().getText());
-				else
+				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses", "First call for paper is sent to all authors in the database.",
 							AlertType.INFORMATION);
 			}
-		}
+		} else
+			alert("No active conference", "You cann't send group call if there is no active conference.",
+					AlertType.ERROR);
 	}
 
 	@FXML
@@ -300,25 +302,24 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		if (!checkTimeLimit()) {
 			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
 					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
-		} else {
+		} else if (ConferenceDAO.getInstance().getCurrentConference() != null) {
 			ButtonType bt = confirmationAlert("This may take a while",
 					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
 					AlertType.CONFIRMATION);
 			if (bt == ButtonType.OK) {
 				groupEmail.prepareEmails();
-				boolean sentGroup = groupEmail.getValidSecond() != null && !groupEmail.getValidSecond().isEmpty()
-						? secondCallGroupHelper()
-						: false;
-				boolean sentInvalid = groupEmail.getInvalidSecond() != null && !groupEmail.getInvalidSecond().isEmpty()
-						? secondCallInvalidHelper()
-						: false;
-				if (!sentGroup && !sentInvalid)
+				boolean sentGroup = secondCallGroupHelper();
+				boolean sentInvalid = secondCallInvalidHelper();
+				if ((sentGroup || sentInvalid) && groupCall.isSent())
+					EmailDAO.getInstance().create(groupEmail.getNumberOfSecondCalls(),
+							groupCall.getMessage().getText());
+				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses",
 							"Second call for paper is sent to all authors in the database.", AlertType.INFORMATION);
-				else
-					EmailDAO.getInstance().create(groupEmail.getNumberOfSecondCalls());
 			}
-		}
+		} else
+			alert("No active conference", "You cann't send group call if there is no active conference.",
+					AlertType.ERROR);
 	}
 
 	@FXML
@@ -326,21 +327,23 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		if (!checkTimeLimit()) {
 			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
 					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
-		} else {
+		} else if (ConferenceDAO.getInstance().getCurrentConference() != null) {
 			ButtonType bt = confirmationAlert("This may take a while",
 					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
 					AlertType.CONFIRMATION);
 			if (bt == ButtonType.OK) {
 				groupEmail.prepareEmails();
-				boolean sentGroup = groupEmail.getValidThird() != null ? thirdCallGroupHelper() : false;
-				boolean sentInvalid = groupEmail.getInvalidThird() != null ? thirdCallInvalidHelper() : false;
-				if (!sentGroup && !sentInvalid)
+				boolean sentGroup = thirdCallGroupHelper();
+				boolean sentInvalid = thirdCallInvalidHelper();
+				if ((sentGroup || sentInvalid) && groupCall.isSent())
+					EmailDAO.getInstance().create(groupEmail.getNumberOfThirdCalls(), groupCall.getMessage().getText());
+				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses", "Third call for paper is sent to all authors in the database.",
 							AlertType.INFORMATION);
-				else
-					EmailDAO.getInstance().create(groupEmail.getNumberOfThirdCalls());
 			}
-		}
+		} else
+			alert("No active conference", "You cann't send group call if there is no active conference.",
+					AlertType.ERROR);
 	}
 
 	@FXML
@@ -468,6 +471,9 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					emailTextField.getText(), country, institution, institutionNameTextField.getText(),
 					noteTextArea.getText());
 			Logging.getInstance().change("create", "Create author:\n\t" + author.getAuthorEmail());
+			if (ConferenceDAO.getInstance().getCurrentConference() != null)
+				ConferenceCallDAO.getInstance().createEntry(
+						ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), author.getAuthorID());
 		}
 		return author;
 	}
@@ -559,6 +565,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private void setUpDetails() {
 		setUpBoxes();
 		setUpFields();
+		setInvites();
 		group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			try {
 				if ((newValue == firstRadio && !call.isFirstCallAnswered()) || oldValue == firstRadio)
@@ -606,6 +613,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		showRadioButton(secondRadio);
 		showRadioButton(thirdRadio);
 		showCheckBox();
+		showInvites();
 	}
 
 	@FXML
@@ -690,8 +698,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					ConferenceCallDAO.getInstance().updateFirstCallSent(ConferenceCallDAO.getInstance()
 							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
 							true);
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -716,8 +724,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					} catch (MessagingException | IOException e) {
 						e.printStackTrace();
 					}
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -730,8 +738,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					ConferenceCallDAO.getInstance().updateSecondCallSent(ConferenceCallDAO.getInstance()
 							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
 							true);
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -756,8 +764,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					} catch (MessagingException | IOException e) {
 						e.printStackTrace();
 					}
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -770,8 +778,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					ConferenceCallDAO.getInstance().updateThirdCallSent(ConferenceCallDAO.getInstance()
 							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
 							true);
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -796,8 +804,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 					} catch (MessagingException | IOException e) {
 						e.printStackTrace();
 					}
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
@@ -807,10 +815,29 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 			return true;
 		else {
 			emailHelper = EmailDAO.getInstance().getLastRecord();
-			if (Duration.between(emailHelper.getLocalDateTime(), LocalDateTime.now()).toHours() < 1)
+			if (ChronoUnit.HOURS.between(emailHelper.getLocalDateTime(), LocalDateTime.now()) < 1)
 				return false;
-			return true;
+			else
+				return true;
 		}
 	}
-	
+
+	private void showInvites() {
+		try {
+			firstCall.setSelected(call.isFirstCallSent());
+			secondCall.setSelected(call.isSecondCallSent());
+			thirdCall.setSelected(call.isThirdCallSent());
+		} catch (NullPointerException e) {
+			firstCall.setSelected(false);
+			secondCall.setSelected(false);
+			thirdCall.setSelected(false);
+		}
+	}
+
+	private void setInvites() {
+		firstCall.setOnAction(event -> firstCall.setSelected(call != null ? call.isFirstCallSent() : false));
+		secondCall.setOnAction(event -> secondCall.setSelected(call != null ? call.isSecondCallSent() : false));
+		thirdCall.setOnAction(event -> thirdCall.setSelected(call != null ? call.isThirdCallSent() : false));
+	}
+
 }

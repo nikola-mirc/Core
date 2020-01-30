@@ -73,7 +73,7 @@ public class Commons {
 	public static int getLastRecordedIndex(ResultSet rs) {
 		int max = 0;
 		try {
-			if (rs.next())
+			while (rs.next())
 				max = rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
