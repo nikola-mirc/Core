@@ -3,6 +3,8 @@ package alfatec.controller.main;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ import alfatec.controller.user.ChangePasswordController;
 import alfatec.controller.utils.ClearPopUp;
 import alfatec.controller.utils.GroupEmail;
 import alfatec.dao.conference.ConferenceDAO;
+import alfatec.dao.conference.EmailDAO;
 import alfatec.dao.conference.FieldDAO;
 import alfatec.dao.country.CountryDAO;
 import alfatec.dao.filters.FilterAuthorsDAO;
@@ -33,6 +36,7 @@ import alfatec.dao.person.AuthorDAO;
 import alfatec.dao.relationship.ConferenceCallDAO;
 import alfatec.dao.user.UserDAO;
 import alfatec.dao.utils.Logging;
+import alfatec.model.conference.EmailHelper;
 import alfatec.model.country.Country;
 import alfatec.model.enums.Institution;
 import alfatec.model.enums.Opinion;
@@ -172,6 +176,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private ConferenceCall call;
 	private ClearPopUp popup;
 	private GroupEmail groupEmail;
+	private EmailHelper emailHelper;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -270,46 +275,71 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	private void sendFirstInvite() {
-		ButtonType bt = confirmationAlert("This may take a while",
-				"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
-				AlertType.CONFIRMATION);
-		if (bt == ButtonType.OK) {
-			groupEmail.prepareEmails();
-			boolean sentGroup = groupEmail.getValidFirst() != null ? firstCallGroupHelper() : false;
-			boolean sentInvalid = groupEmail.getInvalidFirst() != null ? firstCallInvalidHelper() : false;
-			if (!sentGroup && !sentInvalid)
-				alert("No more available addresses", "First call for paper is sent to all authors in the database.",
-						AlertType.INFORMATION);
+		if (!checkTimeLimit()) {
+			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
+					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
+		} else {
+			ButtonType bt = confirmationAlert("This may take a while",
+					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
+					AlertType.CONFIRMATION);
+			if (bt == ButtonType.OK) {
+				groupEmail.prepareEmails();
+				boolean sentGroup = firstCallGroupHelper();
+				boolean sentInvalid = firstCallInvalidHelper();
+				if (sentGroup || sentInvalid)
+					EmailDAO.getInstance().create(groupEmail.getNumberOfFirstCalls(), groupCall.getMessage().getText());
+				else
+					alert("No more available addresses", "First call for paper is sent to all authors in the database.",
+							AlertType.INFORMATION);
+			}
 		}
 	}
 
 	@FXML
 	private void sendSecondInvite() {
-		ButtonType bt = confirmationAlert("This may take a while",
-				"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
-				AlertType.CONFIRMATION);
-		if (bt == ButtonType.OK) {
-			groupEmail.prepareEmails();
-			boolean sentGroup = groupEmail.getValidSecond() != null ? secondCallGroupHelper() : false;
-			boolean sentInvalid = groupEmail.getInvalidSecond() != null ? secondCallInvalidHelper() : false;
-			if (!sentGroup && !sentInvalid)
-				alert("No more available addresses", "Second call for paper is sent to all authors in the database.",
-						AlertType.INFORMATION);
+		if (!checkTimeLimit()) {
+			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
+					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
+		} else {
+			ButtonType bt = confirmationAlert("This may take a while",
+					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
+					AlertType.CONFIRMATION);
+			if (bt == ButtonType.OK) {
+				groupEmail.prepareEmails();
+				boolean sentGroup = groupEmail.getValidSecond() != null && !groupEmail.getValidSecond().isEmpty()
+						? secondCallGroupHelper()
+						: false;
+				boolean sentInvalid = groupEmail.getInvalidSecond() != null && !groupEmail.getInvalidSecond().isEmpty()
+						? secondCallInvalidHelper()
+						: false;
+				if (!sentGroup && !sentInvalid)
+					alert("No more available addresses",
+							"Second call for paper is sent to all authors in the database.", AlertType.INFORMATION);
+				else
+					EmailDAO.getInstance().create(groupEmail.getNumberOfSecondCalls());
+			}
 		}
 	}
 
 	@FXML
 	private void sendThirdInvite() {
-		ButtonType bt = confirmationAlert("This may take a while",
-				"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
-				AlertType.CONFIRMATION);
-		if (bt == ButtonType.OK) {
-			groupEmail.prepareEmails();
-			boolean sentGroup = groupEmail.getValidThird() != null ? thirdCallGroupHelper() : false;
-			boolean sentInvalid = groupEmail.getInvalidThird() != null ? thirdCallInvalidHelper() : false;
-			if (!sentGroup && !sentInvalid)
-				alert("No more available addresses", "Third call for paper is sent to all authors in the database.",
-						AlertType.INFORMATION);
+		if (!checkTimeLimit()) {
+			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
+					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
+		} else {
+			ButtonType bt = confirmationAlert("This may take a while",
+					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
+					AlertType.CONFIRMATION);
+			if (bt == ButtonType.OK) {
+				groupEmail.prepareEmails();
+				boolean sentGroup = groupEmail.getValidThird() != null ? thirdCallGroupHelper() : false;
+				boolean sentInvalid = groupEmail.getInvalidThird() != null ? thirdCallInvalidHelper() : false;
+				if (!sentGroup && !sentInvalid)
+					alert("No more available addresses", "Third call for paper is sent to all authors in the database.",
+							AlertType.INFORMATION);
+				else
+					EmailDAO.getInstance().create(groupEmail.getNumberOfThirdCalls());
+			}
 		}
 	}
 
@@ -655,106 +685,132 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	private boolean firstCallGroupHelper() {
 		if (groupEmail.getValidFirst() != null && !groupEmail.getValidFirst().isEmpty()) {
 			groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getValidFirst());
-			if (groupCall.isSent())
+			if (groupCall.isSent()) {
 				for (String email : groupEmail.getValidFirst())
 					ConferenceCallDAO.getInstance().updateFirstCallSent(ConferenceCallDAO.getInstance()
 							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
 							true);
-			return true;
-		} else
-			return false;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean firstCallInvalidHelper() {
 		if (groupEmail.getInvalidFirst() != null && !groupEmail.getInvalidFirst().isEmpty()) {
 			if (groupCall == null)
 				groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getInvalidFirst());
-			for (String email : groupEmail.getInvalidFirst())
-				try {
-					groupCall.getLoopia().sendEmail(
-							ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
-							ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
-							groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
-							groupCall.getSelectedFiles());
-					ConferenceCallDAO.getInstance().updateFirstCallSent(ConferenceCallDAO.getInstance()
-							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
-							true);
-				} catch (MessagingException | IOException e) {
-					e.printStackTrace();
-				}
-			return true;
-		} else
-			return false;
+			if (groupCall.isSent()) {
+				for (String email : groupEmail.getInvalidFirst())
+					try {
+						groupCall.getLoopia().sendEmail(
+								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
+								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
+								groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
+								groupCall.getSelectedFiles());
+						ConferenceCallDAO.getInstance()
+								.updateFirstCallSent(
+										ConferenceCallDAO.getInstance().getCurrentAnswer(
+												AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
+										true);
+					} catch (MessagingException | IOException e) {
+						e.printStackTrace();
+					}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean secondCallGroupHelper() {
 		if (groupEmail.getValidSecond() != null && !groupEmail.getValidSecond().isEmpty()) {
 			groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getValidSecond());
-			if (groupCall.isSent())
+			if (groupCall.isSent()) {
 				for (String email : groupEmail.getValidSecond())
 					ConferenceCallDAO.getInstance().updateSecondCallSent(ConferenceCallDAO.getInstance()
 							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
 							true);
-			return true;
-		} else
-			return false;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean secondCallInvalidHelper() {
 		if (groupEmail.getInvalidSecond() != null && !groupEmail.getInvalidSecond().isEmpty()) {
 			if (groupCall == null)
 				groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getInvalidSecond());
-			for (String email : groupEmail.getInvalidSecond())
-				try {
-					groupCall.getLoopia().sendEmail(
-							ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
-							ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
-							groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
-							groupCall.getSelectedFiles());
-					ConferenceCallDAO.getInstance().updateSecondCallSent(ConferenceCallDAO.getInstance()
-							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
-							true);
-				} catch (MessagingException | IOException e) {
-					e.printStackTrace();
-				}
-			return true;
-		} else
-			return false;
+			if (groupCall.isSent()) {
+				for (String email : groupEmail.getInvalidSecond())
+					try {
+						groupCall.getLoopia().sendEmail(
+								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
+								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
+								groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
+								groupCall.getSelectedFiles());
+						ConferenceCallDAO.getInstance()
+								.updateSecondCallSent(
+										ConferenceCallDAO.getInstance().getCurrentAnswer(
+												AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
+										true);
+					} catch (MessagingException | IOException e) {
+						e.printStackTrace();
+					}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean thirdCallGroupHelper() {
 		if (groupEmail.getValidThird() != null && !groupEmail.getValidThird().isEmpty()) {
 			groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getValidThird());
-			if (groupCall.isSent())
+			if (groupCall.isSent()) {
 				for (String email : groupEmail.getValidThird())
 					ConferenceCallDAO.getInstance().updateThirdCallSent(ConferenceCallDAO.getInstance()
 							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
 							true);
-			return true;
-		} else
-			return false;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean thirdCallInvalidHelper() {
 		if (groupEmail.getInvalidThird() != null && !groupEmail.getInvalidThird().isEmpty()) {
 			if (groupCall == null)
 				groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getInvalidThird());
-			for (String email : groupEmail.getInvalidThird())
-				try {
-					groupCall.getLoopia().sendEmail(
-							ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
-							ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
-							groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
-							groupCall.getSelectedFiles());
-					ConferenceCallDAO.getInstance().updateThirdCallSent(ConferenceCallDAO.getInstance()
-							.getCurrentAnswer(AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
-							true);
-				} catch (MessagingException | IOException e) {
-					e.printStackTrace();
-				}
-			return true;
-		} else
-			return false;
+			if (groupCall.isSent()) {
+				for (String email : groupEmail.getInvalidThird())
+					try {
+						groupCall.getLoopia().sendEmail(
+								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
+								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
+								groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
+								groupCall.getSelectedFiles());
+						ConferenceCallDAO.getInstance()
+								.updateThirdCallSent(
+										ConferenceCallDAO.getInstance().getCurrentAnswer(
+												AuthorDAO.getInstance().findAuthorByExactEmail(email).getAuthorID()),
+										true);
+					} catch (MessagingException | IOException e) {
+						e.printStackTrace();
+					}
+				return true;
+			}
+		}
+		return false;
 	}
 
+	private boolean checkTimeLimit() {
+		if (EmailDAO.getInstance().getAllRelevant() == null || EmailDAO.getInstance().getAllRelevant().isEmpty())
+			return true;
+		else {
+			emailHelper = EmailDAO.getInstance().getLastRecord();
+			if (Duration.between(emailHelper.getLocalDateTime(), LocalDateTime.now()).toHours() < 1)
+				return false;
+			return true;
+		}
+	}
+	
 }

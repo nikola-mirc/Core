@@ -45,9 +45,7 @@ public class GroupCallController extends EmailGUI {
 			getLoopia().sendEmail(getEmailid().getText(), getPassword().getText(), Utils.mergeList(recievers),
 					getSubject().getText(), getMessage().getText(), true, getSelectedFiles());
 			Logging.getInstance().change("email", "Send group e-mail to\n\t" + bccid.getText());
-			alert("Message sent",
-					"Message was sent to " + bccid.getText() + ".\nTotal authors selected: " + recievers.size(),
-					AlertType.INFORMATION);
+			alert("Message sent", "Message was sent to " + bccid.getText() + ".", AlertType.INFORMATION);
 			setSent(true);
 		} catch (MessagingException | IOException e) {
 			alert("Empty or invalid fields",

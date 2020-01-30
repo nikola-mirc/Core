@@ -53,17 +53,6 @@ public class ResearchDAO {
 			try {
 				research.setResearchID(rs.getLong(table.getTable().getPrimaryKey()));
 				research.setResearchTitle(rs.getString(table.getTable().getColumnName(1)));
-//				Path path = Paths.get(Folder.getResearchDirectory().getAbsolutePath() + File.separator
-//						+ research.getResearchID() + research.getResearchTitle());
-//				if (Files.notExists(path)) {
-//					File file = new File(Folder.getResearchDirectory().getAbsolutePath() + File.separator
-//							+ research.getResearchID() + research.getResearchTitle());
-//					InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
-//					if (blob != null)
-//						FileUtils.copyInputStreamToFile(blob, file);
-//					research.setPaperFile(file);
-//					file.deleteOnExit();
-//				}
 				research.setPaperFile(null);
 				research.setNote(rs.getString(table.getTable().getColumnName(3)));
 			} catch (SQLException e) {
@@ -151,7 +140,7 @@ public class ResearchDAO {
 				File file = new File(Folder.getResearchDirectory().getAbsolutePath() + File.separator
 						+ research.getResearchID() + research.getResearchTitle());
 				rs.next();
-				InputStream blob = rs.getBinaryStream("paper");
+				InputStream blob = rs.getBinaryStream(table.getTable().getColumnName(2));
 				if (blob != null)
 					FileUtils.copyInputStreamToFile(blob, file);
 				research.setPaperFile(file);

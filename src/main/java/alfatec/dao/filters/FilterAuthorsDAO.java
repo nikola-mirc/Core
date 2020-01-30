@@ -28,7 +28,7 @@ public class FilterAuthorsDAO {
 			"conference_call.third_call_answer", "conference_call.interested" };
 
 	public static ResultSet createStatementForFilter(String condition) {
-		String query = "SELECT author.author_id, author.country_id, author.author_first_name, author.author_last_name, author.author_email, author.institution, author.institution_name, author.note FROM author \n"
+		String query = "SELECT author.author_id, author.country_id, author.author_first_name, author.author_last_name, author.author_email, author.institution, author.institution_name, author.note, author.validate_email FROM author \n"
 				+ "LEFT OUTER JOIN conference_call ON author.author_id = conference_call.author_id\n"
 				+ "LEFT OUTER JOIN conference ON conference_call.conference_id = conference.conference_id\n"
 				+ "LEFT OUTER JOIN author_research ON author.author_id = author_research.author_id \n"
