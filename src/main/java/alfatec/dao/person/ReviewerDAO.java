@@ -61,12 +61,15 @@ public class ReviewerDAO {
 
 	public Reviewer createReviewer(String firstName, String lastName, String email, String contactTelephone,
 			String institution, String country, String note) {
-		String[] strings = { firstName, lastName, email, contactTelephone, institution, note };
-		int[] ints = { Commons.findCountryByName(country).getCountryID() };
-		Reviewer reviewer = table.create(strings, ints, new long[] {}, getReviewer);
-		Logging.getInstance().change("create", "Add reviewer " + reviewer.getReviewerEmail() + ", "
-				+ reviewer.getReviewerFirstName() + " " + reviewer.getReviewerLastName());
-		return reviewer;
+		if (country != null) {
+			String[] strings = { firstName, lastName, email, contactTelephone, institution, note };
+			int[] ints = { Commons.findCountryByName(country).getCountryID() };
+			Reviewer reviewer = table.create(strings, ints, new long[] {}, getReviewer);
+			return reviewer;
+		} else {
+			String[] strings = { firstName, lastName, email, contactTelephone, institution, note, country };
+			return table.create(strings, new int[] {}, new long[] {}, getReviewer);
+		}
 	}
 
 	public void deleteReviewer(Reviewer reviewer) {
@@ -178,6 +181,12 @@ public class ReviewerDAO {
 		reviewer.setContactTelephone(telephone);
 		Logging.getInstance().change("update",
 				"Update reviewer " + reviewer.getReviewerEmail() + " telephone from " + number + " to " + telephone);
+	}
+
+	public Reviewer findReviewerByExactEmail(String email) {
+		ObservableList<Reviewer> search = table.findWhere(new String[] { table.getTable().getColumnName(3) },
+				new String[] { email }, getReviewer);
+		return search.size() > 0 ? search.get(0) : null;
 	}
 
 }

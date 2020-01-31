@@ -13,6 +13,7 @@ public class DatabaseLimits {
 	private static final int CONFERENCE_TITLE_LENGTH = 100;
 	private static final int REGISTRATION_FEE_NAME_LENGTH = 50;
 	private static final long BLOB_LENGTH = 16777216;
+	private static final int FIELD_NAME_LENGTH = 100;
 
 	public static int getFirstNameLength() {
 		return FIRST_NAME_LENGTH;
@@ -57,4 +58,9 @@ public class DatabaseLimits {
 	public static long getBlobLength() {
 		return BLOB_LENGTH;
 	}
+
+	public static int getFieldNameLength() {
+		return FIELD_NAME_LENGTH;
+	}
+
 }
