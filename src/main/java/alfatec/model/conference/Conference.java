@@ -181,4 +181,8 @@ public class Conference {
 		this.conferenceBcc.set(conferenceBcc);
 	}
 
+	@Override
+	public String toString() {
+		return getConferenceTitleProperty().get();
+	}
 }

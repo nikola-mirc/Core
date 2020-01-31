@@ -2,6 +2,7 @@ package alfatec.controller.paper;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -23,6 +24,7 @@ import alfatec.controller.utils.ClearPopUp;
 import alfatec.controller.utils.Utils;
 import alfatec.dao.conference.CollectionDAO;
 import alfatec.dao.conference.ConferenceDAO;
+import alfatec.dao.conference.FieldDAO;
 import alfatec.dao.conference.RegistrationFeeDAO;
 import alfatec.dao.conference.SpecialIssueDAO;
 import alfatec.dao.country.CountryDAO;
@@ -96,7 +98,7 @@ public class ScientificWorkTabController extends GUIUtils {
 	@FXML
 	private JFXButton addApplicationButton, updateApplicationButton, insertAuthorButton, importPaperButton,
 			selectReviewerButton, sendForReviewButton, sendEmailButton, remove, saveButton, rwAcceptedButton,
-			rwSmallButton, rwBigButton, rwRejectedButton, openPaperButton;
+			rwSmallButton, rwBigButton, rwRejectedButton, openPaperButton, resetFiltersButton;
 
 	@FXML
 	private TableView<Author> miniAuthorTableView;
@@ -151,7 +153,7 @@ public class ScientificWorkTabController extends GUIUtils {
 	private TextField filterReviewer;
 
 	@FXML
-	private ComboBox<Opinion> filterStatus;
+	private ComboBox<String> filterStatus;
 
 	@FXML
 	private JFXCheckBox filterSubmittedWork;
@@ -200,6 +202,7 @@ public class ScientificWorkTabController extends GUIUtils {
 		generalSetUp();
 		populateMainTable();
 		handleSearch();
+		setUpFiltersAction();
 	}
 
 	@FXML
@@ -654,6 +657,7 @@ public class ScientificWorkTabController extends GUIUtils {
 		data = ResearchFactory.getInstance().getAllData();
 		addedAuthors = FXCollections.observableArrayList();
 		deletedAuthors = FXCollections.observableArrayList();
+		setUpFiltersBox();
 		setUpBox();
 		setUpGroup();
 		setUpFields(new TextArea[] { swNote }, new int[] { getNoteLength() });
@@ -797,5 +801,82 @@ public class ScientificWorkTabController extends GUIUtils {
 			feeComboBox.getItems().setAll(RegistrationFeeDAO.getInstance().getCurrentFees());
 		feeComboBox.getSelectionModel().select(null);
 		feeComboBox.setPromptText("Please select");
+	}
+
+	@FXML
+	void resetFilters(ActionEvent event) {
+		searchScientificWorkField.clear();
+		filterInstitution.getSelectionModel().clearSelection();
+		filterInstitutionName.clear();
+		filterCountry.getSelectionModel().clearSelection();
+		filterConference.getSelectionModel().clearSelection();
+		filterField.getSelectionModel().clearSelection();
+		filterCollSpec.setSelected(false);
+		filterSentForReview.setSelected(false);
+		filterReviewer.clear();
+		filterStatus.getSelectionModel().clearSelection();
+		filterSubmittedWork.setSelected(false);
+		filterPresentation.getSelectionModel().clearSelection();
+		filterDate.getEditor().clear();
+	}
+
+	private void setUpFiltersAction() {
+		filterInstitution.setOnAction((event) -> {
+			Institution institution = filterInstitution.getSelectionModel().getSelectedItem();
+			if (institution != null) {
+				ObservableList<ScientificWork> searched1 = ResearchFactory.getInstance()
+						.searchBothAuthorsAndResearchesByInstitutionType(institution);
+				applicationsTableView.getItems().setAll(searched1);
+			} else {
+				data = ResearchFactory.getInstance().getAllData();
+				applicationsTableView.getItems().setAll(data);
+			}
+		});
+//		filterInstitutionName.setOnKeyTyped(event -> {
+//			closePopUpsAndClear();
+//			String search = filterInstitutionName.getText();
+//			Pattern pattern = Pattern.compile("[@()\\\\<>+~%\\*\\-\\'\"]");
+//			Matcher matcher = pattern.matcher(search);
+//			if (search.length() > 0 && !matcher.find()) {
+//				ObservableList<ScientificWork> searched2 = ResearchFactory.getInstance()
+//						.searchBothAuthorsAndResearchesByInstitutionName(search);
+//				applicationsTableView.getItems().setAll(searched2);
+//			} else {
+//				data = ResearchFactory.getInstance().getAllData();
+//				applicationsTableView.getItems().setAll(data);
+//			}
+//		});
+		filterCountry.setOnAction((event) -> {
+			String country = filterCountry.getSelectionModel().getSelectedItem() != null
+					? filterCountry.getSelectionModel().getSelectedItem().getCountryName().toLowerCase()
+					: null;
+			if (country != null) {
+				ObservableList<ScientificWork> searched3 = ResearchFactory.getInstance()
+						.searchBothAuthorsAndResearchesByCountry(country);
+				applicationsTableView.getItems().setAll(searched3);
+			} else {
+				data = ResearchFactory.getInstance().getAllData();
+				applicationsTableView.getItems().setAll(data);
+			}
+		});
+	}
+
+	private void setUpFiltersBox() {
+		filterInstitution.getItems().setAll(FXCollections.observableArrayList(Institution.values()));
+		filterInstitution.setPromptText("Please select");
+		filterCountry.getItems().setAll(FXCollections.observableArrayList(CountryDAO.getInstance().getAllCountries()));
+		filterCountry.setPromptText("Please select");
+		filterConference.getItems().setAll(FXCollections.observableArrayList(ConferenceDAO.getInstance().getAll()));
+		filterConference.setPromptText("Please select");
+		filterField.getItems().setAll(FXCollections.observableArrayList(FieldDAO.getInstance().getAllFields()));
+		filterField.setPromptText("Please select");
+		List<String> opinions = new ArrayList<String>();
+		for (Opinion opinion : Opinion.values()) {
+			opinions.add(opinion.getOpinion());
+		}
+		filterStatus.getItems().setAll(FXCollections.observableArrayList(opinions));
+		filterStatus.setPromptText("Please select");
+		filterPresentation.getItems().setAll(FXCollections.observableArrayList(Presentation.values()));
+		filterPresentation.setPromptText("Please select");
 	}
 }
