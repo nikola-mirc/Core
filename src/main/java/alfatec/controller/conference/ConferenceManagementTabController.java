@@ -108,12 +108,20 @@ public class ConferenceManagementTabController extends GUIUtils {
 
 	@FXML
 	void addFee(ActionEvent event) {
-		closeAll();
-		registrationFeeCleaner.clear();
-		setAddAction(true);
-		saveFeeButton.setDisable(false);
-		openYPopup(feePopup, -350);
-		openFee = true;
+		if (ConferenceDAO.getInstance().getCurrentConference() == null)
+			alert("No active conference",
+					"Registration fee and Conference are closely related.\nIn order to add registration fee, please start a Conference first.",
+					AlertType.ERROR);
+		else {
+			closeAll();
+			registrationFeeCleaner.clear();
+			setAddAction(true);
+			setRegistrationFee();
+			saveFeeButton.setDisable(false);
+			feePopup.setVisible(true);
+			openYPopup(feePopup, -350);
+			openFee = true;
+		}
 	}
 
 	@FXML
@@ -121,7 +129,9 @@ public class ConferenceManagementTabController extends GUIUtils {
 		closeAll();
 		fieldCleaner.clear();
 		setAddAction(true);
+		setFields();
 		saveFieldButton.setDisable(false);
+		fieldsPopup.setVisible(true);
 		openYPopup(fieldsPopup, -200);
 		openField = true;
 	}
@@ -131,7 +141,9 @@ public class ConferenceManagementTabController extends GUIUtils {
 		closeAll();
 		reviewerCleaner.clear();
 		setAddAction(true);
+		setReviewerFields();
 		saveRevButton.setDisable(false);
+		revieversPopup.setVisible(true);
 		openDetails(revieversPopup, 340);
 		openReviewer = true;
 	}
@@ -176,16 +188,22 @@ public class ConferenceManagementTabController extends GUIUtils {
 	void deleteFee(ActionEvent event) {
 		registrationFee = feesTableView.getSelectionModel().getSelectedItem();
 		if (registrationFee != null) {
-			ButtonType bt = confirmationAlert("Please confirm:",
-					"Are you sure you want to delete data for " + registrationFee.getRegistrationName() + "?",
-					AlertType.CONFIRMATION);
-			if (bt == ButtonType.OK) {
-				RegistrationFeeDAO.getInstance().deleteRegistration(registrationFee);
-				RegistrationFeeDAO.getInstance().getAll().remove(registrationFee);
-				fees.remove(registrationFee);
-				feesTableView.getItems().remove(registrationFee);
-				refreshY(feesTableView, feesTableView.getSelectionModel().getSelectedIndex() - 1);
-				closeFeePopup(event);
+			if (ConferenceDAO.getInstance().getCurrentConference() == null || ConferenceDAO.getInstance()
+					.getCurrentConference().getConferenceID() != registrationFee.getConferenceID())
+				alert("Delete forbidden", "The conference with this registration fee is ended. Data are now read only.",
+						AlertType.INFORMATION);
+			else {
+				ButtonType bt = confirmationAlert("Please confirm:",
+						"Are you sure you want to delete data for " + registrationFee.getRegistrationName() + "?",
+						AlertType.CONFIRMATION);
+				if (bt == ButtonType.OK) {
+					RegistrationFeeDAO.getInstance().deleteRegistration(registrationFee);
+					RegistrationFeeDAO.getInstance().getAll().remove(registrationFee);
+					fees.remove(registrationFee);
+					feesTableView.getItems().remove(registrationFee);
+					refreshY(feesTableView, feesTableView.getSelectionModel().getSelectedIndex() - 1);
+					closeFeePopup(event);
+				}
 			}
 		}
 	}
@@ -212,37 +230,75 @@ public class ConferenceManagementTabController extends GUIUtils {
 	@FXML
 	void editFee(ActionEvent event) {
 		closeAll();
-		setEditAction(true);
-		saveFeeButton.setDisable(false);
-		openYPopup(feePopup, -350);
-		openFee = true;
+		registrationFee = feesTableView.getSelectionModel().getSelectedItem();
+		if (registrationFee != null) {
+			if (ConferenceDAO.getInstance().getCurrentConference() == null || ConferenceDAO.getInstance()
+					.getCurrentConference().getConferenceID() != registrationFee.getConferenceID())
+				alert("Edit forbidden", "The conference with this registration fee is ended. Data are now read only.",
+						AlertType.INFORMATION);
+			else {
+				setEditAction(true);
+				if (registrationFee != null) {
+					setRegistrationFee();
+					saveFeeButton.setDisable(false);
+					openYPopup(feePopup, -350);
+					openFee = true;
+				}
+			}
+		}
 	}
 
 	@FXML
 	void editField(ActionEvent event) {
 		closeAll();
-		saveFeeButton.setDisable(false);
-		openYPopup(feePopup, -200);
-		openField = true;
+		field = fieldsTableView.getSelectionModel().getSelectedItem();
+		setEditAction(true);
+		if (field != null) {
+			setFields();
+			saveFieldButton.setDisable(false);
+			openYPopup(fieldsPopup, -200);
+			openField = true;
+		}
 	}
 
 	@FXML
 	void editReviewer(ActionEvent event) {
 		closeAll();
+		reviewer = reviewersTableView.getSelectionModel().getSelectedItem();
 		setEditAction(true);
-		saveRevButton.setDisable(false);
-		openDetails(revieversPopup, 340);
-		openReviewer = true;
+		if (reviewer != null) {
+			setReviewerFields();
+			saveRevButton.setDisable(false);
+			openDetails(revieversPopup, 340);
+			openReviewer = true;
+		}
 	}
 
 	@FXML
 	void saveField(ActionEvent event) {
-		// TODO
 		if (isAddAction()) {
+			if (isValidFieldName() && !isFieldAlreadyInDB()) {
+				fields.add(getNewField());
+				refreshY(fieldsTableView, fields.size() - 1);
+				closeFieldPopup(event);
+				field = fieldsTableView.getSelectionModel().getSelectedItem();
+			} else if (isFieldAlreadyInDB()) {
+				fieldNameErrorLabel.setText("Field already exists.");
+				return;
+			} else
+				return;
 			setAddAction(false);
+			setFields();
 		} else if (isEditAction()) {
-			setEditAction(false);
+			field = fieldsTableView.getSelectionModel().getSelectedItem();
+			if (isValidFieldName() && !isFieldAlreadyInDB())
+				handleEditField();
+			refreshY(fieldsTableView, fieldsTableView.getSelectionModel().getSelectedIndex());
+			closeFieldPopup(event);
+			field = fieldsTableView.getSelectionModel().getSelectedItem();
 		}
+		setEditAction(false);
+		setFields();
 	}
 
 	@FXML
@@ -258,8 +314,10 @@ public class ConferenceManagementTabController extends GUIUtils {
 			} else if (isEmailAlreadyInDB()) {
 				emailErrorLabel.setText("E-mail already exists in database.");
 				return;
-			}
+			} else
+				return;
 			setAddAction(false);
+			setReviewerFields();
 		} else if (isEditAction()) {
 			reviewer = reviewersTableView.getSelectionModel().getSelectedItem();
 			if (isValidReviewer())
@@ -276,6 +334,7 @@ public class ConferenceManagementTabController extends GUIUtils {
 					showReviewer(reviewer);
 				}
 			setEditAction(false);
+			setReviewerFields();
 		}
 	}
 
@@ -297,12 +356,34 @@ public class ConferenceManagementTabController extends GUIUtils {
 	}
 
 	@FXML
-	private void saveFee() {
-		// TODO
+	private void saveFee(ActionEvent event) {
 		if (isAddAction()) {
+			if (isValidFeeInput() && !isFeeAlreadyInDB()) {
+				fees.add(getNewFee());
+				refreshY(feesTableView, fees.size() - 1);
+				closeFeePopup(event);
+				registrationFee = feesTableView.getSelectionModel().getSelectedItem();
+			} else if (isFeeAlreadyInDB()) {
+				feeNameErrorLabel.setText("Registration fee already exists for this conference.");
+				return;
+			} else
+				return;
 			setAddAction(false);
+			setRegistrationFee();
 		} else if (isEditAction()) {
+			registrationFee = feesTableView.getSelectionModel().getSelectedItem();
+			if (isValidFeeInput())
+				if (!feePresetTextField.getText().equals(registrationFee.getRegistrationName()) && isFeeAlreadyInDB()) {
+					feeNameErrorLabel.setText("Database already has enter with the same fee name for this conference.");
+					return;
+				} else {
+					handleEditRegistrationFee();
+					refreshY(feesTableView, feesTableView.getSelectionModel().getSelectedIndex());
+					closeFeePopup(event);
+					registrationFee = feesTableView.getSelectionModel().getSelectedItem();
+				}
 			setEditAction(false);
+			setRegistrationFee();
 		}
 	}
 
@@ -319,7 +400,7 @@ public class ConferenceManagementTabController extends GUIUtils {
 		registrationFeeCleaner = () -> {
 			clearFields(Arrays.asList(feePresetTextField, feeAmountTextField),
 					Arrays.asList(feeNameErrorLabel, amountErrorLabel));
-			feeCurrencyComboBox.getSelectionModel().select(null);
+			feeCurrencyComboBox.setValue(Currency.RSD);
 			registrationFee = null;
 		};
 		fieldCleaner = () -> {
@@ -342,9 +423,51 @@ public class ConferenceManagementTabController extends GUIUtils {
 		Utility.setUpStringCell(feesTableView);
 		noteTextArea.setWrapText(true);
 		setUpBoxes();
+		setUpListeners();
+		setReviewerFields();
+		setFields();
+		setRegistrationFee();
+	}
+
+	private void setReviewerFields() {
+		Arrays.asList(revNameTextField, revLastNameTextField, revEmailTextField, revContactTextField,
+				revInstitutionTextField).forEach(f -> f.setEditable(isAddAction() || isEditAction()));
+		noteTextArea.setEditable(isAddAction() || isEditAction());
+	}
+
+	private void setFields() {
+		fieldTextField.setEditable(isAddAction() || isEditAction());
+	}
+
+	private void setRegistrationFee() {
+		Arrays.asList(feePresetTextField, feeAmountTextField)
+				.forEach(f -> f.setEditable(isAddAction() || isEditAction()));
+	}
+
+	private void setUpListeners() {
 		revEmailTextField.setOnKeyPressed(event -> {
 			if (emailErrorLabel.getText() != null || !emailErrorLabel.getText().equals(""))
 				emailErrorLabel.setText("");
+		});
+		revNameTextField.setOnKeyPressed(event -> {
+			if (firstNameErrorLabel.getText() != null || !firstNameErrorLabel.getText().equals(""))
+				firstNameErrorLabel.setText("");
+		});
+		revLastNameTextField.setOnKeyPressed(event -> {
+			if (lastNameErrorLabel.getText() != null || !lastNameErrorLabel.getText().equals(""))
+				lastNameErrorLabel.setText("");
+		});
+		fieldTextField.setOnKeyPressed(event -> {
+			if (fieldNameErrorLabel.getText() != null || !fieldNameErrorLabel.getText().equals(""))
+				fieldNameErrorLabel.setText("");
+		});
+		feePresetTextField.setOnKeyPressed(event -> {
+			if (feeNameErrorLabel.getText() != null || !feeNameErrorLabel.getText().equals(""))
+				feeNameErrorLabel.setText("");
+		});
+		feeAmountTextField.setOnKeyPressed(event -> {
+			if (amountErrorLabel.getText() != null || !amountErrorLabel.getText().equals(""))
+				amountErrorLabel.setText("");
 		});
 	}
 
@@ -356,6 +479,23 @@ public class ConferenceManagementTabController extends GUIUtils {
 		revCountryComboBox.getItems().setAll(CountryDAO.getInstance().getAllCountries());
 		revCountryComboBox.valueProperty().addListener(
 				(observable, oldValue, newValue) -> revCountryComboBox.getSelectionModel().select(newValue));
+	}
+
+	private void closeAll() {
+		if (openReviewer) {
+			closeDetails(revieversPopup, 340);
+			openReviewer = false;
+		}
+		if (openFee) {
+			closeYPopup(feePopup, -350);
+			openFee = false;
+		}
+		if (openField) {
+			closeYPopup(fieldsPopup, -200);
+			openField = false;
+		}
+		setAddAction(false);
+		setEditAction(false);
 	}
 
 	private void populateReviewersTable() {
@@ -419,6 +559,7 @@ public class ConferenceManagementTabController extends GUIUtils {
 	private void showReviewer(Reviewer reviewer) {
 		this.reviewer = reviewer;
 		saveRevButton.setDisable(true);
+		setReviewerFields();
 		revNameTextField.setText(reviewer.getReviewerFirstName());
 		revLastNameTextField.setText(reviewer.getReviewerLastName());
 		revEmailTextField.setText(reviewer.getReviewerEmail());
@@ -431,31 +572,16 @@ public class ConferenceManagementTabController extends GUIUtils {
 
 	private void showField(Field field) {
 		saveFieldButton.setDisable(true);
+		setFields();
 		fieldTextField.setText(field.getFieldName());
 	}
 
 	private void showRegistrationFee(RegistrationFee fee) {
 		saveFeeButton.setDisable(true);
+		setRegistrationFee();
 		feePresetTextField.setText(fee.getRegistrationName());
 		feeCurrencyComboBox.getSelectionModel().select(fee.getCurrency());
 		feeAmountTextField.setText(fee.getRegistrationPrice().toString());
-	}
-
-	private void closeAll() {
-		if (openReviewer) {
-			closeDetails(revieversPopup, 340);
-			openReviewer = false;
-		}
-		if (openFee) {
-			closeYPopup(feePopup, -350);
-			openFee = false;
-		}
-		if (openField) {
-			closeYPopup(fieldsPopup, -200);
-			openField = false;
-		}
-		setAddAction(false);
-		setEditAction(false);
 	}
 
 	private boolean isValidReviewer() {
@@ -513,7 +639,7 @@ public class ConferenceManagementTabController extends GUIUtils {
 	}
 
 	private void setNote() {
-		if (reviewer.getNote() != null && !noteTextArea.getText().equalsIgnoreCase(reviewer.getNote()))
+		if (!noteTextArea.getText().equalsIgnoreCase(reviewer.getNote()))
 			ReviewerDAO.getInstance().updateNote(reviewer, noteTextArea.getText());
 	}
 
@@ -526,6 +652,67 @@ public class ConferenceManagementTabController extends GUIUtils {
 		setInstitution();
 		setNote();
 		reviewersTableView.refresh();
+	}
+
+	private boolean isValidFieldName() {
+		fieldNameErrorLabel.setText(isValidName(fieldTextField) ? "" : "Empty field name.");
+		return isValidName(fieldTextField);
+	}
+
+	private boolean isFieldAlreadyInDB() {
+		return FieldDAO.getInstance().findFieldByName(fieldTextField.getText()) != null;
+	}
+
+	private Field getNewField() {
+		field = FieldDAO.getInstance().createField(fieldTextField.getText());
+		return field;
+	}
+
+	private void handleEditField() {
+		if (!field.getFieldName().equalsIgnoreCase(fieldTextField.getText()))
+			FieldDAO.getInstance().updateField(field, fieldTextField.getText());
+		fieldsTableView.refresh();
+	}
+
+	private boolean isValidFeeInput() {
+		feeNameErrorLabel.setText(isValidName(feePresetTextField) ? "" : "Empty registration fee name.");
+		amountErrorLabel.setText(isValidName(feeAmountTextField) ? "" : "Empty amount for registration fee.");
+		return isValidName(feeAmountTextField) && isValidName(feePresetTextField);
+	}
+
+	private boolean isFeeAlreadyInDB() {
+		return RegistrationFeeDAO.getInstance().findFeeByName(feePresetTextField.getText()) != null;
+	}
+
+	private RegistrationFee getNewFee() {
+		registrationFee = RegistrationFeeDAO.getInstance().create(feePresetTextField.getText(),
+				Double.parseDouble(feeAmountTextField.getText()),
+				feeCurrencyComboBox.getSelectionModel().getSelectedItem().name());
+		return registrationFee;
+	}
+
+	private void setFeeName() {
+		if (!registrationFee.getRegistrationName().equalsIgnoreCase(feePresetTextField.getText()))
+			RegistrationFeeDAO.getInstance().updateRegistrationName(registrationFee, feePresetTextField.getText());
+	}
+
+	private void setFeeCurrency() {
+		if (!registrationFee.getCurrency().equals(feeCurrencyComboBox.getSelectionModel().getSelectedItem()))
+			RegistrationFeeDAO.getInstance().updateCurrency(registrationFee,
+					feeCurrencyComboBox.getSelectionModel().getSelectedItem().name());
+	}
+
+	private void setFeePrice() {
+		if (registrationFee.getRegistrationPriceDouble() != Double.parseDouble(feeAmountTextField.getText()))
+			RegistrationFeeDAO.getInstance().updatePrice(registrationFee,
+					Double.parseDouble(feeAmountTextField.getText()));
+	}
+
+	private void handleEditRegistrationFee() {
+		setFeeName();
+		setFeeCurrency();
+		setFeePrice();
+		feesTableView.refresh();
 	}
 
 }

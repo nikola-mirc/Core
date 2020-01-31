@@ -3,12 +3,12 @@ package alfatec.dao.conference;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javafx.collections.ObservableList;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.RegistrationFee;
-import database.Getter;
 import database.DatabaseTable;
+import database.Getter;
+import javafx.collections.ObservableList;
 
 /**
  * DAO for table "registration_fee".
@@ -129,4 +129,17 @@ public class RegistrationFeeDAO {
 		table.update(fee.getRegistrationFeeID(), 3, conferenceID);
 		fee.setConferenceID(conferenceID);
 	}
+
+	/*
+	 * for current conference
+	 */
+	public RegistrationFee findFeeByName(String name) {
+		ObservableList<RegistrationFee> current = getCurrentFees();
+		if (current == null || current.isEmpty())
+			return null;
+		boolean find = current.stream().anyMatch(f -> f.getRegistrationName().equalsIgnoreCase(name));
+		return find ? current.stream().filter(f -> f.getRegistrationName().equalsIgnoreCase(name)).findFirst().get()
+				: null;
+	}
+
 }

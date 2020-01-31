@@ -3,12 +3,12 @@ package alfatec.dao.conference;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javafx.collections.ObservableList;
 import alfatec.dao.utils.Logging;
 import alfatec.dao.utils.TableUtility;
 import alfatec.model.conference.Field;
-import database.Getter;
 import database.DatabaseTable;
+import database.Getter;
+import javafx.collections.ObservableList;
 
 /**
  * DAO for table "field"
@@ -103,5 +103,11 @@ public class FieldDAO {
 
 	public ObservableList<String> getAllFieldNames() {
 		return table.getColumn(1);
+	}
+
+	public Field findFieldByName(String name) {
+		ObservableList<Field> search = table.findWhere(new String[] { table.getTable().getColumnName(1) },
+				new String[] { name }, getField);
+		return search.size() > 0 ? search.get(0) : null;
 	}
 }
