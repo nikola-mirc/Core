@@ -63,15 +63,15 @@ public class StatisticsFactory {
 	}
 
 	private int getNumberOfPositiveFirstAnswers() {
-		return calls.stream().filter(call -> call.getFirstCallAnswer() == 1).collect(Collectors.toList()).size();
+		return calls.stream().filter(ConferenceCall::isFirstCallAnswered).collect(Collectors.toList()).size();
 	}
 
 	private int getNumberOfPositiveSecondAnswers() {
-		return calls.stream().filter(call -> call.getSecondCallAnswer() == 1).collect(Collectors.toList()).size();
+		return calls.stream().filter(ConferenceCall::isSecondCallAnswered).collect(Collectors.toList()).size();
 	}
 
 	private int getNumberOfPositiveThirdAnswers() {
-		return calls.stream().filter(call -> call.getThirdCallAnswer() == 1).collect(Collectors.toList()).size();
+		return calls.stream().filter(ConferenceCall::isThirdCallAnswered).collect(Collectors.toList()).size();
 	}
 
 	public String createStats() {
