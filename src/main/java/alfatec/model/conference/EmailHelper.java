@@ -100,11 +100,11 @@ public class EmailHelper {
 	}
 
 	public IntegerProperty getInviteProperty() {
-		return sent;
+		return invite;
 	}
 
 	public int getOrdinal() {
-		return sent.get();
+		return invite.get();
 	}
 
 	public void setOrdinal(int invite) {

@@ -24,6 +24,7 @@ import alfatec.model.conference.SpecialIssue;
 import alfatec.model.person.Author;
 import alfatec.model.user.LoginData;
 import alfatec.view.factory.ResearchFactory;
+import alfatec.view.factory.StatisticsFactory;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.ConferenceDateSettings;
@@ -396,6 +397,7 @@ public class ConferenceTabController extends GUIUtils {
 		populateRegistrationFeeTable(cds);
 		populateThisResearchTable(ResearchFactory.getInstance()
 				.getAllForConference(ConferenceDAO.getInstance().findBy(cds.getConference().getConferenceID())));
+		statsTextArea.setText(new StatisticsFactory(cds.getConference()).createStats());
 	}
 
 	public void refreshSpecialTab() {

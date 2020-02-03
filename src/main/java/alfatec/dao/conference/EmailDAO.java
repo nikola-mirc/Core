@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 
 import alfatec.dao.utils.Commons;
 import alfatec.dao.utils.TableUtility;
+import alfatec.model.conference.Conference;
 import alfatec.model.conference.EmailHelper;
 import database.CRUD;
 import database.DatabaseTable;
@@ -135,5 +136,9 @@ public class EmailDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public ObservableList<EmailHelper> getDataForConference(Conference conference) {
+		return table.findBy(conference.getConferenceID(), 3, getHelp);
 	}
 }
