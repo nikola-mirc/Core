@@ -268,17 +268,22 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	@FXML
 	private void sendEmail() {
-		author = authorsTableView.getSelectionModel().getSelectedItem();
-		if (author != null)
-			send = MainView.getInstance().loadEmailWindow(send, author.getAuthorEmail());
+		if (!checkTimeLimit())
+			alert("Time Limit", "Last timestamp on group call: " + emailHelper.getTime() + ".\nPlease try again later",
+					AlertType.WARNING);
+		else {
+			author = authorsTableView.getSelectionModel().getSelectedItem();
+			if (author != null)
+				send = MainView.getInstance().loadEmailWindow(send, author.getAuthorEmail());
+		}
 	}
 
 	@FXML
 	private void sendFirstInvite() {
-		if (!checkTimeLimit()) {
+		if (!checkTimeLimit())
 			alert("Time Limit", "Group calls can be sent every hour.\nLast timestamp on group call: "
 					+ emailHelper.getTime() + ".\nNumber of invites: " + emailHelper.getCount(), AlertType.WARNING);
-		} else if (ConferenceDAO.getInstance().getCurrentConference() != null) {
+		else if (ConferenceDAO.getInstance().getCurrentConference() != null) {
 			ButtonType bt = confirmationAlert("This may take a while",
 					"Process of validating and collecting email addresses is time consuming. Please be patient.\nDo you want to continue?",
 					AlertType.CONFIRMATION);
@@ -287,7 +292,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				boolean sentGroup = firstCallGroupHelper();
 				boolean sentInvalid = firstCallInvalidHelper();
 				if ((sentGroup || sentInvalid) && groupCall.isSent())
-					EmailDAO.getInstance().create(groupEmail.getNumberOfFirstCalls(), groupCall.getMessage().getText());
+					EmailDAO.getInstance().create(1, groupEmail.getNumberOfFirstCalls(),
+							groupCall.getMessage().getText());
 				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses", "First call for paper is sent to all authors in the database.",
 							AlertType.INFORMATION);
@@ -311,7 +317,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				boolean sentGroup = secondCallGroupHelper();
 				boolean sentInvalid = secondCallInvalidHelper();
 				if ((sentGroup || sentInvalid) && groupCall.isSent())
-					EmailDAO.getInstance().create(groupEmail.getNumberOfSecondCalls(),
+					EmailDAO.getInstance().create(2, groupEmail.getNumberOfSecondCalls(),
 							groupCall.getMessage().getText());
 				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses",
@@ -336,7 +342,8 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				boolean sentGroup = thirdCallGroupHelper();
 				boolean sentInvalid = thirdCallInvalidHelper();
 				if ((sentGroup || sentInvalid) && groupCall.isSent())
-					EmailDAO.getInstance().create(groupEmail.getNumberOfThirdCalls(), groupCall.getMessage().getText());
+					EmailDAO.getInstance().create(3, groupEmail.getNumberOfThirdCalls(),
+							groupCall.getMessage().getText());
 				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses", "Third call for paper is sent to all authors in the database.",
 							AlertType.INFORMATION);

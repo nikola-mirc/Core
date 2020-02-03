@@ -16,17 +16,19 @@ public class EmailHelper {
 	private final ObjectProperty<LocalDateTime> time;
 	private final ObjectProperty<File> message;
 	private final IntegerProperty sent;
+	private final IntegerProperty invite;
 
 	public EmailHelper() {
-		this(0, 0, "", null, 0);
+		this(0, 0, "", null, 0, 0);
 	}
 
-	public EmailHelper(int emailID, int conferenceID, String time, File message, int sent) {
+	public EmailHelper(int emailID, int conferenceID, String time, File message, int sent, int invite) {
 		this.emailID = new SimpleIntegerProperty(emailID);
 		this.conferenceID = new SimpleIntegerProperty(conferenceID);
 		this.time = new SimpleObjectProperty<LocalDateTime>(DateUtil.parse(time));
 		this.message = new SimpleObjectProperty<File>(message);
 		this.sent = new SimpleIntegerProperty(sent);
+		this.invite = new SimpleIntegerProperty(invite);
 	}
 
 	public IntegerProperty getEmailIDProperty() {
@@ -95,6 +97,18 @@ public class EmailHelper {
 
 	public void setCount(int sent) {
 		this.sent.set(sent);
+	}
+
+	public IntegerProperty getInviteProperty() {
+		return sent;
+	}
+
+	public int getOrdinal() {
+		return sent.get();
+	}
+
+	public void setOrdinal(int invite) {
+		this.invite.set(invite);
 	}
 
 }

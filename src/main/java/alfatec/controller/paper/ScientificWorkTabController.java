@@ -2,11 +2,8 @@ package alfatec.controller.paper;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.controlsfx.control.PrefixSelectionComboBox;
@@ -57,8 +54,12 @@ import alfatec.view.wrappers.PaperworkResearch;
 import alfatec.view.wrappers.ScientificWork;
 import javafx.application.HostServices;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -98,7 +99,8 @@ public class ScientificWorkTabController extends GUIUtils {
 	@FXML
 	private JFXButton addApplicationButton, updateApplicationButton, insertAuthorButton, importPaperButton,
 			selectReviewerButton, sendForReviewButton, sendEmailButton, remove, saveButton, rwAcceptedButton,
-			rwSmallButton, rwBigButton, rwRejectedButton, openPaperButton, resetFiltersButton;
+			rwSmallButton, rwBigButton, rwRejectedButton, openPaperButton, resetFiltersButton,
+			searchFilterReviewerButton;
 
 	@FXML
 	private TableView<Author> miniAuthorTableView;
@@ -153,7 +155,7 @@ public class ScientificWorkTabController extends GUIUtils {
 	private TextField filterReviewer;
 
 	@FXML
-	private ComboBox<String> filterStatus;
+	private ComboBox<Opinion> filterStatus;
 
 	@FXML
 	private JFXCheckBox filterSubmittedWork;
@@ -201,7 +203,6 @@ public class ScientificWorkTabController extends GUIUtils {
 		setOtherPopupOpen(true);
 		generalSetUp();
 		populateMainTable();
-		handleSearch();
 		setUpFiltersAction();
 	}
 
@@ -436,23 +437,6 @@ public class ScientificWorkTabController extends GUIUtils {
 		makeFakeRadio(Arrays.asList(rwAcceptedButton, rwBigButton, rwRejectedButton, rwSmallButton), reviews);
 		review = reviews.size() > 0 ? reviews.get(reviews.size() - 1) : null;
 		opinion.setText(getOpinions(reviews));
-	}
-
-	private void handleSearch() {
-		searchScientificWorkField.setOnKeyTyped(event -> {
-			closePopUpsAndClear();
-			String search = searchScientificWorkField.getText();
-			Pattern pattern = Pattern.compile("[@()\\\\<>+~%\\*\\-\\'\"]");
-			Matcher matcher = pattern.matcher(search);
-			if (search.length() > 0 && !matcher.find()) {
-				ObservableList<ScientificWork> searched = ResearchFactory.getInstance()
-						.searchBothAuthorsAndResearches(search);
-				applicationsTableView.getItems().setAll(searched);
-			} else {
-				data = ResearchFactory.getInstance().getAllData();
-				applicationsTableView.getItems().setAll(data);
-			}
-		});
 	}
 
 	private PaperworkResearch create() {
@@ -817,48 +801,249 @@ public class ScientificWorkTabController extends GUIUtils {
 		filterStatus.getSelectionModel().clearSelection();
 		filterSubmittedWork.setSelected(false);
 		filterPresentation.getSelectionModel().clearSelection();
-		filterDate.getEditor().clear();
+		filterDate.setValue(null);
+	}
+
+	@FXML
+	void searchFilterReviewer(ActionEvent event) {
+		controllerReviewer = ResearchView.getInstance().loadSearchReviewers(controllerReviewer);
+		reviewer = controllerReviewer.getSelectedReviewer();
+		filterReviewer.setText(
+				reviewer != null ? reviewer.getReviewerFirstName().concat(" ").concat(reviewer.getReviewerLastName())
+						: null);
 	}
 
 	private void setUpFiltersAction() {
-		filterInstitution.setOnAction((event) -> {
-			Institution institution = filterInstitution.getSelectionModel().getSelectedItem();
-			if (institution != null) {
-				ObservableList<ScientificWork> searched1 = ResearchFactory.getInstance()
-						.searchBothAuthorsAndResearchesByInstitutionType(institution);
-				applicationsTableView.getItems().setAll(searched1);
-			} else {
-				data = ResearchFactory.getInstance().getAllData();
-				applicationsTableView.getItems().setAll(data);
+		ObservableList<ScientificWork> list = data;
+
+		FilteredList<ScientificWork> searched = new FilteredList<ScientificWork>(list, p -> true);
+		searchScientificWorkField.textProperty().addListener((observable, oldValue, newValue) -> {
+			searched.setPredicate(sw -> {
+				if (newValue == null || newValue.isEmpty())
+					return true;
+				String lowerCaseFilter = newValue.toLowerCase();
+				for (int i = 0; i < sw.getAuthors().size(); i++) {
+					if (sw.getAuthors().get(i).getAuthorEmail().toLowerCase().startsWith(lowerCaseFilter)
+							|| sw.getAuthors().get(i).getAuthorFirstName().toLowerCase().startsWith(lowerCaseFilter)
+							|| sw.getAuthors().get(i).getAuthorLastName().toLowerCase().startsWith(lowerCaseFilter))
+						return true;
+				}
+				if (sw.getPaperworkResearch().getResearch().getResearchTitle().toLowerCase().contains(lowerCaseFilter))
+					return true;
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData = new FilteredList<>(searched, p -> true);
+		filterInstitution.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData.setPredicate((sw) -> {
+				if (newValue == null) {
+					return true;
+				}
+				ObservableList<Author> authors = FXCollections.observableArrayList();
+				authors.addAll(
+						ResearchFactory.getInstance().getAuthorsForResearch(sw.getPaperworkResearch().getResearch()));
+				for (int i = 0; i < authors.size(); i++) {
+					if (authors.get(i).getInstitution() != null && authors.get(i).getInstitution()
+							.equals(filterInstitution.getSelectionModel().getSelectedItem()))
+						return true;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData1 = new FilteredList<>(filteredData, p -> true);
+		filterInstitutionName.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData1.setPredicate(sw -> {
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
+				String lowerCaseFilter = newValue.toLowerCase();
+				ObservableList<Author> authors = FXCollections.observableArrayList();
+				authors.addAll(
+						ResearchFactory.getInstance().getAuthorsForResearch(sw.getPaperworkResearch().getResearch()));
+				for (int i = 0; i < authors.size(); i++) {
+					if (authors.get(i).getInstitutionName().toLowerCase().contains(lowerCaseFilter))
+						return true;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData2 = new FilteredList<>(filteredData1, p -> true);
+		filterCountry.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData2.setPredicate((sw) -> {
+				if (newValue == null) {
+					return true;
+				}
+				ObservableList<Author> authors = FXCollections.observableArrayList();
+				authors.addAll(
+						ResearchFactory.getInstance().getAuthorsForResearch(sw.getPaperworkResearch().getResearch()));
+				for (int i = 0; i < authors.size(); i++) {
+					if (authors.get(i).getCountryID() == filterCountry.getSelectionModel().getSelectedItem()
+							.getCountryID())
+						return true;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData3 = new FilteredList<>(filteredData2, p -> true);
+		filterConference.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData3.setPredicate((sw) -> {
+				if (newValue == null) {
+					return true;
+				}
+				if (sw.getPaperworkResearch().getPaperwork().getConferenceID() == filterConference.getSelectionModel()
+						.getSelectedItem().getConferenceID()) {
+					return true;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData4 = new FilteredList<>(filteredData3, p -> true);
+		filterField.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData4.setPredicate((sw) -> {
+				if (newValue == null)
+					return true;
+				if (sw.getPaperworkResearch().getPaperwork().getConferenceIDProperty() != null
+						&& ConferenceDAO.getInstance()
+								.getConference(sw.getPaperworkResearch().getPaperwork().getConferenceID()) != null
+						&& ConferenceDAO.getInstance()
+								.getConference(sw.getPaperworkResearch().getPaperwork().getConferenceID())
+								.getFieldIDProperty() != null
+						&& ConferenceDAO.getInstance()
+								.getConference(sw.getPaperworkResearch().getPaperwork().getConferenceID())
+								.getFieldID() == filterField.getSelectionModel().getSelectedItem().getFieldID()) {
+					return true;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData5 = new FilteredList<>(filteredData4, p -> true);
+		filterCollSpec.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filteredData5.setPredicate((sw) -> {
+					if (!filterCollSpec.isSelected()) {
+						return true;
+					}
+					if (sw.getPaperworkResearch().getPaperwork().isForCollection() == true) {
+						return true;
+					}
+
+					return false;
+				});
 			}
 		});
-//		filterInstitutionName.setOnKeyTyped(event -> {
-//			closePopUpsAndClear();
-//			String search = filterInstitutionName.getText();
-//			Pattern pattern = Pattern.compile("[@()\\\\<>+~%\\*\\-\\'\"]");
-//			Matcher matcher = pattern.matcher(search);
-//			if (search.length() > 0 && !matcher.find()) {
-//				ObservableList<ScientificWork> searched2 = ResearchFactory.getInstance()
-//						.searchBothAuthorsAndResearchesByInstitutionName(search);
-//				applicationsTableView.getItems().setAll(searched2);
-//			} else {
-//				data = ResearchFactory.getInstance().getAllData();
-//				applicationsTableView.getItems().setAll(data);
-//			}
-//		});
-		filterCountry.setOnAction((event) -> {
-			String country = filterCountry.getSelectionModel().getSelectedItem() != null
-					? filterCountry.getSelectionModel().getSelectedItem().getCountryName().toLowerCase()
-					: null;
-			if (country != null) {
-				ObservableList<ScientificWork> searched3 = ResearchFactory.getInstance()
-						.searchBothAuthorsAndResearchesByCountry(country);
-				applicationsTableView.getItems().setAll(searched3);
-			} else {
-				data = ResearchFactory.getInstance().getAllData();
-				applicationsTableView.getItems().setAll(data);
+
+		FilteredList<ScientificWork> filteredData6 = new FilteredList<>(filteredData5, p -> true);
+		filterSentForReview.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filteredData6.setPredicate((sw) -> {
+					if (!filterSentForReview.isSelected()) {
+						return true;
+					}
+					if (sw.getPaperworkResearch().getPaperwork().isSentToReview() == true) {
+						return true;
+					}
+					return false;
+				});
 			}
 		});
+
+		FilteredList<ScientificWork> filteredData7 = new FilteredList<>(filteredData6, p -> true);
+		filterReviewer.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData7.setPredicate(sw -> {
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
+				String lowerCaseFilter = newValue.toLowerCase();
+				ObservableList<Review> reviews = FXCollections.observableArrayList();
+				reviews.addAll(ReviewDAO.getInstance()
+						.getAllFor(sw.getResearchProperty().get().getResearch().getResearchID()));
+				for (int i = 0; i < reviews.size(); i++) {
+					Reviewer reviewer = ReviewerDAO.getInstance().getReviewer(reviews.get(i).getReviewerID());
+					if (reviewer.getReviewerFirstName().concat(" ").concat(reviewer.getReviewerLastName())
+							.equalsIgnoreCase(lowerCaseFilter))
+						return true;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData8 = new FilteredList<>(filteredData7, p -> true);
+		filterStatus.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData8.setPredicate((sw) -> {
+				if (newValue == null)
+					return true;
+				ObservableList<Review> reviews = ReviewDAO.getInstance()
+						.getAllFor(sw.getResearchProperty().get().getResearch().getResearchID());
+				for (int i = 0; i < reviews.size(); i++)
+					if (reviews.get(i).getOpinion() != null && reviews.get(i).getOpinionName()
+							.equals(filterStatus.getSelectionModel().getSelectedItem()))
+						return true;
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData9 = new FilteredList<>(filteredData8, p -> true);
+		filterSubmittedWork.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				filteredData9.setPredicate((sw) -> {
+					if (!filterSubmittedWork.isSelected()) {
+						return true;
+					}
+					if (sw.getPaperworkResearch().getPaperwork().isSubmittetWork() == true) {
+						return true;
+					}
+					return false;
+				});
+			}
+		});
+
+		FilteredList<ScientificWork> filteredData10 = new FilteredList<>(filteredData9, p -> true);
+		filterPresentation.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData10.setPredicate((sw) -> {
+				if (newValue == null) {
+					return true;
+				}
+				if (sw.getPaperworkResearch().getPaperwork().getPresentation() != null) {
+					if (sw.getPaperworkResearch().getPaperwork().getPresentation()
+							.equals(filterPresentation.getSelectionModel().getSelectedItem())) {
+						return true;
+					}
+					return false;
+				}
+				return false;
+			});
+		});
+
+		FilteredList<ScientificWork> filteredData11 = new FilteredList<>(filteredData10, p -> true);
+		filterDate.valueProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData11.setPredicate((sw) -> {
+				if (newValue == null) {
+					return true;
+				}
+				if (sw.getPaperworkResearch().getPaperwork().getPresentationTime()
+						.startsWith(DateUtil.format(filterDate.getValue()))) {
+					return true;
+				}
+				return false;
+			});
+			if (filteredData11.isEmpty()) {
+				alert("No Scientific Work created on selected date", "Please, select another date.",
+						AlertType.INFORMATION);
+			}
+		});
+
+		SortedList<ScientificWork> sortedData = new SortedList<>(filteredData11);
+		sortedData.comparatorProperty().bind(applicationsTableView.comparatorProperty());
+		applicationsTableView.setItems(sortedData);
 	}
 
 	private void setUpFiltersBox() {
@@ -870,11 +1055,7 @@ public class ScientificWorkTabController extends GUIUtils {
 		filterConference.setPromptText("Please select");
 		filterField.getItems().setAll(FXCollections.observableArrayList(FieldDAO.getInstance().getAllFields()));
 		filterField.setPromptText("Please select");
-		List<String> opinions = new ArrayList<String>();
-		for (Opinion opinion : Opinion.values()) {
-			opinions.add(opinion.getOpinion());
-		}
-		filterStatus.getItems().setAll(FXCollections.observableArrayList(opinions));
+		filterStatus.getItems().setAll(FXCollections.observableArrayList(Opinion.values()));
 		filterStatus.setPromptText("Please select");
 		filterPresentation.getItems().setAll(FXCollections.observableArrayList(Presentation.values()));
 		filterPresentation.setPromptText("Please select");

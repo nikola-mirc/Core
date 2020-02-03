@@ -31,7 +31,7 @@ public class EmailDAO {
 
 	private EmailDAO() {
 		table = new TableUtility(new DatabaseTable("email_helper", "email_id",
-				new String[] { "time", "message", "conference_id", "sent" }));
+				new String[] { "time", "message", "conference_id", "sent", "invite" }));
 		getHelp = (ResultSet rs) -> {
 			EmailHelper email = new EmailHelper();
 			try {
@@ -40,6 +40,7 @@ public class EmailDAO {
 				email.setFile(null);
 				email.setConferenceID(rs.getInt(table.getTable().getColumnName(3)));
 				email.setCount(rs.getInt(table.getTable().getColumnName(4)));
+				email.setOrdinal(rs.getInt(table.getTable().getColumnName(5)));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -56,20 +57,20 @@ public class EmailDAO {
 		return instance;
 	}
 
-	public EmailHelper create(int sent) {
+	public EmailHelper create(int invite, int sent) {
 		return table.create(new String[] { DateUtil.format(LocalDateTime.now()), null },
-				new int[] { ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), sent }, new long[] {},
-				getHelp);
+				new int[] { ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), sent, invite },
+				new long[] {}, getHelp);
 	}
 
-	public EmailHelper create(int sent, String text) {
+	public EmailHelper create(int invite, int sent, String text) {
 		try {
 			String path = createFile(text, sent).getAbsolutePath();
 			return table.create(path, 2, new String[] { DateUtil.format(LocalDateTime.now()), path },
-					new int[] { ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), sent },
+					new int[] { ConferenceDAO.getInstance().getCurrentConference().getConferenceID(), sent, invite },
 					new long[] {}, getHelp);
 		} catch (IOException e) {
-			return create(sent);
+			return create(invite, sent);
 		}
 	}
 

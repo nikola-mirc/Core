@@ -23,9 +23,11 @@ import alfatec.model.conference.RegistrationFee;
 import alfatec.model.conference.SpecialIssue;
 import alfatec.model.person.Author;
 import alfatec.model.user.LoginData;
+import alfatec.view.factory.ResearchFactory;
 import alfatec.view.utils.GUIUtils;
 import alfatec.view.utils.Utility;
 import alfatec.view.wrappers.ConferenceDateSettings;
+import alfatec.view.wrappers.ScientificWork;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -56,6 +58,12 @@ public class ConferenceTabController extends GUIUtils {
 
 	@FXML
 	private TableView<Collection> collectionTableView, thisConfCollectionTableView;
+
+	@FXML
+	private TableView<ScientificWork> thisConfResearchTableView;
+
+	@FXML
+	private TableColumn<ScientificWork, String> thisResearch;
 
 	@FXML
 	private TableColumn<Collection, String> titleColumn, confColumn, thisConfTitleCol;
@@ -98,7 +106,7 @@ public class ConferenceTabController extends GUIUtils {
 	private DatePicker firstCallDatePicker, secondCallDatePicker, thirdCallDatePicker;
 
 	@FXML
-	private TextArea confNotesTextArea, addNote;
+	private TextArea confNotesTextArea, addNote, statsTextArea;
 
 	private BooleanProperty conferenceActive = new SimpleBooleanProperty(false);
 	private BooleanProperty noActiveConference = new SimpleBooleanProperty(true);
@@ -212,6 +220,8 @@ public class ConferenceTabController extends GUIUtils {
 		confNotesTextArea.setEditable(false);
 		confNotesTextArea.setWrapText(true);
 		addNote.setWrapText(true);
+		statsTextArea.setEditable(false);
+		statsTextArea.setWrapText(true);
 	}
 
 	private void bindBoxes() {
@@ -314,8 +324,9 @@ public class ConferenceTabController extends GUIUtils {
 
 	private void populateCollectionTable() {
 		Utility.setUpStringCell(collectionTableView);
-		titleColumn.setCellValueFactory(cellData -> ResearchDAO.getInstance()
-				.getResearch(cellData.getValue().getResearchIDProperty().get()).getResearchTitleProperty());
+		titleColumn.setCellValueFactory(cellData -> ResearchFactory.getInstance()
+				.workToString(ResearchDAO.getInstance().getResearch(CollectionDAO.getInstance()
+						.get(cellData.getValue().getCollectionIDProperty().get()).getResearchIDProperty().get())));
 		confColumn.setCellValueFactory(cellData -> ConferenceDAO.getInstance()
 				.findBy(cellData.getValue().getFromConferenceIDProperty().get()).getConferenceTitleProperty());
 		collectionTableView.setItems(collections);
@@ -323,10 +334,9 @@ public class ConferenceTabController extends GUIUtils {
 
 	private void populateSpecialTable() {
 		Utility.setUpStringCell(specialTableView);
-		titleSpecial.setCellValueFactory(cellData -> ResearchDAO
-				.getInstance().getResearch(CollectionDAO.getInstance()
-						.get(cellData.getValue().getCollectionIDProperty().get()).getResearchIDProperty().get())
-				.getResearchTitleProperty());
+		titleSpecial.setCellValueFactory(cellData -> ResearchFactory.getInstance()
+				.workToString(ResearchDAO.getInstance().getResearch(CollectionDAO.getInstance()
+						.get(cellData.getValue().getCollectionIDProperty().get()).getResearchIDProperty().get())));
 		confSpecial.setCellValueFactory(cellData -> ConferenceDAO
 				.getInstance().findBy(CollectionDAO.getInstance()
 						.get(cellData.getValue().getCollectionIDProperty().get()).getFromConferenceIDProperty().get())
@@ -334,18 +344,25 @@ public class ConferenceTabController extends GUIUtils {
 		specialTableView.setItems(specials);
 	}
 
+	private void populateThisResearchTable(ObservableList<ScientificWork> list) {
+		Utility.setUpStringCell(thisConfResearchTableView);
+		thisResearch.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().toString()));
+		thisConfResearchTableView.setItems(list);
+		thisConfResearchTableView.refresh();
+	}
+
 	private void populateThisCollectionTable(ObservableList<Collection> list) {
-		thisConfTitleCol.setCellValueFactory(cellData -> ResearchDAO.getInstance()
-				.getResearch(cellData.getValue().getResearchIDProperty().get()).getResearchTitleProperty());
+		thisConfTitleCol.setCellValueFactory(cellData -> ResearchFactory.getInstance()
+				.workToString(ResearchDAO.getInstance().getResearch(CollectionDAO.getInstance()
+						.get(cellData.getValue().getCollectionIDProperty().get()).getResearchIDProperty().get())));
 		thisConfCollectionTableView.setItems(list);
 		thisConfCollectionTableView.refresh();
 	}
 
 	private void populateThisSpecialTable(ObservableList<SpecialIssue> list) {
-		thisConfCollection.setCellValueFactory(cellData -> ResearchDAO
-				.getInstance().getResearch(CollectionDAO.getInstance()
-						.get(cellData.getValue().getCollectionIDProperty().get()).getResearchIDProperty().get())
-				.getResearchTitleProperty());
+		thisConfCollection.setCellValueFactory(cellData -> ResearchFactory.getInstance()
+				.workToString(ResearchDAO.getInstance().getResearch(CollectionDAO.getInstance()
+						.get(cellData.getValue().getCollectionIDProperty().get()).getResearchIDProperty().get())));
 		thisConfSpecialTableView.setItems(list);
 		thisConfSpecialTableView.refresh();
 	}
@@ -365,7 +382,7 @@ public class ConferenceTabController extends GUIUtils {
 		activeConfLabel.setText(cds.getConference().getConferenceTitle());
 		confFieldLabel.setText(FieldDAO.getInstance().getField(cds.getConference().getFieldID()) == null ? null
 				: FieldDAO.getInstance().getField(cds.getConference().getFieldID()).getFieldName());
-		confStartDate.setText(cds.getDates().getStartTimestamp());
+		confStartDate.setText(cds.getDates().getStartDatum());
 		confEndDate.setText(cds.getDates().getEndDateString());
 		firstCallLabel.setText(cds.getDates().getFirstCallString());
 		secondCallLabel.setText(cds.getDates().getSecondCallString());
@@ -377,6 +394,8 @@ public class ConferenceTabController extends GUIUtils {
 		populateThisSpecialTable(
 				SpecialIssueDAO.getInstance().getFromConference(cds.getConference().getConferenceID()));
 		populateRegistrationFeeTable(cds);
+		populateThisResearchTable(ResearchFactory.getInstance()
+				.getAllForConference(ConferenceDAO.getInstance().findBy(cds.getConference().getConferenceID())));
 	}
 
 	public void refreshSpecialTab() {

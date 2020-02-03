@@ -221,14 +221,4 @@ public class AuthorDAO {
 		author.setValidateEmail(valid);
 	}
 
-	public ObservableList<Author> getAuthorsForInstitutionType(Institution institution) {
-		return table.findWhere(new String[] { table.getTable().getColumnName(1) }, new String[] { institution.name() },
-				getAuthor);
-	}
-
-//	public ObservableList<Author> getAuthorsForInstitutionName(String startTyping) {
-//		String[] fulltext = { table.getTable().getColumnName(5) };
-//		return table.searchInBooleanMode(startTyping, fulltext, getAuthor);
-//	}
-
 }

@@ -280,14 +280,8 @@
 												<Label id="label" fx:id="confFieldLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="250.0" text="n/a" />
 											</children>
 										</HBox>
-										<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="50.0" text="Fees:" />
-										<TableView id="tableViewMini" fx:id="registrationTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0">
-											<columns>
-												<TableColumn fx:id="feePresetColumn" prefWidth="106.40002822875977" text="Preset" />
-												<TableColumn fx:id="feeCurrencyColumn" prefWidth="64.79998779296875" text="Currency" />
-												<TableColumn fx:id="feeAmountColumn" prefWidth="71.19999694824219" text="Amount" />
-											</columns>
-										</TableView>
+										<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" text="Notes:" />
+										<TextArea fx:id="confNotesTextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="250.0" />
 									</children>
 									<HBox.margin>
 										<Insets />
@@ -354,8 +348,8 @@
 								</VBox>
 								<VBox id="popupVboxRoundLight" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="275.0" spacing="5.0">
 									<children>
-										<Label id="label" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="230.0" text="Notes:" />
-										<TextArea fx:id="confNotesTextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="230.0" />
+										<Label id="label" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="230.0" text="Stats:" />
+										<TextArea fx:id="statsTextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="230.0" />
 									</children>
 								</VBox>
 							</children>
@@ -364,39 +358,72 @@
 							<children>
 								<VBox id="popupVboxRound" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0">
 									<children>
-										<JFXTabPane id="tabPaneMini" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="300.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="20.0" tabMinHeight="20.0" tabMinWidth="90.0">
-											<tabs>
-												<Tab closable="false" text="Collection">
-													<content>
-														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-															<children>
-																<TableView id="tableView" fx:id="thisConfCollectionTableView" layoutX="7.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0" prefWidth="290.0">
-																	<columns>
-																		<TableColumn fx:id="thisConfTitleCol" editable="false" prefWidth="288.0000733375549" text="Research" />
-																	</columns>
-																</TableView>
-															</children>
-														</AnchorPane>
-													</content>
-												</Tab>
-												<Tab closable="false" text="Special">
-													<content>
-														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-															<children>
-																<TableView id="tableView" fx:id="thisConfSpecialTableView" layoutX="7.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0" prefWidth="290.0">
-																	<columns>
-																		<TableColumn fx:id="thisConfCollection" editable="false" prefWidth="288.0000733375549" text="Research" />
-																	</columns>
-																</TableView>
-															</children>
-														</AnchorPane>
-													</content>
-												</Tab>
-											</tabs>
-											<VBox.margin>
-												<Insets top="10.0" />
-											</VBox.margin>
-										</JFXTabPane>
+										<HBox>
+											<children>
+												<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="310.0">
+													<children>
+														<JFXTabPane id="tabPaneMini" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="300.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="20.0" tabMinHeight="20.0" tabMinWidth="90.0">
+															<tabs>
+																<Tab closable="false" text="Research">
+																	<content>
+																		<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																			<children>
+																				<TableView id="tableView" fx:id="thisConfResearchTableView" layoutX="7.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0" prefWidth="290.0">
+																					<columns>
+																						<TableColumn fx:id="thisResearch" editable="false" prefWidth="288.0000733375549" text="Research" />
+																					</columns>
+																				</TableView>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</Tab>
+																<Tab closable="false" text="Collection">
+																	<content>
+																		<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																			<children>
+																				<TableView id="tableView" fx:id="thisConfCollectionTableView" layoutX="7.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0" prefWidth="290.0">
+																					<columns>
+																						<TableColumn fx:id="thisConfTitleCol" editable="false" prefWidth="288.0000733375549" text="Research" />
+																					</columns>
+																				</TableView>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</Tab>
+																<Tab closable="false" text="Special">
+																	<content>
+																		<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+																			<children>
+																				<TableView id="tableView" fx:id="thisConfSpecialTableView" layoutX="7.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0" prefWidth="290.0">
+																					<columns>
+																						<TableColumn fx:id="thisConfCollection" editable="false" prefWidth="288.0000733375549" text="Research" />
+																					</columns>
+																				</TableView>
+																			</children>
+																		</AnchorPane>
+																	</content>
+																</Tab>
+															</tabs>
+															<VBox.margin>
+																<Insets top="10.0" />
+															</VBox.margin>
+														</JFXTabPane>
+													</children>
+												</VBox>
+												<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="260.0" spacing="5.0">
+													<children>
+														<Label id="labelInverse" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="37.0" prefWidth="260.0" text="Fees:" />
+														<TableView id="tableView" fx:id="registrationTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="173.0" prefWidth="260.0">
+															<columns>
+																<TableColumn fx:id="feePresetColumn" prefWidth="106.40002822875977" text="Preset" />
+																<TableColumn fx:id="feeCurrencyColumn" prefWidth="74.79998779296875" text="Currency" />
+																<TableColumn fx:id="feeAmountColumn" prefWidth="71.19999694824219" text="Amount" />
+															</columns>
+														</TableView>
+													</children>
+												</VBox>
+											</children>
+										</HBox>
 									</children>
 								</VBox>
 								<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="230.0" spacing="30.0">

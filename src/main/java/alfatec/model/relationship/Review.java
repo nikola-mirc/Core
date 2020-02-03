@@ -38,7 +38,7 @@ public class Review {
 	}
 
 	public String getOpinion() {
-		return opinion.get().name();
+		return opinion != null && opinion.get() != null ? opinion.get().name() : null;
 	}
 
 	public Opinion getOpinionName() {
@@ -113,4 +113,8 @@ public class Review {
 		this.authorInformed.set(BooleanUtil.parse(isInformed));
 	}
 
+	@Override
+	public String toString() {
+		return getOpinionProperty() != null ? getOpinion() : null;
+	}
 }

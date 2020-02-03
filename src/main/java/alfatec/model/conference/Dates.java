@@ -106,6 +106,10 @@ public class Dates {
 		return DateUtil.format(startDate.get());
 	}
 
+	public String getStartDatum() {
+		return DateUtil.format(startDate.get().toLocalDate());
+	}
+
 	public LocalDate getThirdCallDate() {
 		return thirdCallDate.get();
 	}

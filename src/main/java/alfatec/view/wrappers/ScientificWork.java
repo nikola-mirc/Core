@@ -104,4 +104,10 @@ public class ScientificWork {
 	public int hashCode() {
 		return Objects.hash(research.get().getResearch().getResearchID());
 	}
+
+	@Override
+	public String toString() {
+		return getResearchProperty().get().getResearch().getResearchTitleProperty().concat(" BY ")
+				.concat(getAuthorsStringProperty()).get();
+	}
 }

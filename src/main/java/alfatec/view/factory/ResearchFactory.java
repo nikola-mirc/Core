@@ -5,12 +5,15 @@ import alfatec.dao.person.AuthorDAO;
 import alfatec.dao.relationship.AuthorResearchDAO;
 import alfatec.dao.research.PaperworkDAO;
 import alfatec.dao.research.ResearchDAO;
-import alfatec.model.enums.Institution;
+import alfatec.model.conference.Conference;
 import alfatec.model.person.Author;
 import alfatec.model.relationship.AuthorResearch;
+import alfatec.model.research.Paperwork;
 import alfatec.model.research.Research;
 import alfatec.view.wrappers.PaperworkResearch;
 import alfatec.view.wrappers.ScientificWork;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -84,64 +87,18 @@ public class ResearchFactory {
 		return Utils.removeDuplicates(united);
 	}
 
-	public ObservableList<ScientificWork> searchAuthorsByInstitutionType(Institution institution) {
-		ObservableList<ScientificWork> united = FXCollections.observableArrayList();
-		for (Author author : AuthorDAO.getInstance().getAuthorsForInstitutionType(institution)) {
-			ObservableList<Research> researches = getResearchesForAuthor(author);
-			for (Research research : researches) {
-				ObservableList<Author> allAuthorsOfResearch = getAuthorsForResearch(research);
-				united.add(new ScientificWork(allAuthorsOfResearch, new PaperworkResearch(
-						PaperworkDAO.getInstance().getPaperworkForResearch(research.getResearchID()), research)));
-			}
-		}
-		return united;
+	public ObservableList<ScientificWork> getAllForConference(Conference conference) {
+		ObservableList<ScientificWork> researches = getAllData();
+		researches.removeIf(
+				work -> work.getPaperworkResearch().getPaperwork().getConferenceID() != conference.getConferenceID());
+		return researches;
 	}
 
-	public ObservableList<ScientificWork> searchBothAuthorsAndResearchesByInstitutionType(Institution institution) {
-		ObservableList<ScientificWork> united = FXCollections.observableArrayList();
-		united.addAll(searchAuthorsByInstitutionType(institution));
-		// united.addAll(searchResearches(startTyping));
-		return Utils.removeDuplicates(united);
-	}
-
-//	public ObservableList<ScientificWork> searchAuthorsByInstitutionName(String startTyping) {
-//		ObservableList<ScientificWork> united = FXCollections.observableArrayList();
-//		for (Author author : AuthorDAO.getInstance().getAuthorsForInstitutionName(startTyping)) {
-//			ObservableList<Research> researches = getResearchesForAuthor(author);
-//			for (Research research : researches) {
-//				ObservableList<Author> allAuthorsOfResearch = getAuthorsForResearch(research);
-//				united.add(new ScientificWork(allAuthorsOfResearch, new PaperworkResearch(
-//						PaperworkDAO.getInstance().getPaperworkForResearch(research.getResearchID()), research)));
-//			}
-//		}
-//		return united;
-//	}
-//
-//	public ObservableList<ScientificWork> searchBothAuthorsAndResearchesByInstitutionName(String startTyping) {
-//		ObservableList<ScientificWork> united = FXCollections.observableArrayList();
-//		united.addAll(searchAuthorsByInstitutionName(startTyping));
-//		// united.addAll(searchResearches(startTyping));
-//		return Utils.removeDuplicates(united);
-//	}
-
-	public ObservableList<ScientificWork> searchAuthorsByCountry(String country) {
-		ObservableList<ScientificWork> united = FXCollections.observableArrayList();
-		for (Author author : AuthorDAO.getInstance().getAuthorsFrom(country)) {
-			ObservableList<Research> researches = getResearchesForAuthor(author);
-			for (Research research : researches) {
-				ObservableList<Author> allAuthorsOfResearch = getAuthorsForResearch(research);
-				united.add(new ScientificWork(allAuthorsOfResearch, new PaperworkResearch(
-						PaperworkDAO.getInstance().getPaperworkForResearch(research.getResearchID()), research)));
-			}
-		}
-		return united;
-	}
-
-	public ObservableList<ScientificWork> searchBothAuthorsAndResearchesByCountry(String country) {
-		ObservableList<ScientificWork> united = FXCollections.observableArrayList();
-		united.addAll(searchAuthorsByCountry(country));
-		// united.addAll(searchResearches(startTyping));
-		return Utils.removeDuplicates(united);
+	public ObservableValue<String> workToString(Research research) {
+		Paperwork paperwork = PaperworkDAO.getInstance().getPaperworkForResearch(research.getResearchID());
+		return new ReadOnlyStringWrapper(
+				new ScientificWork(getAuthorsForResearch(research), new PaperworkResearch(paperwork, research))
+						.toString());
 	}
 
 }

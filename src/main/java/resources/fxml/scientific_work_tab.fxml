@@ -45,6 +45,7 @@
 						<JFXCheckBox id="radio" fx:id="filterSentForReview" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="Sent for review" />
 						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="By reviewer" />
 						<TextField fx:id="filterReviewer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" />
+						<JFXButton id="miniButtonTransparent" fx:id="searchFilterReviewerButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#searchFilterReviewer" prefHeight="27.0" prefWidth="70.0" text="Search" />
 						<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="By review status" />
 						<ComboBox id="comboBoxText" fx:id="filterStatus" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
 						<JFXCheckBox id="radio" fx:id="filterSubmittedWork" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="Submitted work" />

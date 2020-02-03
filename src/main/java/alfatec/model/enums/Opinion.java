@@ -13,6 +13,7 @@ import java.util.Map;
  * @author jelena
  *
  */
+
 public enum Opinion {
 	ACCEPTED("accepted"), SMALL("small review"), GREAT("great review"), REJECTED("rejected");
 
@@ -41,5 +42,10 @@ public enum Opinion {
 		if (name != null && name.equalsIgnoreCase("great review"))
 			name = "great";
 		return name == null ? null : indexMap.get(name.toUpperCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public String toString() {
+		return getOpinion();
 	}
 }
