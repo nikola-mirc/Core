@@ -27,7 +27,6 @@ public class GroupCallController extends EmailGUI {
 	public void initialize() {
 		recievers = new ArrayList<String>();
 		setSent(false);
-		instructions();
 		try {
 			setUp();
 			bccid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceBcc());
@@ -45,7 +44,7 @@ public class GroupCallController extends EmailGUI {
 		getLoopia().setConferenceBCC(bccid.getText());
 		try {
 			getLoopia().sendEmail(getEmailid().getText(), getPassword().getText(), Utils.mergeList(recievers),
-					getSubject().getText(), getMessage().getText(), true, getSelectedFiles());
+					getSubject().getText(), getHTML().getHtmlText(), true, getSelectedFiles());
 			Logging.getInstance().change("email", "Send group e-mail to\n\t" + bccid.getText());
 			alert("Message sent", "Message was sent to " + bccid.getText() + ".", AlertType.INFORMATION);
 			setSent(true);

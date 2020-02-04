@@ -23,7 +23,6 @@ public class SendEmailController extends EmailGUI {
 			setUp();
 			setListener(recieverid);
 			setSent(false);
-			instructions();
 		} catch (Exception e) {
 			alert("No active conference", "Send email to selected author via loopia server with your own credentials.",
 					AlertType.ERROR);
@@ -35,7 +34,7 @@ public class SendEmailController extends EmailGUI {
 	public void handleSendButton() {
 		try {
 			getLoopia().sendEmail(getEmailid().getText(), getPassword().getText(), recieverid.getText(),
-					getSubject().getText(), getMessage().getText(), false, getSelectedFiles());
+					getSubject().getText(), getHTML().getHtmlText(), false, getSelectedFiles());
 			alert("Message sent", "Message was sent to " + recieverid.getText() + ".", AlertType.INFORMATION);
 			Logging.getInstance().change("email", "Send e-mail to\n\t" + recieverid.getText());
 			setSent(true);

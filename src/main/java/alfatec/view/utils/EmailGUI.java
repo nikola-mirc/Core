@@ -6,20 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 
 import alfatec.dao.conference.ConferenceDAO;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import util.LoopiaEmail;
@@ -33,13 +25,7 @@ public abstract class EmailGUI extends GUIUtils {
 	private JFXPasswordField password;
 
 	@FXML
-	private JFXTextArea message;
-
-	@FXML
-	private MenuButton menu;
-
-	@FXML
-	private MenuItem item;
+	private HTMLEditor html;
 
 	private Stage display;
 	private List<File> selectedFiles;
@@ -79,15 +65,6 @@ public abstract class EmailGUI extends GUIUtils {
 		display.close();
 	}
 
-	public void instructions() {
-		ImageView html_code = new ImageView(
-				new Image(getClass().getResourceAsStream("/resources/images/html_code.png")));
-		ImageView html_preview = new ImageView(
-				new Image(getClass().getResourceAsStream("/resources/images/html_preview.png")));
-		item.setGraphic(createPopupContent(html_code, html_preview));
-		menu.getItems().setAll(item);
-	}
-
 	public void setDisplayStage(Stage stage) {
 		this.display = stage;
 	}
@@ -121,8 +98,8 @@ public abstract class EmailGUI extends GUIUtils {
 		return subject;
 	}
 
-	public JFXTextArea getMessage() {
-		return message;
+	public HTMLEditor getHTML() {
+		return html;
 	}
 
 	public boolean isSent() {
@@ -142,7 +119,7 @@ public abstract class EmailGUI extends GUIUtils {
 		emailid.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail());
 		password.setText(ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword());
 		loopia.setConferenceBCC(ConferenceDAO.getInstance().getCurrentConference().getConferenceBcc());
-		setListeners(new JFXTextField[] { emailid, subject }, password, message);
+		setListeners(new JFXTextField[] { emailid, subject }, password);
 	}
 
 	public void setListener(JFXTextField field) {
@@ -152,41 +129,16 @@ public abstract class EmailGUI extends GUIUtils {
 		});
 	}
 
-	private void setListeners(JFXTextField[] textArray, JFXPasswordField pass, JFXTextArea area) {
+	private void setListeners(JFXTextField[] textArray, JFXPasswordField pass) {
 		for (JFXTextField text : textArray)
 			setListener(text);
 		pass.setOnKeyTyped(event -> {
 			if (event.getCharacter().equals(KeyCode.ESCAPE.getChar()))
 				display.close();
 		});
-		area.setOnKeyTyped(event -> {
-			if (event.getCharacter().equals(KeyCode.ESCAPE.getChar()))
-				display.close();
-		});
 	}
 
-	private VBox createPopupContent(final ImageView imageView1, final ImageView imageView2) {
-		final Label label1 = createLabel(imageView1.getImage().getWidth(),
-				"The email client uses HTML markups to format content of an email. For example, code");
-		final Label label2 = createLabel(imageView1.getImage().getWidth(), "will produce");
-		final Label label3 = createLabel(imageView1.getImage().getWidth(),
-				"So, use tag <i> for italic, <b> for bold and <br> for breaking a line (simple enter will not get a job done).");
-		final VBox box = new VBox(5);
-		box.setAlignment(Pos.CENTER);
-		box.getChildren().setAll(label1, imageView1, label2, imageView2, label3);
-		return box;
-	}
-
-	private final Label createLabel(double width, String text) {
-		final Label htmlMarkups = new Label();
-		htmlMarkups.setWrapText(true);
-		htmlMarkups.setTextAlignment(TextAlignment.JUSTIFY);
-		htmlMarkups.setMaxWidth(width);
-		htmlMarkups.setText(text);
-		return htmlMarkups;
-	}
-
-	public void setMessage(String message) {
-		this.message.setText(message);
+	public void setMessage(String htmlMessage) {
+		this.html.setHtmlText(htmlMessage);
 	}
 }

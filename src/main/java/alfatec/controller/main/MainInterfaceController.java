@@ -265,7 +265,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				boolean sentInvalid = firstCallInvalidHelper();
 				if ((sentGroup || sentInvalid) && groupCall.isSent())
 					EmailDAO.getInstance().create(1, groupEmail.getNumberOfFirstCalls(),
-							groupCall.getMessage().getText());
+							groupCall.getHTML().getHtmlText());
 				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses", "First call for paper is sent to all authors in the database.",
 							AlertType.INFORMATION);
@@ -290,7 +290,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				boolean sentInvalid = secondCallInvalidHelper();
 				if ((sentGroup || sentInvalid) && groupCall.isSent())
 					EmailDAO.getInstance().create(2, groupEmail.getNumberOfSecondCalls(),
-							groupCall.getMessage().getText());
+							groupCall.getHTML().getHtmlText());
 				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses",
 							"Second call for paper is sent to all authors in the database.", AlertType.INFORMATION);
@@ -315,7 +315,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 				boolean sentInvalid = thirdCallInvalidHelper();
 				if ((sentGroup || sentInvalid) && groupCall.isSent())
 					EmailDAO.getInstance().create(3, groupEmail.getNumberOfThirdCalls(),
-							groupCall.getMessage().getText());
+							groupCall.getHTML().getHtmlText());
 				else if (!sentGroup && !sentInvalid)
 					alert("No more available addresses", "Third call for paper is sent to all authors in the database.",
 							AlertType.INFORMATION);
@@ -692,7 +692,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 						groupCall.getLoopia().sendEmail(
 								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
 								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
-								groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
+								groupCall.getSubject().getText(), groupCall.getHTML().getHtmlText(), false,
 								groupCall.getSelectedFiles());
 						ConferenceCallDAO.getInstance()
 								.updateFirstCallSent(
@@ -731,7 +731,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 						groupCall.getLoopia().sendEmail(
 								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
 								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
-								groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
+								groupCall.getSubject().getText(), groupCall.getHTML().getHtmlText(), false,
 								groupCall.getSelectedFiles());
 						ConferenceCallDAO.getInstance()
 								.updateSecondCallSent(
@@ -770,7 +770,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 						groupCall.getLoopia().sendEmail(
 								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmail(),
 								ConferenceDAO.getInstance().getCurrentConference().getConferenceEmailPassword(), email,
-								groupCall.getSubject().getText(), groupCall.getMessage().getText(), false,
+								groupCall.getSubject().getText(), groupCall.getHTML().getHtmlText(), false,
 								groupCall.getSelectedFiles());
 						ConferenceCallDAO.getInstance()
 								.updateThirdCallSent(
