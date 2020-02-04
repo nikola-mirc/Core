@@ -13,7 +13,7 @@
 	<children>
 		<JFXTextField fx:id="emailid" labelFloat="true" layoutX="21.0" layoutY="32.0" prefHeight="34.0" prefWidth="1056.0" promptText="Email ID" />
 		<JFXPasswordField fx:id="password" labelFloat="true" layoutX="21.0" layoutY="97.0" prefHeight="34.0" prefWidth="1056.0" promptText="Password" />
-		<JFXTextField fx:id="bccid" labelFloat="true" layoutX="21.0" layoutY="162.0" prefHeight="34.0" prefWidth="1056.0" promptText="Recipient ID" />
+		<JFXTextField fx:id="bccid" labelFloat="true" layoutX="21.0" layoutY="162.0" prefHeight="34.0" prefWidth="1056.0" promptText="BCC ID" />
 		<JFXTextField fx:id="subject" labelFloat="true" layoutX="21.0" layoutY="227.0" prefHeight="34.0" prefWidth="1056.0" promptText="SUBJECT" />
 		<Text fill="#b2b2b2" layoutX="21.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Message" wrappingWidth="102.6708984375">
 			<font>
