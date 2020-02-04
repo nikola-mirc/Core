@@ -76,7 +76,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import util.DateUtil;
 
 public class ScientificWorkTabController extends GUIUtils {
@@ -237,7 +236,7 @@ public class ScientificWorkTabController extends GUIUtils {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
-		File file = fileChooser.showOpenDialog(((Stage) (((Button) event.getSource()).getScene().getWindow())));
+		File file = fileChooser.showOpenDialog(((((Button) event.getSource()).getScene().getWindow())));
 		if (file != null && file.length() < getBlobLength()) {
 			filePath = file.getAbsolutePath();
 			return;

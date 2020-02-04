@@ -22,6 +22,7 @@ public class GroupCallController extends EmailGUI {
 
 	private List<String> recievers;
 
+	@Override
 	@FXML
 	public void initialize() {
 		recievers = new ArrayList<String>();
@@ -38,6 +39,7 @@ public class GroupCallController extends EmailGUI {
 		}
 	}
 
+	@Override
 	@FXML
 	public void handleSendButton() {
 		getLoopia().setConferenceBCC(bccid.getText());

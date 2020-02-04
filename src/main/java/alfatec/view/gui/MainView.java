@@ -184,4 +184,24 @@ public class MainView {
 		}
 		return controller;
 	}
+
+	public GroupCallController loadEmailWindow(GroupCallController controller, List<String> list, String message) {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(
+					getClass().getClassLoader().getResource("resources/fxml/Group_call.fxml"));
+			Parent root = (Parent) fxmlLoader.load();
+			Stage stage = new Stage();
+			stage.initStyle(StageStyle.UNDECORATED);
+			stage.setScene(new Scene(root));
+			controller = fxmlLoader.getController();
+			controller.setRecievers(list);
+			controller.setMessage(message);
+			controller.setDisplayStage(stage);
+			stage.showAndWait();
+		} catch (Exception e) {
+			System.out.println("Error sending group email.");
+			e.printStackTrace();
+		}
+		return controller;
+	}
 }

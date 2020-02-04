@@ -16,6 +16,7 @@ public class SendEmailController extends EmailGUI {
 	@FXML
 	private JFXTextField recieverid;
 
+	@Override
 	@FXML
 	public void initialize() {
 		try {
@@ -29,6 +30,7 @@ public class SendEmailController extends EmailGUI {
 		}
 	}
 
+	@Override
 	@FXML
 	public void handleSendButton() {
 		try {

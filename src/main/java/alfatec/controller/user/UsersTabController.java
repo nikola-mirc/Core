@@ -247,6 +247,7 @@ public class UsersTabController extends GUIUtils implements Initializable {
 				cellData -> new ReadOnlyStringWrapper(DateUtil.format(cellData.getValue().getTimeProperty().get())));
 		Timeline animation = new Timeline();
 		animation.getKeyFrames().add(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+			@Override
 			public void handle(ActionEvent event) {
 				auditTableView.setItems(audit);
 			}
@@ -393,7 +394,10 @@ public class UsersTabController extends GUIUtils implements Initializable {
 	}
 
 	private void setContact() {
-		if (!contactTextField.getText().equalsIgnoreCase(userData.getUser().getContactTelephone()))
+		if (userData.getUser().getContactTelephone() == null && contactTextField.getText() == null)
+			return;
+		if ((userData.getUser().getContactTelephone() == null && contactTextField.getText() != null)
+				|| !contactTextField.getText().equalsIgnoreCase(userData.getUser().getContactTelephone()))
 			UserDAO.getInstance().updateUserTelephone(userData.getUser(), contactTextField.getText());
 	}
 

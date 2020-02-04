@@ -58,7 +58,9 @@ public abstract class EmailGUI extends GUIUtils {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All files", "*.*");
 		fileChooser.getExtensionFilters().add(extFilter);
-		selectedFiles.addAll(fileChooser.showOpenMultipleDialog(display));
+		List<File> files = fileChooser.showOpenMultipleDialog(display);
+		if (files != null)
+			selectedFiles.addAll(files);
 		if (selectedFiles != null && selectedFiles.size() > 0) {
 			HashSet<File> set = new HashSet<File>(selectedFiles);
 			set.addAll(selectedFiles);
@@ -182,5 +184,9 @@ public abstract class EmailGUI extends GUIUtils {
 		htmlMarkups.setMaxWidth(width);
 		htmlMarkups.setText(text);
 		return htmlMarkups;
+	}
+
+	public void setMessage(String message) {
+		this.message.setText(message);
 	}
 }

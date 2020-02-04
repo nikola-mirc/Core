@@ -128,43 +128,15 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 	 */
 
 	@FXML
-	private ComboBox<String> filterInstitution;
-
-	@FXML
-	private ComboBox<String> filterInstitutionName;
+	private ComboBox<String> filterInstitution, filterInstitutionName, filterConference, filterField,
+			filterReviewStatus;
 
 	@FXML
 	private PrefixSelectionComboBox<String> filterCountry;
 
 	@FXML
-	private ComboBox<String> filterConference;
-
-	@FXML
-	private ComboBox<String> filterField;
-
-	@FXML
-	private JFXCheckBox filterCollSpec;
-
-	@FXML
-	private JFXCheckBox filterSentForReview;
-
-	@FXML
-	private ComboBox<String> filterReviewStatus;
-
-	@FXML
-	private JFXCheckBox filterSubmittedWork;
-
-	@FXML
-	private JFXCheckBox filterFirstInv;
-
-	@FXML
-	private JFXCheckBox filterSecondInv;
-
-	@FXML
-	private JFXCheckBox filterThirdInv;
-
-	@FXML
-	private JFXCheckBox filterInterested;
+	private JFXCheckBox filterCollSpec, filterSentForReview, filterSubmittedWork, filterFirstInv, filterSecondInv,
+			filterThirdInv, filterInterested;
 
 	private ChangePasswordController changePasswordController;
 	private SendEmailController send;
@@ -699,7 +671,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private boolean firstCallGroupHelper() {
 		if (groupEmail.getValidFirst() != null && !groupEmail.getValidFirst().isEmpty()) {
-			groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getValidFirst());
+			prepareValidGroupCall(groupEmail.getValidFirst(), 1);
 			if (groupCall.isSent()) {
 				for (String email : groupEmail.getValidFirst())
 					ConferenceCallDAO.getInstance().updateFirstCallSent(ConferenceCallDAO.getInstance()
@@ -713,8 +685,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private boolean firstCallInvalidHelper() {
 		if (groupEmail.getInvalidFirst() != null && !groupEmail.getInvalidFirst().isEmpty()) {
-			if (groupCall == null)
-				groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getInvalidFirst());
+			prepareInvalidGroupCall(groupEmail.getInvalidFirst(), 1);
 			if (groupCall.isSent()) {
 				for (String email : groupEmail.getInvalidFirst())
 					try {
@@ -739,7 +710,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private boolean secondCallGroupHelper() {
 		if (groupEmail.getValidSecond() != null && !groupEmail.getValidSecond().isEmpty()) {
-			groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getValidSecond());
+			prepareValidGroupCall(groupEmail.getValidSecond(), 2);
 			if (groupCall.isSent()) {
 				for (String email : groupEmail.getValidSecond())
 					ConferenceCallDAO.getInstance().updateSecondCallSent(ConferenceCallDAO.getInstance()
@@ -753,8 +724,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private boolean secondCallInvalidHelper() {
 		if (groupEmail.getInvalidSecond() != null && !groupEmail.getInvalidSecond().isEmpty()) {
-			if (groupCall == null)
-				groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getInvalidSecond());
+			prepareInvalidGroupCall(groupEmail.getInvalidSecond(), 2);
 			if (groupCall.isSent()) {
 				for (String email : groupEmail.getInvalidSecond())
 					try {
@@ -779,7 +749,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private boolean thirdCallGroupHelper() {
 		if (groupEmail.getValidThird() != null && !groupEmail.getValidThird().isEmpty()) {
-			groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getValidThird());
+			prepareValidGroupCall(groupEmail.getValidThird(), 3);
 			if (groupCall.isSent()) {
 				for (String email : groupEmail.getValidThird())
 					ConferenceCallDAO.getInstance().updateThirdCallSent(ConferenceCallDAO.getInstance()
@@ -793,8 +763,7 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 
 	private boolean thirdCallInvalidHelper() {
 		if (groupEmail.getInvalidThird() != null && !groupEmail.getInvalidThird().isEmpty()) {
-			if (groupCall == null)
-				groupCall = MainView.getInstance().loadEmailWindow(groupCall, groupEmail.getInvalidThird());
+			prepareInvalidGroupCall(groupEmail.getInvalidThird(), 3);
 			if (groupCall.isSent()) {
 				for (String email : groupEmail.getInvalidThird())
 					try {
@@ -847,4 +816,16 @@ public class MainInterfaceController extends GUIUtils implements Initializable {
 		thirdCall.setOnAction(event -> thirdCall.setSelected(call != null ? call.isThirdCallSent() : false));
 	}
 
+	private void prepareValidGroupCall(List<String> emails, int call) {
+		if (emailHelper != null && emailHelper.getOrdinal() == call)
+			groupCall = MainView.getInstance().loadEmailWindow(groupCall, emails,
+					EmailDAO.getInstance().getMessage(emailHelper));
+		else
+			groupCall = MainView.getInstance().loadEmailWindow(groupCall, emails);
+	}
+
+	private void prepareInvalidGroupCall(List<String> emails, int call) {
+		if (groupCall == null)
+			prepareValidGroupCall(emails, call);
+	}
 }
