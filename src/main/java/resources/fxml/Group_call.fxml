@@ -8,21 +8,24 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.HTMLEditor?>
+<?import javafx.scene.layout.HBox?>
 
 <AnchorPane id="AnchorPane" onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="645.0" prefWidth="1100.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="alfatec.controller.email.GroupCallController">
 	<children>
-		<JFXTextField fx:id="emailid" labelFloat="true" layoutX="21.0" layoutY="32.0" prefHeight="34.0" prefWidth="1056.0" promptText="Email ID" />
-		<JFXPasswordField fx:id="password" labelFloat="true" layoutX="21.0" layoutY="97.0" prefHeight="34.0" prefWidth="1056.0" promptText="Password" />
-		<JFXTextField fx:id="bccid" labelFloat="true" layoutX="21.0" layoutY="162.0" prefHeight="34.0" prefWidth="1056.0" promptText="BCC ID" />
-		<JFXTextField fx:id="subject" labelFloat="true" layoutX="21.0" layoutY="227.0" prefHeight="34.0" prefWidth="1056.0" promptText="SUBJECT" />
-		<Text fill="#b2b2b2" layoutX="21.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Message" wrappingWidth="102.6708984375">
+		<HBox layoutX="21.0" layoutY="40.0" prefHeight="35.0" prefWidth="1056.0" spacing="15.0">
+			<JFXTextField fx:id="emailid" labelFloat="true" prefHeight="34.0" prefWidth="342.0" promptText="Email ID" />
+			<JFXPasswordField fx:id="password" labelFloat="true" prefHeight="34.0" prefWidth="342.0" promptText="Password" />
+			<JFXTextField fx:id="bccid" labelFloat="true" prefHeight="34.0" prefWidth="342.0" promptText="BCC ID" />
+		</HBox>
+		<JFXTextField fx:id="subject" labelFloat="true" layoutX="21.0" layoutY="105.0" prefHeight="34.0" prefWidth="1056.0" promptText="SUBJECT" />
+		<Text fill="#b2b2b2" layoutX="21.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Message" wrappingWidth="102.6708984375">
 			<font>
 				<Font size="18.0" />
 			</font>
 		</Text>
-		<ScrollPane layoutX="21.0" layoutY="305.0" prefHeight="277.0" prefWidth="1056.0">
+		<ScrollPane layoutX="21.0" layoutY="184.0" prefHeight="400.0" prefWidth="1056.0">
 			<content>
-				<HTMLEditor fx:id="html" prefHeight="275.0" prefWidth="1054.0" />
+				<HTMLEditor fx:id="html" prefHeight="398.0" prefWidth="1054.0" />
 			</content>
 		</ScrollPane>
 		<JFXTextField fx:id="selected" labelFloat="true" layoutX="21.0" layoutY="590.0" prefHeight="34.0" prefWidth="713.0" promptText="Selected Files:" />
