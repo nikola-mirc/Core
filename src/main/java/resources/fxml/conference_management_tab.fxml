@@ -78,7 +78,7 @@
 						<TableColumn fx:id="fieldCol" prefWidth="259.80006098747253" text="Field name" />
 					</columns>
 				</TableView>
-				<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="250.0" spacing="20.0">
+				<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="260.0" spacing="20.0">
 					<children>
 						<JFXButton id="buttonInverse" fx:id="addFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addField" prefHeight="40.0" prefWidth="70.0" text="Add" />
 						<JFXButton id="buttonInverse" fx:id="editFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editField" prefHeight="40.0" prefWidth="70.0" text="Edit" />
@@ -99,7 +99,7 @@
 				</Label>
 				<Label id="labelInverse" fx:id="authors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="330.0" text="n/a">
 					<VBox.margin>
-						<Insets bottom="3.0" />
+						<Insets bottom="30.0" />
 					</VBox.margin>
 					<padding>
 						<Insets left="30.0" />
