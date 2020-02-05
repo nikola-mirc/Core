@@ -11,7 +11,9 @@ import alfatec.dao.conference.ConferenceDAO;
 import alfatec.dao.conference.FieldDAO;
 import alfatec.dao.conference.RegistrationFeeDAO;
 import alfatec.dao.country.CountryDAO;
+import alfatec.dao.person.AuthorDAO;
 import alfatec.dao.person.ReviewerDAO;
+import alfatec.dao.research.ResearchDAO;
 import alfatec.dao.utils.Logging;
 import alfatec.model.conference.Field;
 import alfatec.model.conference.RegistrationFee;
@@ -73,7 +75,7 @@ public class ConferenceManagementTabController extends GUIUtils {
 
 	@FXML
 	private Label firstNameErrorLabel, lastNameErrorLabel, emailErrorLabel, feeNameErrorLabel, amountErrorLabel,
-			fieldNameErrorLabel;
+			fieldNameErrorLabel, authors, researches;
 
 	@FXML
 	private ComboBox<Currency> feeCurrencyComboBox;
@@ -104,6 +106,7 @@ public class ConferenceManagementTabController extends GUIUtils {
 		populateRegistrationFeeTable();
 		fields = FieldDAO.getInstance().getAllFields();
 		populateFieldsTable();
+		refreshLabel();
 	}
 
 	@FXML
@@ -713,6 +716,11 @@ public class ConferenceManagementTabController extends GUIUtils {
 		setFeeCurrency();
 		setFeePrice();
 		feesTableView.refresh();
+	}
+	
+	public void refreshLabel() {
+		authors.setText("" + AuthorDAO.getInstance().getAllAuthors().size());
+		researches.setText("" + ResearchDAO.getInstance().getAllResearches().size());
 	}
 
 }

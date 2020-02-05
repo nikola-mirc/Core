@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
 
 import alfatec.Main;
+import alfatec.controller.conference.ConferenceManagementTabController;
 import alfatec.controller.conference.ConferenceTabController;
 import alfatec.controller.email.GroupCallController;
 import alfatec.controller.email.SendEmailController;
@@ -48,10 +49,11 @@ public class MainView {
 		try {
 			setUp(usersTab, "resources/fxml/users_tab.fxml");
 			AnchorPane conferenceAnchor = setUp(conferenceTab, "resources/fxml/conference_tab.fxml");
-			setUp(confManagementTab, "resources/fxml/conference_management_tab.fxml");
+			AnchorPane management = setUp(confManagementTab, "resources/fxml/conference_management_tab.fxml");
 			setUp(scientificWorkTab, "resources/fxml/scientific_work_tab.fxml");
 			setUp(emailWebTab, "resources/fxml/emailTab.fxml");
-			ConferenceTabController conferenceController = (ConferenceTabController) getController(conferenceAnchor);
+			ConferenceTabController conferenceController = (ConferenceTabController) getController(conferenceAnchor,
+					"foo");
 			conferenceController.disablePartsForAdminAccess(loginData);
 			conferenceTab.setOnSelectionChanged(event -> {
 				if (conferenceTab.isSelected()) {
@@ -59,6 +61,12 @@ public class MainView {
 					conferenceController.refreshSpecialTab();
 					conferenceController.refreshSelection();
 				}
+			});
+			ConferenceManagementTabController managementController = (ConferenceManagementTabController) getController(
+					management, "notice");
+			confManagementTab.setOnSelectionChanged(event -> {
+				if (confManagementTab.isSelected())
+					managementController.refreshLabel();
 			});
 			if (loginData.getRoleID() == 3)
 				tabPane.getTabs().addAll(scientificWorkTab, conferenceTab, confManagementTab, usersTab, emailWebTab);
@@ -133,10 +141,10 @@ public class MainView {
 		return logout;
 	}
 
-	public Object getController(Node node) {
+	public Object getController(Node node, String key) {
 		Object controller = null;
 		do {
-			controller = node.getProperties().get("foo");
+			controller = node.getProperties().get(key);
 			node = node.getParent();
 		} while (controller == null && node != null);
 		return controller;

@@ -19,6 +19,14 @@
 
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.conference.ConferenceManagementTabController">
+	<userData>
+		<fx:reference source="controller" />
+	</userData>
+	<properties>
+		<notice>
+			<fx:reference source="controller" />
+		</notice>
+	</properties>
 	<children>
 		<VBox id="popupVboxRound" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="840.0">
 			<children>
@@ -58,28 +66,61 @@
 				</HBox>
 			</children>
 		</VBox>
-		<VBox id="popupVboxRoundLight" alignment="TOP_CENTER" layoutX="859.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="330.0">
+		<VBox id="popupVboxRoundLight" alignment="TOP_CENTER" layoutX="859.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="330.0">
 			<children>
 				<Label id="label" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" text="Fields">
 					<VBox.margin>
 						<Insets left="15.0" />
 					</VBox.margin>
 				</Label>
-				<TableView id="tableViewMini" fx:id="fieldsTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="265.0">
+				<TableView id="tableViewMini" fx:id="fieldsTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="265.0">
 					<columns>
 						<TableColumn fx:id="fieldCol" prefWidth="259.80006098747253" text="Field name" />
 					</columns>
 				</TableView>
-				<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="257.0" prefWidth="70.0" spacing="20.0">
+				<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="250.0" spacing="20.0">
 					<children>
 						<JFXButton id="buttonInverse" fx:id="addFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addField" prefHeight="40.0" prefWidth="70.0" text="Add" />
 						<JFXButton id="buttonInverse" fx:id="editFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editField" prefHeight="40.0" prefWidth="70.0" text="Edit" />
 						<JFXButton id="buttonInverse" fx:id="deleteFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteField" prefHeight="40.0" prefWidth="70.0" text="Delete" />
 					</children>
-					<HBox.margin>
-						<Insets left="20.0" />
-					</HBox.margin>
-				</VBox>
+				</HBox>
+			</children>
+		</VBox>
+		<VBox id="popupVboxRound" alignment="CENTER" layoutX="859.0" layoutY="321.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="240.0" prefWidth="330.0">
+			<children>
+				<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="330.0" text="Number of authors:">
+					<VBox.margin>
+						<Insets bottom="3.0" />
+					</VBox.margin>
+					<padding>
+						<Insets left="30.0" />
+					</padding>
+				</Label>
+				<Label id="labelInverse" fx:id="authors" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="330.0" text="n/a">
+					<VBox.margin>
+						<Insets bottom="3.0" />
+					</VBox.margin>
+					<padding>
+						<Insets left="30.0" />
+					</padding>
+				</Label>
+				<Label id="labelInverse" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="330.0" text="Number of researches:">
+					<VBox.margin>
+						<Insets bottom="3.0" />
+					</VBox.margin>
+					<padding>
+						<Insets left="30.0" />
+					</padding>
+				</Label>
+				<Label id="labelInverse" fx:id="researches" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="330.0" text="n/a">
+					<VBox.margin>
+						<Insets bottom="3.0" />
+					</VBox.margin>
+					<padding>
+						<Insets left="30.0" />
+					</padding>
+				</Label>
 			</children>
 		</VBox>
 		<VBox id="popupVboxRoundLight" alignment="TOP_CENTER" layoutX="10.0" layoutY="321.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="240.0" prefWidth="840.0">
