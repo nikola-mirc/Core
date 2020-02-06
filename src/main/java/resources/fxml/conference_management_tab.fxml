@@ -54,9 +54,9 @@
 						</TableView>
 						<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="70.0" spacing="20.0">
 							<children>
-								<JFXButton id="buttonInverse" fx:id="addRevButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addReviewer" prefHeight="40.0" prefWidth="70.0" text="Add" />
-								<JFXButton id="buttonInverse" fx:id="editRevButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editReviewer" prefHeight="40.0" prefWidth="70.0" text="Edit" />
-								<JFXButton id="buttonInverse" fx:id="deleteRevButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteReviewer" prefHeight="40.0" prefWidth="70.0" text="Delete" />
+								<JFXButton id="buttonInverse" fx:id="addRevButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addReviewer" prefHeight="40.0" prefWidth="80.0" text="Add" />
+								<JFXButton id="buttonInverse" fx:id="editRevButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editReviewer" prefHeight="40.0" prefWidth="80.0" text="Edit" />
+								<JFXButton id="buttonInverse" fx:id="deleteRevButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteReviewer" prefHeight="40.0" prefWidth="80.0" text="Delete" />
 							</children>
 							<HBox.margin>
 								<Insets left="20.0" />
@@ -80,9 +80,9 @@
 				</TableView>
 				<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="260.0" spacing="20.0">
 					<children>
-						<JFXButton id="buttonInverse" fx:id="addFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addField" prefHeight="40.0" prefWidth="70.0" text="Add" />
-						<JFXButton id="buttonInverse" fx:id="editFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editField" prefHeight="40.0" prefWidth="70.0" text="Edit" />
-						<JFXButton id="buttonInverse" fx:id="deleteFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteField" prefHeight="40.0" prefWidth="70.0" text="Delete" />
+						<JFXButton id="buttonInverse" fx:id="addFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addField" prefHeight="40.0" prefWidth="80.0" text="Add" />
+						<JFXButton id="buttonInverse" fx:id="editFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editField" prefHeight="40.0" prefWidth="80.0" text="Edit" />
+						<JFXButton id="buttonInverse" fx:id="deleteFieldButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteField" prefHeight="40.0" prefWidth="80.0" text="Delete" />
 					</children>
 				</HBox>
 			</children>
@@ -140,17 +140,17 @@
 				</TableView>
 				<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="350.0" spacing="30.0">
 					<children>
-						<JFXButton id="buttonInverse" fx:id="addFeeButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addFee" prefHeight="40.0" prefWidth="70.0" text="Add">
+						<JFXButton id="buttonInverse" fx:id="addFeeButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#addFee" prefHeight="40.0" prefWidth="80.0" text="Add">
 							<HBox.margin>
 								<Insets />
 							</HBox.margin>
 						</JFXButton>
-						<JFXButton id="buttonInverse" fx:id="editFeeButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editFee" prefHeight="40.0" prefWidth="70.0" text="Edit">
+						<JFXButton id="buttonInverse" fx:id="editFeeButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#editFee" prefHeight="40.0" prefWidth="80.0" text="Edit">
 							<HBox.margin>
 								<Insets />
 							</HBox.margin>
 						</JFXButton>
-						<JFXButton id="buttonInverse" fx:id="deleteFeeButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteFee" prefHeight="40.0" prefWidth="70.0" text="Delete">
+						<JFXButton id="buttonInverse" fx:id="deleteFeeButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#deleteFee" prefHeight="40.0" prefWidth="80.0" text="Delete">
 							<HBox.margin>
 								<Insets />
 							</HBox.margin>
