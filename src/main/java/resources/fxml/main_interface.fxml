@@ -28,7 +28,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.PrefixSelectionComboBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.main.MainInterfaceController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" 
+	xmlns="http://javafx.com/javafx/11.0.1" 
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="alfatec.controller.main.MainInterfaceController">
 	<top>
 		<GridPane id="header" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="100.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
 			<columnConstraints>
@@ -40,9 +42,9 @@
 				<RowConstraints minHeight="10.0" prefHeight="75.0" vgrow="SOMETIMES" />
 			</rowConstraints>
 			<children>
-				<ImageView fitHeight="75.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+				<ImageView fitHeight="75.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
 					<image>
-						<Image url="@../images/logo.png" />
+						<Image url="@../images/logo_main.png" />
 					</image>
 					<GridPane.margin>
 						<Insets left="20.0" />
@@ -113,29 +115,33 @@
 										<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="10.0">
 											<children>
 												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="Institution" />
-												<ComboBox id="comboBoxText" fx:id="filterInstitution" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" onAction="#filter" />
+												<ComboBox id="comboBoxText" fx:id="filterInstitution" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
 												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="Name of the institution" />
-												<ComboBox id="comboBoxText" fx:id="filterInstitutionName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" onAction="#filter" />
+												<ComboBox id="comboBoxText" fx:id="filterInstitutionName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
 												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="Country" />
-												<PrefixSelectionComboBox id="comboBoxText" fx:id="filterCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" onAction="#filter" />
+												<PrefixSelectionComboBox id="comboBoxText" fx:id="filterCountry" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
 												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="From conference" />
-												<ComboBox id="comboBoxText" fx:id="filterConference" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" onAction="#filter" />
+												<ComboBox id="comboBoxText" fx:id="filterConference" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
 												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="Field of work" />
-												<ComboBox id="comboBoxText" fx:id="filterField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" onAction="#filter" />
-												<JFXCheckBox id="radio" fx:id="filterCollSpec" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="Collection/special" onAction="#filter" />
+												<ComboBox id="comboBoxText" fx:id="filterField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
+												<JFXCheckBox id="radio" fx:id="filterCollSpec" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="Collection/special" />
 											</children>
 										</VBox>
-										<VBox layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="20.0">
+										<VBox layoutX="300.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="15.0">
 											<children>
-												<JFXCheckBox id="radio" fx:id="filterSentForReview" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="Sent for review" onAction="#filter" />
+												<JFXCheckBox id="radio" fx:id="filterSentForReview" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="Sent for review" />
 												<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="200.0" text="By review status" />
-												<ComboBox id="comboBoxText" fx:id="filterReviewStatus" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Select" onAction="#filter" />
-												<JFXCheckBox id="radio" fx:id="filterSubmittedWork" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="Submitted work" onAction="#filter" />
-												<JFXCheckBox id="radio" fx:id="filterFirstInv" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="1st invite" onAction="#filter" />
-												<JFXCheckBox id="radio" fx:id="filterSecondInv" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="2nd invite" onAction="#filter" />
-												<JFXCheckBox id="radio" fx:id="filterThirdInv" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="3rd invite" onAction="#filter" />
-												<JFXCheckBox id="radio" fx:id="filterInterested" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="270.0" text="Interested to participate" onAction="#filter" />
-												<JFXButton id="button" fx:id="addAuthorButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#resetFilters" prefHeight="40.0" prefWidth="100.0" text="Reset" />
+												<ComboBox id="comboBoxText" fx:id="filterReviewStatus" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="200.0" promptText="Select" />
+												<JFXCheckBox id="radio" fx:id="filterSubmittedWork" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="Submitted work" />
+												<JFXCheckBox id="radio" fx:id="filterFirstInv" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="1st invite" />
+												<JFXCheckBox id="radio" fx:id="filterSecondInv" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="2nd invite" />
+												<JFXCheckBox id="radio" fx:id="filterThirdInv" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="3rd invite" />
+												<JFXCheckBox id="radio" fx:id="filterInterested" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#filter" prefHeight="27.0" prefWidth="270.0" text="Interested to participate" />
+												<JFXButton id="button" fx:id="addAuthorButton" buttonType="RAISED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#resetFilters" prefHeight="40.0" prefWidth="100.0" text="Reset">
+													<VBox.margin>
+														<Insets />
+													</VBox.margin>
+												</JFXButton>
 											</children>
 										</VBox>
 									</children>
@@ -315,7 +321,11 @@
 															<ToggleGroup fx:id="group" />
 														</fx:define>
 														<Label id="label" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="150.0" text="Answers:" />
-														<JFXRadioButton id="radio" fx:id="firstRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="1st invitation" toggleGroup="$group" />
+														<JFXRadioButton id="radio" fx:id="firstRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="1st invitation">
+															<toggleGroup>
+																<ToggleGroup fx:id="group" />
+															</toggleGroup>
+														</JFXRadioButton>
 														<JFXRadioButton id="radio" fx:id="secondRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="2nd invitation" toggleGroup="$group" />
 														<JFXRadioButton id="radio" fx:id="thirdRadio" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="3rd invitation" toggleGroup="$group" />
 														<JFXCheckBox id="radio" fx:id="interestedCheckbox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Interested">
